@@ -43,6 +43,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, L
 	HWND hWnd;
 	WNDCLASSEX wc;
 
+
+	int b;
+
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
 	wc.cbSize = sizeof(WNDCLASSEX);

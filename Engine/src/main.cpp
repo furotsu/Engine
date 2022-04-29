@@ -1,37 +1,59 @@
 ﻿#include <windows.h>
 #include <windowsx.h>
+
+#include "Actor.h"
+
 #include <iostream>
+
+constexpr int SCREEN_WIDTH = 400;
+constexpr int SCREEN_HEIGHT = 200;
+
+
+Actor mainSphere(ActorType::Sphere, vec3(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, -100.0f));
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+bool rmbDown = false;
+
 BOOL AdjustWindowRect(LPRECT lpRect, DWORD dwStyle, BOOL bMenu);
+void initConsole();
 
-VOID render(HDC hdc, int posX)
-{
-	SetPixel(hdc, posX, 100, 0x00FF0000);
-	SetPixel(hdc, posX, 101, 0x00FF0000);
-	SetPixel(hdc, posX, 102, 0x00FF0000);
-	SetPixel(hdc, posX, 103, 0x00FF0000);
-}
+vec3 getColor(const ray& r, const Actor& sph);
 
-template<typename ...Args>
-void printToVisualStudioOutput(Args&&... args)
+void render(HDC hdc, const Actor& sphere)
 {
-	std::stringstream ss;
-	(ss << "???" << args) << std::endl; // Fold expression requires C++17
-	OutputDebugStringW(ss.str().c_str());
-}
+	vec3 origin(0.0f, 0.0f, 0.0f);
+	vec3 direction(0.0f, 0.0f, -1.0f);
+	
 
-void initConsole()
-{
-	if (!AllocConsole()) {
-		// Add some error handling here.
-		// You can call GetLastError() to get more info about the error.
-		return;
+	for (int w = 0; w <= SCREEN_WIDTH; w++)
+	{
+		for (int h = 0; h <= SCREEN_HEIGHT; h++)
+		{
+			ray r(origin + vec3(w, h, 0.0f), direction);
+			vec3 col = getColor(r, sphere);
+			(hdc, w, h, RGB(col.x() * 256, col.y() * 256, col.z() * 256));
+			SetPixel(hdc, w, h, RGB(col.r() * 256, col.g() * 256, col.b() * 256));
+		}
 	}
-	FILE* dummy;
-	auto s = freopen_s(&dummy, "CONOUT$", "w", stdout);
 }
+
+vec3 getColor(const ray& r, const Actor& sph)
+{
+	hitRecord hr;
+
+	if (sph.hit(r, hr))
+	{
+		return 0.5 * vec3(hr.normal.x() + 1, hr.normal.y() + 1, hr.normal.z() + 1);
+	}
+
+	vec3 UDirection = unitVector(r.origin());
+	float t = 0.5f * (UDirection.y() + 1.0f);
+
+	return (1.0f - t) * vec3(1.0f, 1.0f, 1.0f) + t * vec3(0.5f, 0.7f, 0.9f);
+}
+
+
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
@@ -43,8 +65,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, L
 	HWND hWnd;
 	WNDCLASSEX wc;
 
-
-	int b;
 
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
@@ -58,7 +78,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, L
 
 	RegisterClassEx(&wc);
 
-	RECT wr = { 0, 0, 500, 400 };    // set the size, but not the position
+	RECT wr = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };    // set the size, but not the position
 	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 
 	hWnd = CreateWindowEx(NULL,
@@ -76,35 +96,32 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, L
 
 	ShowWindow(hWnd, nCmdShow);
 
-	// enter the main loop:
-
-	// this struct holds Windows event messages
 	MSG msg = { 0 };
 	HDC hdc = GetDC(hWnd);
-	// wait for the next message in the queue, store the result in 'msg'
-	long long counter = 0;
+
+
 	while (TRUE)
 	{
-		counter++;
-		render(hdc, counter / 10000);
-		// Check to see if any messages are waiting in the queue
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			// translate keystroke messages into the right format
 			TranslateMessage(&msg);
 
-			// send the message to the WindowProc function
 			DispatchMessage(&msg);
 
-			// check to see if it's time to quit
 			if (msg.message == WM_QUIT)
 				break;
 		}
 		else
 		{
-			// Run game code here
-			// ...
-			// ...
+			render(hdc, mainSphere);
+			if (rmbDown)
+			{
+				POINT point;
+				GetCursorPos(&point);
+				ScreenToClient(FindWindowA(NULL, "Our First Windowed Program"), &point);
+				std::cout << point.x << " " << point.y << std::endl;
+				mainSphere.setPosition(vec3(point.x, point.y, -100));
+			}
 		}
 	}
 
@@ -128,6 +145,37 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	case WM_MOUSEMOVE:
 	{
 		std::cout << "Mouse moved" << std::endl;
+		return 0;
+	} break;
+	case WM_RBUTTONDOWN:
+	{
+		rmbDown = true;
+	} break;
+	case WM_RBUTTONUP:
+	{
+		rmbDown = false;
+	}
+	case WM_KEYDOWN:
+	{
+		switch (wParam)
+		{
+		case 'W':
+		{
+			mainSphere.move(vec3(0.0f, -1.0f, 0.0f));
+		} break;
+		case 'A':
+		{
+			mainSphere.move(vec3(-1.0f, 0.0f, 0.0f));
+		} break;
+		case 'S':
+		{
+			mainSphere.move(vec3(1.0f, 0.0f, 0.0f));
+		} break;
+		case 'D':
+		{
+			mainSphere.move(vec3(1.0f, 0.0f, 0.0f));
+		} break;
+		}
 	} break;
 	}
 
@@ -135,69 +183,21 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-/*
-
-...
-#include <windows.h>
-...
-​
-
-​
-void render()
+void initConsole()
 {
-	...
-		SetPixel(..); // for each pixel
-	...
-}
-​
-int WINAPI WinMain(HINSTANCE appHandle, HINSTANCE, LPSTR cmdLine, int windowShowParams)
-{
-
-
-	....
-
-		RegisterClassExW(..);
-	CreateWindowExW(..);
-	ShowWindow(..);
-
-	....
-
-		while (true)
-		{
-			while (PeekMessageW(..))
-			{
-				if (msg.message == WM_QUIT)
-					break;
-				​
-					TranslateMessage(..);
-				DispatchMessageW(..);
-			}
-			​
-
-		}
-
-	...
+	if (!AllocConsole()) {
+		// Add some error handling here.
+		// You can call GetLastError() to get more info about the error.
+		return;
+	}
+	FILE* dummy;
+	auto s = freopen_s(&dummy, "CONOUT$", "w", stdout);
 }
 
-...
-​
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+template<typename ...Args>
+void printToVisualStudioOutput(Args&&... args)
 {
-	...
-
-		switch (message)
-		{
-		case WM_MOUSEMOVE:
-			...
-				moveSphere(..);
-			...
-				return 0;
-
-			...
-		}
-
-	...
-
-		return DefWindowProc(hWnd, message, wParam, lParam);
+	std::stringstream ss;
+	(ss << "???" << args) << std::endl; // Fold expression requires C++17
+	OutputDebugStringW(ss.str().c_str());
 }
-*/

@@ -13,7 +13,6 @@ class Actor
 {
 	ActorType m_type;
 	//mat4 m_transformMat;
-	//std::shared_ptr<hitable> object;
 	Sphere sphere;
 
 public:
@@ -22,7 +21,7 @@ public:
 	{
 	}
 
-	Actor(ActorType type, vec3 pos) // std::shared_ptr<hitable> h)
+	Actor(ActorType type, vec3 pos)
 		: m_type(ActorType::Sphere)
 	{
 		//m_transformMat = translate(m_transformMat, pos);
@@ -34,14 +33,3 @@ public:
 	bool hit(const ray& r, hitRecord& rec) const;
 };
 
-void Actor::move(vec3 v)
-{
-	//m_transformMat = translate(m_transformMat, v);
-	sphere.setCenter(sphere.getCenter() + v);
-}
-
-bool Actor::hit(const ray& r, hitRecord& rec) const
-{
-	//this->object->hit(r, tMin, tMax, rec)
-	return sphere.hit(r, RAY_MIN, RAY_MAX, rec);
-}

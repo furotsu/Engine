@@ -140,7 +140,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="math\sphere.cpp" />
+    <ClCompile Include="src\actor.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\hitable.h" />
@@ -149,8 +152,9 @@
     <ClInclude Include="math\sphere.h" />
     <ClInclude Include="math\vec3.h" />
     <ClInclude Include="math\vec4.h" />
-    <ClInclude Include="src\Actor.h" />
-    <ClInclude Include="src\Renderer.h" />
+    <ClInclude Include="src\actor.h" />
+    <ClInclude Include="src\renderer.h" />
+    <ClInclude Include="src\window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

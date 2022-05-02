@@ -1,10 +1,9 @@
-#ifndef MAT4
-#define MAT4
+#pragma once
 
 #include "vec3.h"
 #include "vec4.h"
 
-// Matrix is row time like in DirectX
+// Matrix is row-major like in DirectX
 /* Visual reference:
 	v11 v12 v13 v14
 	v21 v22 v23 v24
@@ -65,6 +64,3 @@ inline vec4 mat4::operator*=(const vec4& v)
 				s[2].x() * v.x() + s[2].y() * v.y() + s[2].z() * v.z() + s[2].w() * v.w(),
 				s[3].x() * v.x() + s[3].y() * v.y() + s[3].z() * v.z() + s[3].w() * v.w());
 }
-
-
-#endif // !MAT4

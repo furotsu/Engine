@@ -1,5 +1,4 @@
-#ifndef VEC3
-#define VEC3
+#pragma once
 
 #include <math.h>
 #include <iostream>
@@ -39,6 +38,7 @@ public:
 	inline float length() const { return sqrt(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]); }
 	inline float squaredLength() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
 	inline void makeUnitVector();
+
 };
 
 inline std::istream& operator>>(std::istream& is, vec3& t)
@@ -162,5 +162,3 @@ inline vec3 unitVector(vec3 v)
 {
     return v / v.length();
 }
-
-#endif

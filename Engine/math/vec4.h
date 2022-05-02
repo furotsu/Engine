@@ -1,5 +1,4 @@
-#ifndef VEC4
-#define VEC4
+#pragma once
 
 #include <math.h>
 #include <iostream>
@@ -173,5 +172,3 @@ inline vec4 unitVector(vec4 v)
 {
     return v / v.length();
 }
-
-#endif

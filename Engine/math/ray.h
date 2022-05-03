@@ -8,18 +8,16 @@ constexpr float RAY_MAX = 1000.0f;
 class ray
 {
 public:
-	vec3 A;
-	vec3 B; // always normalized
+	vec3 origin;
+	vec3 direction; // always normalized
 
 	ray() {}
 	ray(const vec3& a, const vec3& b)
-		: A(a)
+		: origin(a)
 	{
-		B = unitVector(b);
-//		B = b;
+		direction = unitVector(b);
+//		direction = b;
 	}
 	
-	vec3 origin()    const { return A; }
-	vec3 direction() const { return B; }
-	vec3 pointAtParameter(float t) const { return A + t * B;}
+	vec3 pointAtParameter(float t) const { return origin + t * direction;}
 };

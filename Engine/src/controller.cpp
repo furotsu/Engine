@@ -1,11 +1,11 @@
 #include "controller.h"
 
 
-MSG Controller::mainLoop(Renderer& renderer, Window& window, MSG& msg)
+MSG Controller::mainLoop(Window& window, MSG& msg)
 {
 	while (TRUE)
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 
@@ -13,16 +13,16 @@ MSG Controller::mainLoop(Renderer& renderer, Window& window, MSG& msg)
 			if (msg.message == WM_QUIT)
 				break;
 		}
-		else
+		
 		{
-			renderer.render(window);
+			scene.render(window);
 		}
 	}
 
 	return msg;
 }
 
-LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Renderer& renderer)
+LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam)
 {
 	switch (message)
 	{
@@ -50,19 +50,19 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 		{
 		case 'W':
 		{
-			renderer.sph.setCenter(renderer.sph.getCenter() + vec3(0.0f, -5.0f, 0.0f));
+			scene.sph.setCenter(scene.sph.getCenter() + vec3(0.0f, -5.0f, 0.0f));
 		} break;
 		case 'A':
 		{
-			renderer.sph.setCenter(renderer.sph.getCenter() + vec3(-5.0f, 0.0f, 0.0f));
+			scene.sph.setCenter(scene.sph.getCenter() + vec3(-5.0f, 0.0f, 0.0f));
 		} break;
 		case 'S':
 		{
-			renderer.sph.setCenter(renderer.sph.getCenter() + vec3(0.0f, 5.0f, 0.0f));
+			scene.sph.setCenter(scene.sph.getCenter() + vec3(0.0f, 5.0f, 0.0f));
 		} break;
 		case 'D':
 		{
-			renderer.sph.setCenter(renderer.sph.getCenter() + vec3(5.0f, 0.0f, 0.0f));
+			scene.sph.setCenter(scene.sph.getCenter() + vec3(5.0f, 0.0f, 0.0f));
 		} break;
 		}
 	} break;
@@ -74,7 +74,7 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 		GetCursorPos(&point);
 		//determine position relative to init window
 		ScreenToClient(FindWindowA(NULL, "Engine"), &point);
-		renderer.sph.setCenter(vec3(point.x, point.y, -100));
+		scene.sph.setCenter(vec3(point.x, point.y, -100));
 	}
 
 	// Handle any messages the switch statement didn't

@@ -1,37 +1,33 @@
-#include "renderer.h"
+#include "scene.h"
 
 
 // For each pixel determine what color it should 
 //	   based on whether ray hit any object or not 
-vec3 Renderer::getPixelColor(const ray& r)
+vec3 Scene::getPixelColor(const ray& r)
 {
 	hitRecord hr;
 
-	for (auto& light : m_lights)
+	/*
+	if (r.origin.x() == m_light.m_position.x() || r.origin.y() == m_light.m_position.y())
 	{
-		if (r.origin().x() == light->m_position.x() || r.origin().y() == light->m_position.y())
-		{
-			return vec3(1.0f, 0.0f, 0.0f);
-		}
+		return vec3(1.0f, 0.0f, 0.0f);
 	}
+	*/
 
 	if (sph.hit(r, hr))
 	{
 		vec3 resultColor(0.8f, 0.2f, 0.2f);
-		for (auto& light : m_lights)
-		{
-			light->illuminate(sph, hr.point, hr.normal, resultColor);
-		}
+		
 		return resultColor;
 	}
 
-	vec3 UDirection = unitVector(r.origin());
+	vec3 UDirection = unitVector(r.origin);
 	float t = 0.5f * (UDirection.y() + 1.0f);
 
 	return (1.0f - t) * vec3(1.0f, 1.0f, 1.0f) + t * vec3(0.5f, 0.7f, 0.9f);
 }
 
-void Renderer::render(Window& window)
+void Scene::render(Window& window)
 {
 	vec3 origin(0.0f, 0.0f, 0.0f);
 	vec3 direction(0.0f, 0.0f, -1.0f);
@@ -50,15 +46,14 @@ void Renderer::render(Window& window)
 				col = vec3(0.9f, 0.9f, 0.9f);
 			}
 #endif
-			canvas.setPixel(w, h, col.r() * 256, col.g() * 256, col.b() * 256);
-			//canvas.setPixel(w, h, 250, 1, 1);
+			window.canvas.setPixel(w, h, col.r() * 256, col.g() * 256, col.b() * 256);
 		}
 	}
-
-	canvas.printToScreen(window.hdc, window.hWnd);
+	
+	window.canvas.printToScreen(window.hdc, window.hWnd);
 }
 
-void Renderer::addSphere(const vec3& position, const float& radius)
+void Scene::addSphere(const vec3& position, const float& radius)
 {
 	sph = Sphere(position, radius);
 }

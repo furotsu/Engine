@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "lightSource.h"
+#include "canvas.h"
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -16,25 +17,25 @@ class Window
 public:
 	int m_width;
 	int m_height;
-	bool m_rmbDown;
 	HBITMAP m_pixelBuf;
 	HWND hWnd;
 	WNDCLASSEX wc;
 	HDC hdc;
 
+	Canvas canvas;
+	
 	Window() {}
 
 	Window(int width, int height, _In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow)
+		:canvas(width, height, 0, 0)
 	{
 		m_width = width;
 		m_height = height;
-		m_rmbDown = false;
 		init(hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 	}
 
 	void init(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow);
 
-
 	friend LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	friend class Renderer;
+	friend class Scene;
 };

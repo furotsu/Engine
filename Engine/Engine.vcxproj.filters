@@ -27,7 +27,7 @@
     <ClCompile Include="src\lightSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer.cpp">
+    <ClCompile Include="src\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\controller.cpp">
@@ -56,7 +56,7 @@
     <ClInclude Include="math\vec4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer.h">
+    <ClInclude Include="src\scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\window.h">

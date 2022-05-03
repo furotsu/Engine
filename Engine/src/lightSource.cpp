@@ -3,29 +3,6 @@
 #include <math.h>
 #include <algorithm>
 
-int LightSource::s_dirLCount = 0;
-int LightSource::s_pointLCount = 0;
-int LightSource::s_flashLCount = 0;
-
-
-
-DirectionalLight::DirectionalLight(vec3 direction, vec3 ambient, vec3 diffuse)
-{
-	this->s_dirLCount++;
-	m_direction = unitVector(direction);
-	m_ambient = ambient;
-	m_diffuse = diffuse;
-}
-
-DirectionalLight::~DirectionalLight()
-{
-	this->s_dirLCount--;
-}
-
-void DirectionalLight::illuminate(const Sphere& actor, const vec3& fragPos, const vec3& fragNorm, vec3& resColor)
-{
-
-}
 
 void PointLight::illuminate(const Sphere& actor, const vec3& fragPos, const vec3& fragNorm, vec3& resColor)
 {
@@ -41,13 +18,12 @@ void PointLight::illuminate(const Sphere& actor, const vec3& fragPos, const vec3
 
 	float spec = pow(std::max(dot(viewDirection, reflectDir), 0.0f), 32);
 
-	resColor *= (m_diffuse * diff + spec * m_specular);
+	resColor += (m_diffuse * diff + spec * m_specular);
 }
 
 
 PointLight::PointLight(vec3 position, vec3 direction, vec3 ambient, vec3 diffuse, vec3 specular, float intensity)
 {
-	this->s_pointLCount++;
 	m_direction = unitVector(direction);
 	m_ambient = ambient;
 	m_diffuse = diffuse;
@@ -63,14 +39,27 @@ PointLight::PointLight(vec3 position, vec3 direction, vec3 ambient, vec3 diffuse
 
 PointLight::~PointLight()
 {
-	this->s_pointLCount--;
 }
 
+/*
+DirectionalLight::DirectionalLight(vec3 direction, vec3 ambient, vec3 diffuse)
+{
+	m_direction = unitVector(direction);
+	m_ambient = ambient;
+	m_diffuse = diffuse;
+}
+
+DirectionalLight::~DirectionalLight()
+{
+}
+
+void DirectionalLight::illuminate(const Sphere& actor, const vec3& fragPos, const vec3& fragNorm, vec3& resColor)
+{
+
+}
 
 FlashLight::FlashLight(vec3 position, vec3 direction, vec3 ambient, vec3 diffuse, vec3 specular, float CutOff, float intensity)
 {
-	this->s_flashLCount++;
-
 	m_direction = unitVector(direction);
 	m_ambient = ambient;
 	m_diffuse = diffuse;
@@ -88,5 +77,5 @@ FlashLight::FlashLight(vec3 position, vec3 direction, vec3 ambient, vec3 diffuse
 
 FlashLight::~FlashLight()
 {
-	this->s_flashLCount--;
 }
+*/

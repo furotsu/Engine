@@ -1,14 +1,18 @@
+#include "scene.h"
 
-
-#include "renderer.h"
 
 class Controller
 {
 	bool m_rmbDown;
+	Scene scene;
 
 public:
-	Controller() {}
+	Controller()
+	{
+		m_rmbDown = false;
+		scene.addSphere(vec3(200.0f, 100.0f, -100.0f), 50);
+	}
 
-	MSG mainLoop(Renderer& renderer, Window& window, MSG& msg);
-	LRESULT CALLBACK processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Renderer& renderer);
+	MSG mainLoop(Window& window, MSG& msg);
+	LRESULT CALLBACK processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam);
 };

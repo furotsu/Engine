@@ -5,25 +5,23 @@
 #include <vector>
 #include <array>
 
-#include "window.h"
 
 class Canvas
 {
 	int m_width;
 	int m_height;
-	BITMAPINFO m_bmi;
-	LPBITMAPINFO lpBmi;
+	BITMAPINFO bmi;
 
-	//std::unique_ptr<uint32_t> m_pixels;
-	BYTE* m_pixels;
+	std::vector<BYTE> m_pixels;
+	//std::shared_ptr<BYTE> m_pixels;
+	//BYTE* m_pixels;
 
 public:
-	Canvas() {};
+	Canvas() { m_width = 500; m_height = 250; }
 
-	~Canvas();
-	Canvas(Window& parent, int width, int height, int offsetX, int offsetY);
+	Canvas(int width, int height, int offsetX, int offsetY);
 	
-	LPBITMAPINFO createDIB(int x, int y, BYTE*& pBits);
+	BITMAPINFO createDIB();
 
 	void setPixel(int x, int y, BYTE r, BYTE g, BYTE b); // set color into m_pixels
 	void printToScreen(const HDC, const HWND); // call StretchDIBits / SetDIBitsToDevice

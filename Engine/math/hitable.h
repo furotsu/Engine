@@ -9,9 +9,11 @@ struct hitRecord
 	vec3 normal;
 };
 
+/*
 class hitable
 {
 public:
 	virtual bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const = 0;
 };
+*/
 

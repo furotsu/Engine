@@ -1,11 +1,7 @@
 #include "window.h"
 
-int WINAPI Window::main(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow)
+void Window::init(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow)
 {
-	HWND hWnd;
-	WNDCLASSEX wc;
-
-
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
 	wc.cbSize = sizeof(WNDCLASSEX);
@@ -23,7 +19,7 @@ int WINAPI Window::main(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInst
 
 	hWnd = CreateWindowEx(NULL,
 		L"WindowClass1",    // name of the window class
-		L"Our First Windowed Program",   // title of the window
+		L"Engine",   // title of the window
 		WS_OVERLAPPEDWINDOW,    // window style
 		300,    // x-position of the window
 		300,    // y-position of the window
@@ -36,69 +32,6 @@ int WINAPI Window::main(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInst
 
 	ShowWindow(hWnd, nCmdShow);
 
-	MSG msg = { 0 };
-	HDC hdc = GetDC(hWnd);
-
-	while (TRUE)
-	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-
-			DispatchMessage(&msg);
-
-			if (msg.message == WM_QUIT)
-				break;
-		}
-		else
-		{
-			render(hdc, sphere);
-			if (m_rmbDown)
-			{
-				POINT point;
-				GetCursorPos(&point);
-				//determine position relative to main window
-				ScreenToClient(FindWindowA(NULL, "Our First Windowed Program"), &point);
-				std::cout << point.x << " " << point.y << std::endl;
-				sphere.setPosition(vec3(point.x, point.y, -100));
-			}
-		}
-	}
-
-	// return this part of the WM_QUIT message to Windows
-	return msg.wParam;
+	hdc = GetDC(hWnd);
 }
 
-void Window::render(HDC hdc, const Actor& sphere)
-{
-	vec3 origin(0.0f, 0.0f, 0.0f);
-	vec3 direction(0.0f, 0.0f, -1.0f);
-
-
-	for (int h = 0; h <= m_height; h++)
-	{
-		for (int w = 0; w <= m_width; w++)
-		{
-			ray r(origin + vec3(w, h, 0.0f), direction);
-			vec3 col = getPixelColor(r, sphere);
-			SetPixel(hdc, w, h, RGB(col.r() * 256, col.g() * 256, col.b() * 256));
-		}
-	}
-}
-
-vec3 Window::getPixelColor(const ray& r, const Actor& sph)
-{
-	hitRecord hr;
-
-	if (sph.hit(r, hr))
-	{
-		return 0.5 * vec3(hr.normal.x() + 1, hr.normal.y() + 1, hr.normal.z() + 1);
-	}
-
-	vec3 UDirection = unitVector(r.origin());
-	float t = 0.5f * (UDirection.y() + 1.0f);
-
-	return (1.0f - t) * vec3(1.0f, 1.0f, 1.0f) + t * vec3(0.5f, 0.7f, 0.9f);
-}
-
-void Window::changeRmb() { m_rmbDown = !m_rmbDown; }

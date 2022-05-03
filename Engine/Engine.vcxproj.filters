@@ -24,7 +24,16 @@
     <ClCompile Include="src\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\actor.cpp">
+    <ClCompile Include="src\lightSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,9 +50,6 @@
     <ClInclude Include="math\hitable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\actor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="math\mat4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,6 +60,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lightSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\canvas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

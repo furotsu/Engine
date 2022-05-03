@@ -2,7 +2,7 @@
 
 #include "hitable.h"
 
-class Sphere : public hitable
+class Sphere
 {
 public:
 	vec3 center;
@@ -14,7 +14,7 @@ public:
 	{
 	}
 
-	bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const override;
+	bool hit(const ray& r, hitRecord& rec, float tMin = RAY_MIN, float tMax = RAY_MAX) const;
 
 	inline vec3 getCenter() const { return center; }
 	inline float getRadius() const { return radius; }

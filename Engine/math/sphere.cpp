@@ -3,7 +3,7 @@
 void Sphere::setCenter(vec3 newCenter) { this->center = newCenter; }
 void Sphere::setRadius(float newRadius) { this->radius = newRadius; }
 
-bool Sphere::hit(const ray& r, float tMin, float tMax, hitRecord& rec) const
+bool Sphere::hit(const ray& r, hitRecord& rec, float tMin, float tMax) const
 {
 	vec3 ac = r.origin() - center;
 	//float a = dot(r.direction(), r.direction()); - we can get rid of that because of the assumption that r is normalized
@@ -31,5 +31,4 @@ bool Sphere::hit(const ray& r, float tMin, float tMax, hitRecord& rec) const
 		}
 	}
 	return false;
-
 }

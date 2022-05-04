@@ -32,9 +32,9 @@ void Scene::render(Window& window)
 	vec3 origin(0.0f, 0.0f, 0.0f);
 	vec3 direction(0.0f, 0.0f, -1.0f);
 
-	for (int h = 0; h < window.m_height; h++)
+	for (int h = 0; h < window.canvas.getHeight(); h++)
 	{
-		for (int w = 0; w < window.m_width ; w++)
+		for (int w = 0; w < window.canvas.getWidth(); w++)
 		{
 			ray r(origin + vec3(w, h, 0.0f), direction);
 			vec3 col = getPixelColor(r);

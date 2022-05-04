@@ -1,13 +1,18 @@
 #include "canvas.h"
 
-
+#include <iostream>
 
 Canvas::Canvas(int width, int height, int offsetX, int offsetY)
+//	: m_pixels(width * height * 4, 1)
 {
 	m_width = width;
 	m_height = height;
-	m_pixels = std::vector<BYTE>(width * height * 4, 0);
-	bmi = createDIB();
+	//m_pixels = std::vector<BYTE>();
+
+	bmi = createDIB();;
+
+
+	//std::cout << "pixel: " <<  m_pixels[100] << std::endl;
 }
 
 BITMAPINFO Canvas::createDIB()
@@ -15,12 +20,6 @@ BITMAPINFO Canvas::createDIB()
 	int iBmiSize;
 	int iSurfaceSize;
 
-	//iBmiSize = sizeof(BITMAPINFO) + sizeof(DWORD) * 4;
-	//iSurfaceSize = m_width * m_height * sizeof(DWORD);
-
-	//bmi = (LPBITMAPINFO)malloc(iBmiSize);
-
-	//ZeroMemory(bmi, iBmiSize);
 
 	// Initialize bitmap info header
 	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -51,7 +50,6 @@ BITMAPINFO Canvas::createDIB()
 void Canvas::setPixel(int x, int y, BYTE r, BYTE g, BYTE b)
 {
 	int iOffset = bmi.bmiHeader.biWidth * y + x;
-	// Cast void* to a DWORD* and write pixel to surface
 
 	m_pixels[iOffset*4] = b;
 	m_pixels[iOffset*4 + 1] = g;

@@ -19,6 +19,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, L
 
 	Window win(SCREEN_WIDTH, SCREEN_HEIGHT, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
+	controller.init(win);
 
 	MSG msg = { 0 };
 	controller.mainLoop(win, msg);

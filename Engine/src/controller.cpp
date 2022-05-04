@@ -1,8 +1,18 @@
 #include "controller.h"
 
 
+void Controller::init(Window& win)
+{
+	scene = Scene(win);
+	scene.addSphere(vec3(200.0f, 100.0f, -100.0f), 50);
+}
+
 MSG Controller::mainLoop(Window& window, MSG& msg)
 {
+	DWORD startTime = GetTickCount64();
+	DWORD currentTime = GetTickCount64();
+	int fps = 0;
+	int millisecElapsed = 0;
 	while (TRUE)
 	{
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -12,13 +22,25 @@ MSG Controller::mainLoop(Window& window, MSG& msg)
 			DispatchMessage(&msg);
 			if (msg.message == WM_QUIT)
 				break;
+
+		}
+
+		currentTime = GetTickCount64();
+		millisecElapsed = (currentTime - startTime);
+
+		if (millisecElapsed / 15 > 0)
+		{
+			fps = 1000 / millisecElapsed;
+
+			//SetWindowText(window.hWnd, winName);
+			std::cout << "fps: " <<  fps << std::endl;
+			millisecElapsed = 0;
+			startTime = currentTime;
+			scene.render(window);
+			scene.setBuffer(window);
 		}
 		
-		{
-			scene.render(window);
-		}
 	}
-
 	return msg;
 }
 
@@ -73,6 +95,8 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 		POINT point;
 		GetCursorPos(&point);
 		//determine position relative to init window
+
+
 		ScreenToClient(FindWindowA(NULL, "Engine"), &point);
 		scene.sph.setCenter(vec3(point.x, point.y, -100));
 	}

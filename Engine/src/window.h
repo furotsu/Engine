@@ -14,6 +14,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 class Window
 {
+	Window();
 public:
 	int m_width;
 	int m_height;
@@ -24,7 +25,6 @@ public:
 
 	Canvas canvas;
 	
-	Window() {}
 
 	Window(int width, int height, _In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow)
 		:canvas(width, height, 0, 0)

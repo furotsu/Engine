@@ -1,3 +1,5 @@
+#include <string>
+
 #include "scene.h"
 
 
@@ -8,10 +10,11 @@ class Controller
 
 public:
 	Controller()
+		: m_rmbDown(false)
 	{
-		m_rmbDown = false;
-		scene.addSphere(vec3(200.0f, 100.0f, -100.0f), 50);
 	}
+
+	void init(Window& win);
 
 	MSG mainLoop(Window& window, MSG& msg);
 	LRESULT CALLBACK processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam);

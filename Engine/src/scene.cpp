@@ -24,7 +24,7 @@ vec3 Scene::getPixelColor(const ray& r)
 	vec3 UDirection = unitVector(r.origin);
 	float t = 0.5f * (UDirection.y() + 1.0f);
 
-	return (1.0f - t) * vec3(1.0f, 1.0f, 1.0f) + t * vec3(0.5f, 0.7f, 0.9f);
+	return vec3(0.5f, 0.7f, 0.9f);
 }
 
 void Scene::render(Window& window)
@@ -34,22 +34,18 @@ void Scene::render(Window& window)
 
 	for (int h = 0; h < window.m_height; h++)
 	{
-		for (int w = 0; w < window.m_width; w++)
+		for (int w = 0; w < window.m_width ; w++)
 		{
 			ray r(origin + vec3(w, h, 0.0f), direction);
 			vec3 col = getPixelColor(r);
 
-#ifdef _DEBUG
-			if (col.r() > 1.0f || col.g() > 1.0f || col.b() > 1.0f)
-			{
-				//std::cout << "color overflow" << std::endl;
-				col = vec3(0.9f, 0.9f, 0.9f);
-			}
-#endif
 			window.canvas.setPixel(w, h, col.r() * 256, col.g() * 256, col.b() * 256);
 		}
 	}
-	
+}
+
+void Scene::setBuffer(Window& window)
+{
 	window.canvas.printToScreen(window.hdc, window.hWnd);
 }
 

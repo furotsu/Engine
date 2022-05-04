@@ -12,12 +12,11 @@ class Canvas
 	int m_height;
 	BITMAPINFO bmi;
 
-	std::vector<BYTE> m_pixels;
-	//std::shared_ptr<BYTE> m_pixels;
-	//BYTE* m_pixels;
+	//std::vector<unsigned char> m_pixels;
+	BYTE m_pixels[500 * 250 * 4];
 
+	Canvas();
 public:
-	Canvas() { m_width = 500; m_height = 250; }
 
 	Canvas(int width, int height, int offsetX, int offsetY);
 	

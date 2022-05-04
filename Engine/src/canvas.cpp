@@ -3,20 +3,20 @@
 #include <iostream>
 
 Canvas::Canvas(int width, int height, int offsetX, int offsetY)
-//	: m_pixels(width * height * 4, 1)
 {
 	m_width = width;
 	m_height = height;
-	//m_pixels = std::vector<BYTE>();
+	m_pixels = std::vector<BYTE>(width * height * 3);
 
 	bmi = createDIB();;
+	std::cout << width * height * 4 << std::endl;
 
 
-	//std::cout << "pixel: " <<  m_pixels[100] << std::endl;
 }
 
 BITMAPINFO Canvas::createDIB()
 {
+
 	int iBmiSize;
 	int iSurfaceSize;
 
@@ -33,16 +33,7 @@ BITMAPINFO Canvas::createDIB()
 	bmi.bmiHeader.biClrImportant = 0;
 	bmi.bmiHeader.biCompression = BI_RGB;
 
-
-	DWORD* pBmi = (DWORD*)bmi.bmiColors;
-
-	pBmi[0] = 0x00FF0000;	// Red mask
-	pBmi[1] = 0x0000FF00;	// Green mask
-	pBmi[2] = 0x000000FF;	// Blue mask
-	pBmi[3] = 0x00000000;	// Not used (Alpha?)
-
-	bmi.bmiHeader.biBitCount = 32;
-	bmi.bmiHeader.biCompression |= BI_BITFIELDS;
+	bmi.bmiHeader.biBitCount = 24;
 
 	return bmi;
 }
@@ -51,10 +42,9 @@ void Canvas::setPixel(int x, int y, BYTE r, BYTE g, BYTE b)
 {
 	int iOffset = bmi.bmiHeader.biWidth * y + x;
 
-	m_pixels[iOffset*4] = b;
-	m_pixels[iOffset*4 + 1] = g;
-	m_pixels[iOffset*4 + 2] = r;
-	m_pixels[iOffset*4 + 3] = 1;
+	m_pixels[iOffset*3] = b;
+	m_pixels[iOffset*3 + 1] = g;
+	m_pixels[iOffset*3 + 2] = r;
 }
 
 void Canvas::printToScreen(const HDC hdc, const HWND hWnd)
@@ -74,5 +64,6 @@ void Canvas::printToScreen(const HDC hdc, const HWND hWnd)
 		&bmi,	// Pointer to the BITMAPINFO struct.
 		DIB_RGB_COLORS	// Display mode
 	);
+
 	//InvalidateRect(hWnd, NULL, FALSE);
 }

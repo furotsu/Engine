@@ -8,7 +8,7 @@ public:
 	vec3 center;
 	float radius;
 
-	Sphere() {};
+	Sphere() :radius(0) {};
 	Sphere(vec3 center, float radius)
 		: center(center), radius(radius)
 	{

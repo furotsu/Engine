@@ -12,8 +12,8 @@ vec3 Scene::getPixelColor(const ray& r)
 	{
 		return vec3(1.0f, 0.0f, 0.0f);
 	}
-	*/
-
+	
+	*/ 
 	if (sph.hit(r, hr))
 	{
 		vec3 resultColor(0.8f, 0.2f, 0.2f);

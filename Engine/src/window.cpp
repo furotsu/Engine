@@ -35,3 +35,15 @@ void Window::init(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, 
 	hdc = GetDC(hWnd);
 }
 
+void Window::flush()
+{
+	canvas.printToScreen(hdc, hWnd);
+}
+
+void Window::onResize(const int& width, const int& height)
+{
+	m_width = width;
+	m_height = height;
+	canvas.onResize(width, height);
+}
+

@@ -1,18 +1,16 @@
 #include "controller.h"
 
+#include <chrono>
 
-void Controller::init(Window& win)
+void Controller::init(Window& win, Scene& scene)
 {
-	scene = Scene(win);
 	scene.addSphere(vec3(200.0f, 100.0f, -100.0f), 50);
 }
 
-MSG Controller::mainLoop(Window& window, MSG& msg)
+MSG Controller::mainLoop(Window& window, MSG& msg, Scene& scene)
 {
-	DWORD startTime = GetTickCount64();
-	DWORD currentTime = GetTickCount64();
-	int fps = 0;
-	int millisecElapsed = 0;
+	std::chrono::time_point<std::chrono::steady_clock> oldTime = std::chrono::high_resolution_clock::now();
+
 	while (TRUE)
 	{
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -25,26 +23,27 @@ MSG Controller::mainLoop(Window& window, MSG& msg)
 
 		}
 
-		currentTime = GetTickCount64();
-		millisecElapsed = (currentTime - startTime);
+		float elapsed = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - oldTime).count();
 
-		if (millisecElapsed / 15 > 0)
+		if ( elapsed > FRAME_DURATION)
 		{
-			fps = 1000 / millisecElapsed;
-
+			oldTime = std::chrono::high_resolution_clock::now();
 			//SetWindowText(window.hWnd, winName);
-			std::cout << "fps: " <<  fps << std::endl;
-			millisecElapsed = 0;
-			startTime = currentTime;
+			std::cout << "fps: " <<  1.0f / elapsed << std::endl;
 			scene.render(window);
-			scene.setBuffer(window);
+			window.flush();
 		}
 		
 	}
 	return msg;
 }
 
-LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam)
+void printFPS() {
+	static int fps; fps++;
+
+}
+
+LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Scene& scene, Window& window)
 {
 	switch (message)
 	{
@@ -53,6 +52,16 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 		// close the application entirely
 		PostQuitMessage(0);
 		return 0;
+	} break;
+	case WM_SIZE:
+	{
+		RECT rect = { 0, 0, 0, 0 };
+
+		GetWindowRect(hWnd, &rect);
+
+		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
+		window.onResize(rect.right - rect.left, rect.bottom - rect.top);
+
 	} break;
 	case WM_MOUSEMOVE:
 	{

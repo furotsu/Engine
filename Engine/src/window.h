@@ -14,7 +14,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 class Window
 {
-	Window();
 public:
 	int m_width;
 	int m_height;
@@ -25,6 +24,7 @@ public:
 
 	Canvas canvas;
 	
+	Window() {};
 
 	Window(int width, int height, _In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow)
 		:canvas(width, height, 0, 0)
@@ -35,6 +35,10 @@ public:
 	}
 
 	void init(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow);
+
+	void flush();
+
+	void onResize(const int& width, const int& height);
 
 	friend LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	friend class Scene;

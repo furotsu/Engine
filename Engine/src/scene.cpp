@@ -44,11 +44,6 @@ void Scene::render(Window& window)
 	}
 }
 
-void Scene::setBuffer(Window& window)
-{
-	window.canvas.printToScreen(window.hdc, window.hWnd);
-}
-
 void Scene::addSphere(const vec3& position, const float& radius)
 {
 	sph = Sphere(position, radius);

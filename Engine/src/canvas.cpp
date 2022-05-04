@@ -4,14 +4,11 @@
 
 Canvas::Canvas(int width, int height, int offsetX, int offsetY)
 {
-	m_width = width;
+	m_width = width - width % 4;
 	m_height = height;
 	m_pixels = std::vector<BYTE>(width * height * 3);
 
 	bmi = createDIB();;
-	std::cout << width * height * 4 << std::endl;
-
-
 }
 
 BITMAPINFO Canvas::createDIB()
@@ -36,6 +33,19 @@ BITMAPINFO Canvas::createDIB()
 	bmi.bmiHeader.biBitCount = 24;
 
 	return bmi;
+}
+
+void Canvas::onResize(const int& width, const int& height)
+{
+	m_pixels.clear();
+
+	m_width = width - width % 4;
+	m_height = height;
+
+	bmi.bmiHeader.biWidth = m_width;
+	bmi.bmiHeader.biHeight = -(signed)m_height;
+
+	m_pixels = std::vector<BYTE>(m_width * m_height * 3);
 }
 
 void Canvas::setPixel(int x, int y, BYTE r, BYTE g, BYTE b)

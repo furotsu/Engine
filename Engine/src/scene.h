@@ -30,8 +30,6 @@ public:
 
 	void render(Window& w);
 
-	void setBuffer(Window& window);
-
 	void addSphere(const vec3& position, const float& radius);
 
 

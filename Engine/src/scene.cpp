@@ -14,9 +14,7 @@ XMVECTOR Scene::getPixelColor(const ray& r)
 	{
 
 		for (auto& l0 : m_pointLights)
-		{ 
 			resColor += illuminate(hr, l0.first);
-		}
 
 		for (auto& l1 : m_directionalLights)
 			resColor += illuminate(hr, l1);
@@ -128,16 +126,26 @@ void Scene::render(Window& window, XMMATRIX matrix, Camera& camera)
 	XMVECTOR BR = XMVectorSet(1.0f, -1.0f, 1.0f, 1.0f);
 	XMVECTOR BL = XMVectorSet(-1.0f, -1.0f, 1.0f, 1.0f);
 
-	TL = XMVector4Transform(TL, camera.m_viewProjInv);
-	TR = XMVector4Transform(TR, camera.m_viewProjInv);
-	BR = XMVector4Transform(BR, camera.m_viewProjInv);
-	BL = XMVector4Transform(BL, camera.m_viewProjInv);
+	TL = XMVector4Transform(TL, camera.m_projInv);
+	TR = XMVector4Transform(TR, camera.m_projInv);
+	BR = XMVector4Transform(BR, camera.m_projInv);
+	BL = XMVector4Transform(BL, camera.m_projInv);
+
+	TL /=  XMVectorGetW(TL);
+	TR /=  XMVectorGetW(TR);
+	BR /=  XMVectorGetW(BR);
+	BL /=  XMVectorGetW(BL);
+
+	TL = XMVector4Transform(TL, camera.m_viewInv);
+	TR = XMVector4Transform(TR, camera.m_viewInv);
+	BR = XMVector4Transform(BR, camera.m_viewInv);
+	BL = XMVector4Transform(BL, camera.m_viewInv);
 
 	for (int h = 0; h < window.canvas.getHeight(); h++)
 	{
 		for (int w = 0; w < window.canvas.getWidth(); w++)
 		{
-			r.direction = BL + (BR - BL) * w/window.canvas.getWidth() + (TL - BL) * (window.canvas.getHeight() - h) / window.canvas.getHeight();
+			r.direction = XMVector3Normalize(BL + (BR - BL) * w/window.canvas.getWidth() + (TL - BL) * (window.canvas.getHeight() - h) / window.canvas.getHeight());
 
 			XMVECTOR col = getPixelColor(r);
 
@@ -184,6 +192,7 @@ void Scene::addFlashLight(const FlashLight& light, SphereModel sphereModel) { m_
 
 void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos)
 {
+
 	float x = (2.0f * XMVectorGetX(mousePos)) / 400.0f - 1.0f;
 	float y = 1.0f - (2.0f * XMVectorGetY(mousePos)) / 200.0f;
 
@@ -216,6 +225,9 @@ void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos)
 		{
 			objPicked = true;
 			m_movingPlane = Plane(-camera.forward(), hr.point);
+			std::cout << "actual picked position: " << std::endl;
+			std::cout << XMVectorGetX(hr.point) << " " << XMVectorGetY(hr.point) << " " << XMVectorGetZ(hr.point) << std::endl;
+
 			pickedObjPtr = std::make_unique<SphereMover>(light.second, hr.point);
 		}
 	}

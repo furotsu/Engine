@@ -74,7 +74,6 @@ bool Model::hit(math::ray r, math::Intersection& rec) const
 	{
 		rec.material = m_material;
 		rec.point = XMVector4Transform(rec.point, m_modelMat);
-
 		return true;
 	}
 	return false;

@@ -52,9 +52,9 @@ public:
 			0.0f, 0.0f, -(nearP * farP) / (farP - nearP), 0
 		);
 
-		m_projInv = XMMatrixInverse(nullptr, m_proj);
+		//m_proj = XMMatrixPerspectiveFovRH(fov, width / height, nearP, farP);
 
-		std::cout << "projInv" << std::endl;
+		m_projInv = XMMatrixInverse(nullptr, m_proj);
 
 		m_updatedMatrices = false;
 		updateMatrices();

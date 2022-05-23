@@ -2,7 +2,6 @@
 
 void Application::init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height)
 {
-	//std::cout << vec << " + " << vec2 << " = " << vec + vec2 << std::endl;
 	this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
 	controller.init(this->window, scene);
@@ -44,7 +43,7 @@ MSG Application::run()
 			controller.processFrame(window, scene);
 			window.flush();
 
-			std::cout << "fps: " << 1.0f / m_deltaTime << std::endl;
+			//std::cout << "fps: " << 1.0f / m_deltaTime << std::endl;
 		}
 	}
 	return msg;

@@ -26,6 +26,8 @@ public:
 	std::vector<Model> m_models;
 	std::vector<SphereModel> m_spheres;
 
+	XMVECTOR tmp;
+
 	std::unique_ptr<IobjectMover> pickedObjPtr;
 	bool objPicked;
 

@@ -56,9 +56,9 @@ void Controller::init(Window& win, Scene& scene)
 
 	scene.addSphere(SphereModel(XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), 1.0f, Angles(0.0f, 0.0f, 0.0f), sphere, bronze));
 
-	scene.addPointLight(PointLight(XMVectorSet(130.0f, 60.0f, -110.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f),
+	scene.addPointLight(PointLight(XMVectorSet(130.0f, -60.0f, -110.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f),
 		XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f), XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f), XMVectorSet(0.9f, 0.9f, 0.9f, 1.0f)),
-						SphereModel(XMVectorSet(130.0f, 60.0f, -110.0f, 0.0f), 1.0f, Angles(0.0f, 0.0f, 0.0f), sphere));
+						SphereModel(XMVectorSet(130.0f, -60.0f, -110.0f, 0.0f), 1.0f, Angles(0.0f, 0.0f, 0.0f), sphere));
 
 	scene.addPointLight(PointLight(XMVectorSet(-130.0f, 1000.0f, -110.0f, 0.0f), XMVectorSet(0.2f, 0.2f, 0.9f, 0.0f),
 		XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f), XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f), XMVectorSet(0.9f, 0.9f, 0.9f, 1.0f)),
@@ -149,8 +149,9 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 				XMVECTOR offset = XMVectorSet(XMVectorGetX(hr.point) - XMVectorGetX(scene.pickedObjPtr->getPickedPos()),
 												XMVectorGetY(hr.point) - XMVectorGetY(scene.pickedObjPtr->getPickedPos()), 
 												XMVectorGetZ(hr.point) - XMVectorGetZ(scene.pickedObjPtr->getPickedPos()), 0.0f);
-
-				scene.pickedObjPtr->moveBy(offset);
+				std::cout << XMVectorGetX(hr.point) << " " << XMVectorGetY(hr.point) << " " << XMVectorGetZ(hr.point) << std::endl;
+				//scene.pickedObjPtr->moveBy(offset);
+				scene.pickedObjPtr->moveTo(hr.point);
 			}
 
 		}
@@ -239,8 +240,6 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 void Controller::moveCamera(const XMVECTOR& direction, const float& deltaTime)
 {
 	XMVECTOR offset = direction * deltaTime * m_cameraSpeed;
-	std::cout << "offset: ";
-	std::cout << XMVectorGetX(offset) << std::endl;
 	m_camera.addRelativeOffset(offset);
 	m_camera.updateMatrices();
 }

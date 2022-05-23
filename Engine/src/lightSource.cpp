@@ -81,7 +81,9 @@ XMVECTOR FlashLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNor
 		intensity = 0.0f;
 	else if (intensity > 1.0f)
 		intensity = 1.0f;
-
+	
+	// have to multiply ambient to avoid unnecessary shadows
+	ambient *= intensity;
 	diffuse *= intensity;
 	specular *= intensity;
 
@@ -123,8 +125,6 @@ DirectionalLight::DirectionalLight(XMVECTOR direction, XMVECTOR color, XMVECTOR 
 DirectionalLight::~DirectionalLight()
 {
 }
-
-
 
 FlashLight::FlashLight(XMVECTOR position, XMVECTOR color, XMVECTOR direction, float innerCutOff, float outerCutOff, 
 							float constTntensity, float linIntensity, float quadrIntensity) 

@@ -5,8 +5,12 @@
 
 class Surface
 {
+	XMMATRIX  m_modelMat;
+	XMMATRIX  m_modelInvMat;
+
 	math::Plane plane;
 	Material material;
+
 public:
 	Surface() = default;
 	Surface(math::Plane plane, const Material& material);

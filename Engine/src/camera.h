@@ -45,21 +45,12 @@ public:
 		float const h = XMScalarCos((float)0.5 * rad) / XMScalarSin((float)0.5 * rad);
 		float const w = h * width / height; 
 
-		
-
-		std::cout << XMVectorGetX(m_proj.r[0]) << " " << XMVectorGetY(m_proj.r[0]) << " " << XMVectorGetZ(m_proj.r[0]) << " " << XMVectorGetW(m_proj.r[0]) << std::endl;
-		std::cout << XMVectorGetX(m_proj.r[1]) << " " << XMVectorGetY(m_proj.r[1]) << " " << XMVectorGetZ(m_proj.r[1]) << " " << XMVectorGetW(m_proj.r[1]) << std::endl;
-		std::cout << XMVectorGetX(m_proj.r[2]) << " " << XMVectorGetY(m_proj.r[2]) << " " << XMVectorGetZ(m_proj.r[2]) << " " << XMVectorGetW(m_proj.r[2]) << std::endl;
-		std::cout << XMVectorGetX(m_proj.r[3]) << " " << XMVectorGetY(m_proj.r[3]) << " " << XMVectorGetZ(m_proj.r[3]) << " " << XMVectorGetW(m_proj.r[3]) << std::endl;
-
-		std::cout << std::endl;
-
-		m_proj = XMMatrixPerspectiveFovRH(fov, width/height, nearP, farP);
-
-		std::cout << XMVectorGetX(m_proj.r[0]) << " " << XMVectorGetY(m_proj.r[0]) << " " << XMVectorGetZ(m_proj.r[0]) << " " << XMVectorGetW(m_proj.r[0]) << std::endl;
-		std::cout << XMVectorGetX(m_proj.r[1]) << " " << XMVectorGetY(m_proj.r[1]) << " " << XMVectorGetZ(m_proj.r[1]) << " " << XMVectorGetW(m_proj.r[1]) << std::endl;
-		std::cout << XMVectorGetX(m_proj.r[2]) << " " << XMVectorGetY(m_proj.r[2]) << " " << XMVectorGetZ(m_proj.r[2]) << " " << XMVectorGetW(m_proj.r[2]) << std::endl;
-		std::cout << XMVectorGetX(m_proj.r[3]) << " " << XMVectorGetY(m_proj.r[3]) << " " << XMVectorGetZ(m_proj.r[3]) << " " << XMVectorGetW(m_proj.r[3]) << std::endl;
+		m_proj = XMMatrixSet(
+			h, 0.0f, 0.0f, 0.0f,
+			0.0f, w, 0.0f, 0.0f,
+			0.0f, 0.0f, -(farP ) / (-nearP + farP), -1,
+			0.0f, 0.0f, -(nearP * farP) / (farP - nearP), 0
+		);
 
 		m_projInv = XMMatrixInverse(nullptr, m_proj);
 
@@ -105,7 +96,6 @@ public:
 
 		m_viewInv.r[3] += XMVectorGetX(offset) * right() + XMVectorGetY(offset) * top() + XMVectorGetZ(offset) * forward();
 
-//		m_viewInv[3] += XMVECTOR(offset[0] * right() + offset[1] * top() + offset[2] * forward(), 0.0f);
 	}
 
 	void setWorldAngles(const Angles& angles)

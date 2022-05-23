@@ -1,31 +1,20 @@
 ﻿#include <windows.h>
 #include <windowsx.h>
 
-#include <iostream>
-
-#include "controller.h"
-#include "window.h"
+#include "application.h"
 
 constexpr int SCREEN_WIDTH = 400;
 constexpr int SCREEN_HEIGHT = 200;
 
-void initConsole();
-
-Window win;
-Controller controller;
-Scene scene;
+Application app;
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	initConsole();
+	app.initConsole();
 
-	win = Window(SCREEN_WIDTH, SCREEN_HEIGHT, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-	scene = Scene(win);
+	app.init(hInstance, hPrevInstance, lpCmdLine, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	controller.init(win, scene);
-
-	MSG msg = { 0 };
-	controller.mainLoop(win, msg, scene);
+	MSG msg = app.run();
 
 	// return this part of the WM_QUIT message to Windows
 	return msg.wParam;
@@ -33,18 +22,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, L
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	return controller.processInput(hWnd, message, wParam, lParam, scene, win);
-}
-
-void initConsole()
-{
-	if (!AllocConsole()) {
-		// Add some error handling here.
-		// You can call GetLastError() to get more info about the error.
-		return;
-	}
-	FILE* dummy;
-	auto s = freopen_s(&dummy, "CONOUT$", "w", stdout);
+	return app.controller.processInput(hWnd, message, wParam, lParam, app.scene, app.window);
 }
 
 template<typename ...Args>

@@ -6,7 +6,7 @@ Canvas::Canvas(int width, int height, int offsetX, int offsetY)
 {
 	m_width = width - width % 4;
 	m_height = height;
-	m_pixels = std::vector<BYTE>(width * height * 3);
+	m_pixels = std::vector<uint32_t>(width * height );
 
 	bmi = createDIB();;
 }
@@ -30,7 +30,7 @@ BITMAPINFO Canvas::createDIB()
 	bmi.bmiHeader.biClrImportant = 0;
 	bmi.bmiHeader.biCompression = BI_RGB;
 
-	bmi.bmiHeader.biBitCount = 24;
+	bmi.bmiHeader.biBitCount = 32;
 
 	return bmi;
 }
@@ -45,16 +45,14 @@ void Canvas::onResize(const int& width, const int& height)
 	bmi.bmiHeader.biWidth = m_width;
 	bmi.bmiHeader.biHeight = -(signed)m_height;
 
-	m_pixels = std::vector<BYTE>(m_width * m_height * 3);
+	m_pixels = std::vector<uint32_t>(m_width * m_height );
 }
 
 void Canvas::setPixel(int x, int y, BYTE r, BYTE g, BYTE b)
 {
 	int iOffset = bmi.bmiHeader.biWidth * y + x;
 
-	m_pixels[iOffset*3] = b;
-	m_pixels[iOffset*3 + 1] = g;
-	m_pixels[iOffset*3 + 2] = r;
+	m_pixels[iOffset] = (r << 16) + (g << 8) + (b);
 }
 
 void Canvas::printToScreen(const HDC hdc, const HWND hWnd)
@@ -75,5 +73,4 @@ void Canvas::printToScreen(const HDC hdc, const HWND hWnd)
 		DIB_RGB_COLORS	// Display mode
 	);
 
-	//InvalidateRect(hWnd, NULL, FALSE);
 }

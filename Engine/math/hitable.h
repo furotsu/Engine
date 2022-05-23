@@ -1,19 +1,28 @@
 #pragma once
 
+#include <limits>
+#include <cmath>
+
 #include "ray.h"
+#include "material.h"
 
-struct hitRecord
-{
-	float hitParam;
-	vec3 point;
-	vec3 normal;
-};
 
-/*
-class hitable
-{
-public:
-	virtual bool hit(const ray& r, float tMin, float tMax, hitRecord& rec) const = 0;
-};
-*/
+namespace math
+{	
+	struct Intersection
+	{
+		float hitParam;
+		DirectX::XMVECTOR point;
+		DirectX::XMVECTOR normal;
+		Material material;
+
+		Intersection() = default;
+
+		void reset() { hitParam = std::numeric_limits<float>::infinity(); }
+		bool exists() { return std::isfinite(hitParam); }
+
+		static Intersection infinite() { Intersection inf; inf.reset(); return inf; }	
+	};
+}
+
 

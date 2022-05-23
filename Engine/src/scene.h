@@ -6,34 +6,56 @@
 #include <vector>
 
 #include "window.h"
+
+#include "surface.h"
 #include "sphere.h"
+#include "model.h"
+#include "objectMover.h"
+
+#include "camera.h"
+
+using namespace math;
 
 class Scene
 {
-	Sphere sph;
-	PointLight m_light;
 	
 public:
-	Scene() 
-		:m_light(vec3(100.0f, 50.0f, -10.0f), vec3(-2.0f, -1.0f, 0.0f),
-			vec3(0.2f, 0.2f, 0.2f), vec3(0.5f, 0.5f, 0.5f), vec3(0.9f, 0.9f, 0.9f), 16.0f)
-	{
-	}
 
-	Scene(Window& w)
-		:m_light(vec3(100.0f, 50.0f, -10.0f), vec3(-2.0f, -1.0f, 0.0f),
-			vec3(0.2f, 0.2f, 0.2f), vec3(0.5f, 0.5f, 0.5f), vec3(0.9f, 0.9f, 0.9f), 16.0f)
-	{
-	}
+	Surface m_surface;
+	Plane m_movingPlane;
+	std::vector<Model> m_models;
+	std::vector<SphereModel> m_spheres;
 
-	vec3 getPixelColor(const ray& r);
+	std::unique_ptr<IobjectMover> pickedObjPtr;
+	bool objPicked;
 
-	void render(Window& w);
-
-	void addSphere(const vec3& position, const float& radius);
+	std::vector<std::pair<PointLight, SphereModel>> m_pointLights;
+	std::vector<DirectionalLight> m_directionalLights;
+	std::vector<std::pair<FlashLight, SphereModel>> m_flashLights;
 
 
-	friend class Controller;
+	Scene() = default;
+
+	XMVECTOR getPixelColor(const ray& r);
+
+	bool findIntersectionObjects(const ray& r, Intersection& hr);
+	bool findIntersectionLights(const ray& r, Intersection& hr);
+	XMVECTOR illuminate(const Intersection& hr, const PointLight& light);
+	XMVECTOR illuminate(const Intersection& hr, const DirectionalLight& light);
+	XMVECTOR illuminate(const Intersection& hr, const FlashLight& light);
+
+	void render(Window& w, XMMATRIX, Camera& camera);
+
+	void updateLightsPos();
+
+	void addSphere(const SphereModel& sphereModel);
+	void addModel(Model model);
+	void setSurface(Surface surface);
+	void addPointLight(PointLight light, SphereModel sphereModel);
+	void addDirLight(const DirectionalLight& light);
+	void addFlashLight(const FlashLight& light, SphereModel sphereModel);
+
+	void pickObject(const Camera& camera, const XMVECTOR&);
 };
 
 

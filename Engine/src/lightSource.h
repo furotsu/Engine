@@ -1,63 +1,61 @@
 #pragma once
 
-#include "vec3.h"
-#include "sphere.h"
+#include "material.h"
+
+#include <DirectXMath.h>
 
 
 class PointLight 
 {
-private:
 public:
-	vec3 m_direction;
-	vec3 m_ambient;
-	vec3 m_diffuse;
 
-	vec3 m_position;
-	vec3 m_specular;
+	DirectX::XMVECTOR m_ambient;
+	DirectX::XMVECTOR m_diffuse;
+	DirectX::XMVECTOR m_specular;
+	
+	DirectX::XMVECTOR m_lightColor;
+	DirectX::XMVECTOR m_position;	
 
 	float m_constantIntens;
 	float m_linearIntens;
 	float m_quadraticIntens;
 
-	float m_innerCutOff;
-	float m_outerCutOff;
-	PointLight(vec3 position, vec3 direction, vec3 ambient, vec3 diffuse, vec3 specular, float intensity);
-	PointLight(PointLight&) = default;
+	PointLight() = default;
+	PointLight(DirectX::XMVECTOR position, DirectX::XMVECTOR color, DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse, DirectX::XMVECTOR specular,
+				float constInten = 1.0f, float linearInten = 0.0014f, float quadInten = 0.000007f);
 	~PointLight();
 
-	 void illuminate(const Sphere& actor, const vec3& fragPos, const vec3& fragNorm, vec3& resColor) ;
+	DirectX::XMVECTOR illuminate(const DirectX::XMVECTOR& fragPos, const DirectX::XMVECTOR& fragNorm, const Material& albedo) const;
 };
 
-/*
-class DirectionalLight : public LightSource
+class DirectionalLight
+{
+public:
+
+	DirectX::XMVECTOR m_ambient;
+	DirectX::XMVECTOR m_diffuse;
+	DirectX::XMVECTOR m_specular;
+
+	DirectX::XMVECTOR m_lightColor;
+	DirectX::XMVECTOR m_direction;
+
+	DirectionalLight() = default;
+	DirectionalLight(DirectX::XMVECTOR direction, DirectX::XMVECTOR color, DirectX::XMVECTOR ambient, DirectX::XMVECTOR diffuse, const DirectX::XMVECTOR& specular = XMVectorSet(0.9f, 0.9f, 0.9f, 0.0f));
+	~DirectionalLight();
+
+	DirectX::XMVECTOR illuminate(const DirectX::XMVECTOR& fragPos, const DirectX::XMVECTOR& fragNorm, const Material& albedo) const;
+
+};
+
+class FlashLight
 {
 private:
-	//int s_dirPos;
 public:
-	DirectionalLight(vec3 direction, vec3 ambient, vec3 diffuse);
-	DirectionalLight(DirectionalLight&) = default;
-	~DirectionalLight();
-	 void illuminate(const Sphere& actor, const vec3& fragPos, const vec3& fragNorm, vec3& resColor) ;
-};
 
-class FlashLight : public LightSource
-{
-public:
-	FlashLight(vec3 position, vec3 direction, vec3 ambient, vec3 diffuse, vec3 specular, float CutOff, float intensity);
-	FlashLight(FlashLight&) = default;
-	~FlashLight();
-};
 
-class LightSource
-{
-protected:
-public:
-	vec3 m_direction;
-	vec3 m_ambient;
-	vec3 m_diffuse;
-
-	vec3 m_position;
-	vec3 m_specular;
+	DirectX::XMVECTOR m_lightColor;
+	DirectX::XMVECTOR m_position;
+	DirectX::XMVECTOR m_direction;
 
 	float m_constantIntens;
 	float m_linearIntens;
@@ -65,7 +63,11 @@ public:
 
 	float m_innerCutOff;
 	float m_outerCutOff;
+	FlashLight() = default;
+	FlashLight(DirectX::XMVECTOR position, DirectX::XMVECTOR color, DirectX::XMVECTOR direction, float innerCutOff, float outerCutOff,
+		float constTntensity = 1.0f, float linIntensity = 0.0014f, float quadrIntensity = 0.000007f);
+	~FlashLight();
 
-	void illuminate(const Sphere& actor, const vec3& fragPos, const vec3& fragNorm, vec3& resColor) = 0;
+	DirectX::XMVECTOR illuminate(const DirectX::XMVECTOR& fragPos, const DirectX::XMVECTOR& fragNorm, const Material& material) const;
 };
-*/
+

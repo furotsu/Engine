@@ -1,23 +1,28 @@
 #pragma once
 
-#include "vec3.h"
+#include <DirectXMath.h>
 
-constexpr float RAY_MIN = 20.0f;
-constexpr float RAY_MAX = 1000.0f;
+constexpr float RAY_MIN = 1.0f;
+constexpr float RAY_MAX = 100000.0f;
 
-class ray
+using namespace DirectX;
+
+namespace math
 {
-public:
-	vec3 origin;
-	vec3 direction; // always normalized
 
-	ray() {}
-	ray(const vec3& a, const vec3& b)
-		: origin(a)
+	class ray
 	{
-		direction = unitVector(b);
-//		direction = b;
-	}
-	
-	vec3 pointAtParameter(float t) const { return origin + t * direction;}
-};
+	public:
+		DirectX::XMVECTOR origin;
+		DirectX::XMVECTOR direction; // always normalized
+
+		ray() = default;
+		ray(const DirectX::XMVECTOR& origin, const DirectX::XMVECTOR& direction)
+			: origin(origin), direction(DirectX::XMVector3Normalize(direction))
+		{
+		}
+
+		inline DirectX::XMVECTOR pointAtParameter(float t) const { return origin + t * direction; }
+	};
+
+}

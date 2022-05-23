@@ -12,11 +12,11 @@ class Canvas
 	int m_height;
 	BITMAPINFO bmi;
 
-	std::vector<BYTE> m_pixels;
+	std::vector<uint32_t> m_pixels;
 
 public:
 
-	Canvas() {};
+	Canvas() = default;
 	Canvas(int width, int height, int offsetX, int offsetY);
 	
 	BITMAPINFO createDIB();

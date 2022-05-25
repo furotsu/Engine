@@ -69,14 +69,14 @@
     <ClCompile Include="src\window.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="src\application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\objectMover.cpp">
       <Filter>World</Filter>
     </ClCompile>
     <ClCompile Include="src\surface.cpp">
       <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="src\application.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

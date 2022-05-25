@@ -52,8 +52,6 @@ public:
 			0.0f, 0.0f, -(nearP * farP) / (farP - nearP), 0
 		);
 
-		//m_proj = XMMatrixPerspectiveFovRH(fov, width / height, nearP, farP);
-
 		m_projInv = XMMatrixInverse(nullptr, m_proj);
 
 		m_updatedMatrices = false;

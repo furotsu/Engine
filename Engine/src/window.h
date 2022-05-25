@@ -15,8 +15,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 class Window
 {
 public:
-	int m_width;
-	int m_height;
+	uint16_t m_width;
+	uint16_t m_height;
 	HBITMAP m_pixelBuf;
 	HWND hWnd;
 	WNDCLASSEX wc;
@@ -39,6 +39,7 @@ public:
 	void flush();
 
 	void onResize(const int& width, const int& height);
+	XMVECTOR screenToNDC(const uint16_t& x, const uint16_t& y) const;
 
 	friend LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	friend class Scene;

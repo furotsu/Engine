@@ -17,7 +17,6 @@ BITMAPINFO Canvas::createDIB()
 	int iBmiSize;
 	int iSurfaceSize;
 
-
 	// Initialize bitmap info header
 	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bmi.bmiHeader.biWidth = m_width;
@@ -55,22 +54,22 @@ void Canvas::setPixel(int x, int y, BYTE r, BYTE g, BYTE b)
 	m_pixels[iOffset] = (r << 16) + (g << 8) + (b);
 }
 
-void Canvas::printToScreen(const HDC hdc, const HWND hWnd)
+void Canvas::printToScreen(const HDC hdc, const HWND hWnd, uint16_t windWidth, uint16_t windHeight)
 {
 
-	SetDIBitsToDevice(
+	StretchDIBits(
 		hdc,			// Target DC
 		0,			// Destination X-coord.
 		0,			// Destination Y-coord.
-		m_width,		// DIB width in pixels
-		m_height,		// DIB height in pixels
+		windWidth,		// DIB width in pixels
+		windHeight,		// DIB height in pixels
 		0,			// Source X-coord.
 		0,			// Source Y-coord.
-		0,			// Starting scanline
-		m_height,		// Number of scanlines
+		m_width,			// src width
+		m_height,			// src height
 		(BYTE*)&m_pixels[0],		// Pointer to the DIB surface data
 		&bmi,	// Pointer to the BITMAPINFO struct.
-		DIB_RGB_COLORS	// Display mode
+		DIB_RGB_COLORS,	// Display mode
+		SRCCOPY // Copies the source rectangle directly to the destination rectangle
 	);
-
 }

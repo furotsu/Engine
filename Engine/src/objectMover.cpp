@@ -10,19 +10,16 @@ SphereMover::SphereMover(const SphereMover& sm2)
 {
 }
 
-
 void SphereMover::moveTo(const XMVECTOR& offset)
 {
 	sphere.m_modelMat.r[3] = offset;
-	sphere.m_transformation.position = offset;
 	sphere.m_modelInvMat = XMMatrixInverse(nullptr, sphere.m_modelMat);	
-	//pickedPosition = offset;
+	pickedPosition = offset;
 }
 
 void SphereMover::moveBy(const XMVECTOR& offset)
 {
 	sphere.m_modelMat.r[3] += offset;
-	sphere.m_transformation.position += offset;
 	sphere.m_modelInvMat = XMMatrixInverse(nullptr, sphere.m_modelMat);
 	pickedPosition += offset;
 }

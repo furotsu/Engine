@@ -26,7 +26,7 @@ XMVECTOR PointLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNor
 
 	//spec
 	float specularStrength = 0.5f;
-	float spec = pow(std::max(XMVectorGetX(XMVector3Dot(halfDir, fragNorm)), 0.0f), material.shininess * 32.0f);
+	float spec = pow(std::max(XMVectorGetX(XMVector3Dot(halfDir, fragNorm)), 0.0f), material.shininess);
 	XMVECTOR specular = specularStrength * spec * m_lightColor * material.specular;
 
 	float attenuation = 1.0 / (m_constantIntens + m_linearIntens * distance + m_quadraticIntens * (distance * distance));

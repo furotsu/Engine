@@ -28,6 +28,7 @@ SphereModel::SphereModel(XMVECTOR position, float scale, Angles rotation, const 
 bool SphereModel::hit(math::ray r, math::Intersection& rec) const
 {
 	r.origin = XMVector4Transform(r.origin, m_modelInvMat);
+
 	if (m_sphere->hit(r, rec))
 	{
 		rec.point = XMVector4Transform(rec.point, m_modelMat);

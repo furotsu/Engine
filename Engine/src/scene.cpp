@@ -61,7 +61,7 @@ bool Scene::findIntersectionLights(const ray& r, Intersection& hr)
 XMVECTOR Scene::illuminate(const Intersection& hr, const PointLight& light)
 {
 	// adding small offset to avoid self-shadowing artifact
-	ray r(hr.point + 0.01f * hr.normal, XMVector3Normalize(light.m_position - hr.point));
+	ray r(hr.point + 0.01f * hr.normal, -XMVector3Normalize(light.m_position - hr.point));
 
 	Intersection tmp;
 	tmp.reset();
@@ -101,6 +101,7 @@ XMVECTOR Scene::illuminate(const Intersection& hr, const FlashLight& light)
 
 	Intersection tmp;
 	tmp.reset();
+	tmp.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.m_position));
 
 	XMVECTOR res = light.illuminate(hr.point, hr.normal, hr.material);
 
@@ -131,6 +132,8 @@ void Scene::render(Window& window, XMMATRIX matrix, Camera& camera)
 	BR = XMVector4Transform(BR, camera.m_projInv);
 	BL = XMVector4Transform(BL, camera.m_projInv);
 
+	//std::cout << XMVectorGetW(TL) << std::endl;
+
 	TL /=  XMVectorGetW(TL);
 	TR /=  XMVectorGetW(TR);
 	BR /=  XMVectorGetW(BR);
@@ -145,8 +148,8 @@ void Scene::render(Window& window, XMMATRIX matrix, Camera& camera)
 	{
 		for (int w = 0; w < window.canvas.getWidth(); w++)
 		{
-			r.direction = XMVector3Normalize(BL + (BR - BL) * w/window.canvas.getWidth() + (TL - BL) * (window.canvas.getHeight() - h) / window.canvas.getHeight());
-
+			r.direction =  -r.origin + (BL + (BR - BL) * w/window.canvas.getWidth() + (TL - BL) * (window.canvas.getHeight() - h) / window.canvas.getHeight());
+			r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
 			XMVECTOR col = getPixelColor(r);
 
 			float r = XMVectorGetX(col) < 1.0f ? XMVectorGetX(col) : 0.99f;
@@ -193,10 +196,12 @@ void Scene::addFlashLight(const FlashLight& light, SphereModel sphereModel) { m_
 void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos)
 {
 
-	float x = (2.0f * XMVectorGetX(mousePos)) / 400.0f - 1.0f;
-	float y = 1.0f - (2.0f * XMVectorGetY(mousePos)) / 200.0f;
-
-	ray r(camera.position(), XMVector4Transform(XMVectorSet(x, y, 1.0f, 1.0f), camera.m_viewProjInv));
+	XMVECTOR point = XMVector4Transform(mousePos, camera.m_projInv);
+	point /= XMVectorGetW(point);
+	point = XMVector4Transform(point, camera.m_viewInv);
+	ray r(camera.position(), point);
+	r.direction = -r.origin + point;
+	r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
 
 	Intersection hr;
 	hr.reset();
@@ -225,9 +230,6 @@ void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos)
 		{
 			objPicked = true;
 			m_movingPlane = Plane(-camera.forward(), hr.point);
-			std::cout << "actual picked position: " << std::endl;
-			std::cout << XMVectorGetX(hr.point) << " " << XMVectorGetY(hr.point) << " " << XMVectorGetZ(hr.point) << std::endl;
-
 			pickedObjPtr = std::make_unique<SphereMover>(light.second, hr.point);
 		}
 	}

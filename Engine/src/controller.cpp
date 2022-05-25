@@ -60,26 +60,25 @@ void Controller::init(Window& win, Scene& scene)
 		XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f), XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f), XMVectorSet(0.9f, 0.9f, 0.9f, 1.0f)),
 						SphereModel(XMVectorSet(130.0f, -60.0f, -110.0f, 0.0f), 1.0f, Angles(0.0f, 0.0f, 0.0f), sphere));
 
-	scene.addPointLight(PointLight(XMVectorSet(-130.0f, 1000.0f, -110.0f, 0.0f), XMVectorSet(0.2f, 0.2f, 0.9f, 0.0f),
-		XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f), XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f), XMVectorSet(0.9f, 0.9f, 0.9f, 1.0f)),
-		SphereModel(XMVectorSet(-130.0f, 60.0f, -110.0f, 0.0f), 1.0f, Angles(0.0f, 0.0f, 0.0f), sphere));
+	//scene.addPointLight(PointLight(XMVectorSet(-130.0f, 1000.0f, -110.0f, 0.0f), XMVectorSet(0.2f, 0.2f, 0.9f, 0.0f),
+		//XMVectorSet(0.2f, 0.2f, 0.2f, 1.0f), XMVectorSet(0.5f, 0.5f, 0.5f, 1.0f), XMVectorSet(0.9f, 0.9f, 0.9f, 1.0f)),
+		//SphereModel(XMVectorSet(-130.0f, 60.0f, -110.0f, 0.0f), 1.0f, Angles(0.0f, 0.0f, 0.0f), sphere));
 
 
 	scene.addDirLight(DirectionalLight(XMVectorSet(-0.1f, -0.9f, 0.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f),
 		XMVectorSet(0.1f, 0.1f, 0.1f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f), XMVectorSet(0.6f, 0.6f, 0.6f, 0.0f)));
 
-	scene.addFlashLight(FlashLight(XMVectorSet(0.0f, 50.0f, 0.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f),
+	scene.addFlashLight(FlashLight(XMVectorSet(0.0f, -50.0f, 0.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f),
 									 XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f),	0.91f, 0.82f),
 	SphereModel(XMVectorSet(0.0f, 50.0f, 0.0f, 0.0f), 1.0f, Angles(0.0f, 0.0f, 0.0f), sphere));
 
 	m_camera = Camera(XMVectorSet(0.0f, 50.0f, 80.0f, 1.0f),  {0.0f, 0.0f, 0.0f});
-	m_camera.setPerspective(45.0f, 400.0f, 200.0f, 0.1f, 800.0f);
+	m_camera.setPerspective(45.0f, win.m_width, win.m_height, 0.1f, 800.0f);
 	m_cameraSpeed = CAMERA_SPEED;
 	m_mouseSensitivity = MOUSE_SENSITIVITY;
 
 	m_rmbDown = false;
 	m_lmbDown = false;
-
 }
 
 void Controller::update(float deltaTime, Scene& scene)
@@ -121,6 +120,7 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 
 		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 		window.onResize(rect.right - rect.left, rect.bottom - rect.top);
+		m_camera.setPerspective(45.0f, window.m_width, window.m_height, 1.0f, 10000.0f);
 
 	} break;
 	case WM_MOUSEMOVE:
@@ -137,10 +137,17 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 				GetCursorPos(&m_currentPos);
 				ScreenToClient(FindWindowA(NULL, "Engine"), &m_currentPos);
 
-				float x = (2.0f * m_currentPos.x) / 400.0f - 1.0f;
-				float y = 1.0f - (2.0f * m_currentPos.y) / 200.0f;
+				XMVECTOR point = window.screenToNDC(m_currentPos.x, m_currentPos.y);
+				point = XMVector4Transform(point, m_camera.m_projInv);
+				point /= XMVectorGetW(point);
+				point = XMVector4Transform(point, m_camera.m_viewInv);
 
-				ray r(m_camera.position(), XMVector4Transform(XMVectorSet(x, y, 1.0f, 1.0f), m_camera.m_viewProjInv));
+				ray r(m_camera.position(), point);
+				r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
+
+
+				r.direction = -r.origin + point;
+
 
 				Intersection hr;
 				hr.reset();
@@ -149,9 +156,9 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 				XMVECTOR offset = XMVectorSet(XMVectorGetX(hr.point) - XMVectorGetX(scene.pickedObjPtr->getPickedPos()),
 												XMVectorGetY(hr.point) - XMVectorGetY(scene.pickedObjPtr->getPickedPos()), 
 												XMVectorGetZ(hr.point) - XMVectorGetZ(scene.pickedObjPtr->getPickedPos()), 0.0f);
-				std::cout << XMVectorGetX(hr.point) << " " << XMVectorGetY(hr.point) << " " << XMVectorGetZ(hr.point) << std::endl;
-				//scene.pickedObjPtr->moveBy(offset);
-				scene.pickedObjPtr->moveTo(hr.point);
+				//std::cout << XMVectorGetX(hr.point) << " " << XMVectorGetY(hr.point) << " " << XMVectorGetZ(hr.point) << std::endl;
+				scene.pickedObjPtr->moveBy(offset);
+				//scene.pickedObjPtr->moveTo(hr.point);
 			}
 
 		}
@@ -181,8 +188,8 @@ LRESULT CALLBACK Controller::processInput(HWND& hWnd, UINT& message, WPARAM& wPa
 		GetCursorPos(&m_pressedPos);
 		ScreenToClient(FindWindowA(NULL, "Engine"), &m_pressedPos);
 		m_rmbDown = true;
-		scene.pickObject(m_camera, XMVectorSet(m_pressedPos.x, m_pressedPos.y, 1.0f, 1.0f));
 		m_currentPos = m_pressedPos;
+		scene.pickObject(m_camera, window.screenToNDC(m_currentPos.x, m_currentPos.y));
 	} break;
 	case WM_RBUTTONUP:
 	{

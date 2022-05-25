@@ -28,12 +28,11 @@ void math::Quaternion::toMat3(XMMATRIX& matrix)
 	float w = XMVectorGetW(m_quaternion);
 
 	matrix = XMMatrixSet(
-		1.0f - 2.0f * y * y - 2.0f * z * z,   2.0f * x * y - 2.0f * z * w,   2.0f * x * z + 2.0f * y * w, XMVectorGetX(matrix.r[3]),
-		2.0f * x * y + 2.0f * z * w,   1.0f - 2.0f * x * x - 2.0f * z * z,   2.0f * y * z - 2.0f * x * w, XMVectorGetY(matrix.r[3]),
-		2.0f * x * z - 2.0f * y * w,   2.0f * y * z + 2.0f * x * w,          1.0f - 2.0f * x * x - 2.0f * y * y, XMVectorGetZ(matrix.r[3]),
-		XMVectorGetW(matrix.r[0]), XMVectorGetW(matrix.r[1]), XMVectorGetW(matrix.r[2]), XMVectorGetW(matrix.r[3])
-	);
-	matrix = XMMatrixTranspose(matrix);
+		1.0f - 2.0f * y * y - 2.0f * z * z,  2.0f * x * y + 2.0f * z * w,		 2.0f * x * z - 2.0f * y * w,		   XMVectorGetW(matrix.r[0]),
+		2.0f * x * y - 2.0f * z * w,		 1.0f - 2.0f * x * x - 2.0f * z * z, 2.0f * y * z + 2.0f * x * w,		   XMVectorGetW(matrix.r[1]),
+		2.0f * x * z + 2.0f * y * w,		 2.0f * y * z - 2.0f * x * w,		 1.0f - 2.0f * x * x - 2.0f * y * y,   XMVectorGetW(matrix.r[2]),
+		XMVectorGetX(matrix.r[3]),			 XMVectorGetY(matrix.r[3]),			 XMVectorGetZ(matrix.r[3]),			   XMVectorGetW(matrix.r[3])
+	);	
 }
 
 void math::normalizeQuat(Quaternion& q)

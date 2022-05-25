@@ -22,7 +22,7 @@ public:
 	BITMAPINFO createDIB();
 
 	void setPixel(int x, int y, BYTE r, BYTE g, BYTE b); // set color into m_pixels
-	void printToScreen(const HDC, const HWND); // call StretchDIBits / SetDIBitsToDevice
+	void printToScreen(const HDC, const HWND, uint16_t windWidth, uint16_t windHeight); // call StretchDIBits / SetDIBitsToDevice
 
 	void onResize(const int& width, const int& height);
 

@@ -44,7 +44,7 @@ void Window::onResize(const int& width, const int& height)
 {
 	m_width = width;
 	m_height = height;
-	//canvas.onResize(width, height);
+	canvas.onResize(width / 2, height / 2);
 }
 
 XMVECTOR Window::screenToNDC(const uint16_t& x, const uint16_t& y) const

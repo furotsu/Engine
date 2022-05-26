@@ -14,7 +14,6 @@ namespace math
 		float hitParam;
 		DirectX::XMVECTOR point;
 		DirectX::XMVECTOR normal;
-		Material material;
 
 		Intersection() = default;
 

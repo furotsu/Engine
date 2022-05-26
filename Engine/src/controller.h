@@ -13,8 +13,10 @@ constexpr float MOUSE_SENSITIVITY = 0.2f;
 
 class Controller
 {
+public:
 	bool m_rmbDown;
 	bool m_lmbDown;
+	bool m_mouseMoved;
 
 	float m_cameraSpeed;
 	float m_mouseSensitivity;
@@ -26,19 +28,18 @@ class Controller
 	
 	Camera m_camera;
 
-public:
 	Controller() = default;
 
 	void init(Window& win, Scene& scene);
 
-	LRESULT CALLBACK processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Scene& scene, Window& w);
+	void processInput(WPARAM& wParam);
 
-	void update(float deltaTime, Scene& scene);
+	void update(float deltaTime, WPARAM& wParam, Scene& scene, Window& window);
 	void processFrame(Window& window, Scene& scene);
 
 
-	void moveCamera(const XMVECTOR& direction,const float& deltTime);
-	void rotateCamera(const float& xOffset, const float& yOffset, const float& deltaTime);
-	void rotateCamera(const float& direction, const float& deltaTime);
+	void moveCamera(const XMVECTOR& direction);
+	void rotateCamera(const float& xOffset, const float& yOffset);
+	void rotateCamera(const float& direction);
 
 };

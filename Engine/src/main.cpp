@@ -22,7 +22,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, L
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	return app.controller.processInput(hWnd, message, wParam, lParam, app.scene, app.window);
+	return app.processInput(hWnd, message, wParam, lParam, app.scene, app.window);
 }
 
 template<typename ...Args>

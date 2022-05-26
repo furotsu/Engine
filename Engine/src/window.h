@@ -7,8 +7,10 @@
 #include <vector>
 #include <memory>
 
-#include "lightSource.h"
+#include <DirectXMath.h>
 #include "canvas.h"
+
+using namespace DirectX;
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

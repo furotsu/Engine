@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -88,8 +88,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math\glm;$(SolutionDir)Engine\src;$(SolutionDir)Engine\math</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,8 +102,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math\glm;$(SolutionDir)Engine\src;$(SolutionDir)Engine\math</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,8 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math\glm;$(SolutionDir)Engine\src;$(SolutionDir)Engine\math</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math;$(SolutionDir)Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -136,9 +131,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math\glm;$(SolutionDir)Engine\src;$(SolutionDir)Engine\math</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math;$(SolutionDir)Engine\src;$(SolutionDir)Engine\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,21 +147,19 @@
     <ClCompile Include="math\quaternion.cpp" />
     <ClCompile Include="math\sphere.cpp" />
     <ClCompile Include="math\triangle.cpp" />
+    <ClCompile Include="math\utility.cpp" />
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\canvas.cpp" />
     <ClCompile Include="src\controller.cpp" />
-    <ClCompile Include="src\lightSource.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\mesh.cpp" />
     <ClCompile Include="src\model.cpp" />
-    <ClCompile Include="src\objectMover.cpp" />
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\window.cpp" />
-    <ClCompile Include="src\surface.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\material.h" />
+    <ClInclude Include="cube.h" />
     <ClInclude Include="math\hitable.h" />
     <ClInclude Include="math\matrixAlg.h" />
     <ClInclude Include="math\plane.h" />
@@ -175,18 +167,17 @@
     <ClInclude Include="math\ray.h" />
     <ClInclude Include="math\sphere.h" />
     <ClInclude Include="math\triangle.h" />
+    <ClInclude Include="math\utility.h" />
     <ClInclude Include="src\application.h" />
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\canvas.h" />
     <ClInclude Include="src\controller.h" />
-    <ClInclude Include="src\lightSource.h" />
+    <ClInclude Include="src\material.h" />
     <ClInclude Include="src\mesh.h" />
     <ClInclude Include="src\model.h" />
-    <ClInclude Include="src\mousePicker.h" />
-    <ClInclude Include="src\objectMover.h" />
     <ClInclude Include="src\scene.h" />
+    <ClInclude Include="src\timer.h" />
     <ClInclude Include="src\window.h" />
-    <ClInclude Include="src\surface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

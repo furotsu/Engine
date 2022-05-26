@@ -18,10 +18,71 @@ void Application::initConsole()
 	auto s = freopen_s(&dummy, "CONOUT$", "w", stdout);
 }
 
+LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Scene& scene, Window& w)
+{
+	switch (message)
+	{
+	case WM_DESTROY:
+	{
+		// close the application entirely
+		PostQuitMessage(0);
+		return 0;
+	} break;
+	case WM_SIZE:
+	{
+		RECT rect = { 0, 0, 0, 0 };
+
+		GetWindowRect(hWnd, &rect);
+
+		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
+		window.onResize(rect.right - rect.left, rect.bottom - rect.top);
+		controller.m_camera.setPerspective(45.0f, window.m_width, window.m_height, 1.0f, 10000.0f);
+
+	} break;
+	case WM_MOUSEMOVE:
+	{
+		controller.m_mouseMoved = true;
+	} break;
+	case WM_LBUTTONDOWN:
+	{
+		controller.m_lmbDown = true;
+		GetCursorPos(&controller.m_pressedPos);
+		//determine position relative to init window
+		ScreenToClient(FindWindowA(NULL, "Engine"), &controller.m_pressedPos);
+		controller.m_currentPos = controller.m_pressedPos;
+	} break;
+	case WM_LBUTTONUP:
+	{
+		controller.m_lmbDown = false;
+	} break;
+	case WM_RBUTTONDOWN:
+	{
+		GetCursorPos(&controller.m_pressedPos);
+		ScreenToClient(FindWindowA(NULL, "Engine"), &controller.m_pressedPos);
+		controller.m_rmbDown = true;
+		controller.m_currentPos = controller.m_pressedPos;
+		scene.pickObject(controller.m_camera, window.screenToNDC(controller.m_currentPos.x, controller.m_currentPos.y));
+	} break;
+	case WM_RBUTTONUP:
+	{
+		controller.m_rmbDown = false;
+		scene.pickedObjMoverQuery.mover = nullptr;
+	}
+	case WM_KEYDOWN:
+	{
+		lastWParam = wParam;
+	} break;
+	}
+
+	// Handle any messages the switch statement didn't
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
 MSG Application::run()
 {
 	MSG msg = { 0 };
-	std::chrono::time_point<std::chrono::steady_clock> oldTime = std::chrono::high_resolution_clock::now();
+
+	timer.recordTime();
 
 	while (TRUE)
 	{
@@ -34,12 +95,14 @@ MSG Application::run()
 				break;
 		}
 
-		m_deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - oldTime).count();
+		m_deltaTime = timer.elapsed();
 
 		if (m_deltaTime > FRAME_DURATION)
 		{
-			oldTime = std::chrono::high_resolution_clock::now();
-			controller.update(m_deltaTime, scene);
+
+			timer.recordTime();
+			controller.update(m_deltaTime, lastWParam, scene, window);
+			lastWParam = WPARAM();
 			controller.processFrame(window, scene);
 			window.flush();
 

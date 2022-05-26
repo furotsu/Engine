@@ -2,15 +2,11 @@
 
 namespace math
 {
-
-	void Sphere::setCenter(XMVECTOR newCenter) { this->center = newCenter; }
-	void Sphere::setRadius(float newRadius) { this->radius = newRadius; }
-
 	bool Sphere::hit(const ray& r, Intersection& rec, float tMin, float tMax) const
 	{
 		XMVECTOR ac = r.origin - center;
 		//We can get rid of "a" variable because of the assumption that r direction is normalized
-		float b = XMVectorGetX(XMVector3Dot(XMVector3Normalize(r.direction), ac)); // we can cut it in advance to avoid excess operations with discriminant after
+		float b = XMVectorGetX(XMVector3Dot(r.direction, ac)); // we can cut it in advance to avoid excess operations with discriminant after
 		float c = XMVectorGetX(XMVector3Dot(ac, ac)) - radius * radius;
 		float discriminant = b * b - c; // we take out 2 out of sqrt(discriminant) later to cut it with 2 in denominator
 		if (discriminant >= 0)
@@ -34,5 +30,4 @@ namespace math
 		}
 		return false;
 	}
-
 }

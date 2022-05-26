@@ -21,9 +21,6 @@ namespace math
 		inline DirectX::XMVECTOR getCenter() const { return center; }
 		inline float getRadius() const { return radius; }
 
-		void setCenter(DirectX::XMVECTOR newCenter);
-		void setRadius(float newRadius);
-
 	};
 
 }

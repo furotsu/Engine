@@ -6,13 +6,13 @@ using namespace DirectX;
 
 struct Material
 {
-	XMVECTOR ambient;
-	XMVECTOR diffuse;
-	XMVECTOR specular;
-	float shininess;
+	XMVECTOR albedo;
+	float specular;
+	float glossines;
+	XMVECTOR emmision;
 
 	Material() = default;
-	Material(XMVECTOR ambient, XMVECTOR diffuse, XMVECTOR specular, float shininess)
-		: ambient(ambient), diffuse(diffuse), specular(specular), shininess(shininess)
+	Material(XMVECTOR albedo, float specular, float glossines, XMVECTOR emmision = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f))
+		: albedo(albedo), specular(specular), glossines(glossines), emmision(emmision)
 	{}
 };

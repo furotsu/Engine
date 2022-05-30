@@ -142,12 +142,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="lightSource.cpp" />
     <ClCompile Include="math\matrixAlg.cpp" />
     <ClCompile Include="math\plane.cpp" />
     <ClCompile Include="math\quaternion.cpp" />
     <ClCompile Include="math\sphere.cpp" />
     <ClCompile Include="math\triangle.cpp" />
     <ClCompile Include="math\utility.cpp" />
+    <ClCompile Include="modelMover.cpp" />
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\canvas.cpp" />

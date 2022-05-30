@@ -15,7 +15,7 @@
 
 using namespace math;
 
-constexpr float LIGHTMODEL_SIZE = 10.0f;
+constexpr float LIGHTMODEL_SIZE = 5.0f;
 
 class Scene
 {
@@ -114,7 +114,7 @@ public:
 
 	};
 
-	class FlashLight : public Scene::Sphere
+	class SpotLight : public Scene::Sphere
 	{
 	private:
 	public:
@@ -127,8 +127,8 @@ public:
 
 		float m_innerCutOff;
 		float m_outerCutOff;
-		FlashLight() = default;
-		FlashLight(DirectX::XMVECTOR position, DirectX::XMVECTOR color, DirectX::XMVECTOR direction, float innerCutOff, float outerCutOff,
+		SpotLight() = default;
+		SpotLight(DirectX::XMVECTOR position, DirectX::XMVECTOR color, DirectX::XMVECTOR direction, float innerCutOff, float outerCutOff,
 			float constTntensity = 1.0f, float linearInten = 0.034f, float quadInten = 0.03f);
 
 		DirectX::XMVECTOR illuminate(const DirectX::XMVECTOR& fragPos, const DirectX::XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& material) const;
@@ -193,12 +193,12 @@ public:
 	class FlashLightMover : public IobjectMover
 	{
 	public:
-		FlashLight* flashLight;
+		SpotLight* flashLight;
 		XMVECTOR pickedPosition;
 
 		FlashLightMover() = default;
-		FlashLightMover(FlashLight*, const XMVECTOR&);
-		FlashLightMover(FlashLight*);
+		FlashLightMover(SpotLight*, const XMVECTOR&);
+		FlashLightMover(SpotLight*);
 
 		virtual void moveTo(const XMVECTOR&) override;
 		virtual void moveBy(const XMVECTOR&) override;
@@ -226,7 +226,7 @@ public:
 	XMVECTOR m_ambientLight;
 	std::vector<PointLight> m_pointLights;
 	std::vector<DirectionalLight> m_directionalLights;
-	std::vector<FlashLight> m_flashLights;
+	std::vector<SpotLight> m_flashLights;
 
 	Scene() = default;
 
@@ -237,7 +237,7 @@ public:
 
 	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light);
 	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light);
-	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const FlashLight& light);
+	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light);
 
 	void render(Window& w, Camera& camera);
 
@@ -248,7 +248,7 @@ public:
 	void setAmbient(XMVECTOR ambient);
 	void addPointLight(const PointLight& light);
 	void addDirLight(const DirectionalLight& light);
-	void addFlashLight(const FlashLight& light);
+	void addFlashLight(const SpotLight& light);
 
 	void pickObject(const Camera& camera, const XMVECTOR&);
 

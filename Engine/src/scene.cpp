@@ -10,6 +10,7 @@ XMVECTOR Scene::getPixelColor(const ray& r,  const XMVECTOR& cameraPos)
 	Intersection hr;
 	hr.reset();
 
+	// set initial value as a sky color
 	XMVECTOR resColor = XMVectorSet(0.678f, 0.847f, 0.902f, 0.0f);
 
 	if (findIntersection(r, hr, material))
@@ -66,7 +67,7 @@ bool Scene::findIntersection(const ray& r, IntersectionQuery& query)
 	}break;
 	case IntersectedType::FlashLight:
 	{
-		FlashLight* model = static_cast<FlashLight*>(ref.object);
+		SpotLight* model = static_cast<SpotLight*>(ref.object);
 		query.mover.reset(new FlashLightMover(model, query.intersection.point));
 		distToPickedObj = query.intersection.hitParam;
 	}break;
@@ -134,7 +135,7 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 	}
 }
 
-XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const FlashLight& light)
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light)
 {
 	// adding small offset to avoid self-shadowing artifact
 	ray r(hr.point + 1.0f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
@@ -217,7 +218,7 @@ void Scene::setAmbient(XMVECTOR ambient) { m_ambientLight = ambient; }
 
 void Scene::addPointLight(const PointLight& light) {m_pointLights.push_back(light);}
 void Scene::addDirLight(const DirectionalLight& light) { m_directionalLights.push_back(light); }
-void Scene::addFlashLight(const FlashLight& light) { m_flashLights.push_back(light); }
+void Scene::addFlashLight(const SpotLight& light) { m_flashLights.push_back(light); }
 
 void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos)
 {
@@ -231,302 +232,4 @@ void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos)
 
 	pickedObjMoverQuery.intersection.reset();
 	findIntersection(r, pickedObjMoverQuery);
-}
-
-
-Scene::Sphere::Sphere(XMVECTOR position, float radius, const Material& material)
-{
-	this->center = position;
-	this->radius = radius;
-	this->material = material;
-}
-
-XMVECTOR Scene::Sphere::position()
-{
-	return this->center;
-}
-
-bool Scene::Sphere::hit(const math::ray& ray, ObjRef& outRef, math::Intersection& rec, Material*& outMaterial)
-{
-	if (math::Sphere::hit(ray, rec))
-	{
-		outRef.type = IntersectedType::Sphere;
-		outRef.object = this;
-		outMaterial = &material;
-		return true;
-	}
-	return false;
-}
-
-XMVECTOR Scene::Model::position()
-{
-	return m_modelMat.r[3];
-}
-
-Scene::Model::Model(XMVECTOR position, XMVECTOR scale, const std::shared_ptr<Mesh>& mesh, const Material& material)
-{
-	m_mesh = mesh;
-	m_transformation.position = position;
-	m_transformation.scale = scale;
-	this->material = material;
-
-	m_modelMat = XMMatrixSet(
-		XMVectorGetX(scale), 0.0f, 0.0f, 0.0f,
-		0.0f, XMVectorGetY(scale), 0.0f, 0.0f,
-		0.0f, 0.0f, XMVectorGetZ(scale), 0.0f,
-		XMVectorGetX(position), XMVectorGetY(position), XMVectorGetZ(position), 1.0f
-	);
-
-	m_modelInvMat = XMMatrixInverse(nullptr, m_modelMat);
-}
-
-bool Scene::Model::hit(math::ray r, ObjRef& outRef, math::Intersection& rec, Material*& outMaterial)
-{
-	r.origin = XMVector4Transform(r.origin, m_modelInvMat);
-
-	if (m_mesh->hit(r, rec))
-	{
-		outRef.type = IntersectedType::Model;
-		outRef.object = this;
-		outMaterial = &material;
-		rec.point = XMVector4Transform(rec.point, m_modelMat);
-
-		return true;
-	}
-	return false;
-}
-
-Scene::Surface::Surface(math::Plane plane, const Material& material)
-	: plane(plane), material(material)
-{
-}
-
-bool Scene::Surface::hit(const math::ray& r, ObjRef& outRef, math::Intersection& rec, Material*& outMaterial)
-{
-	if (plane.hit(r, rec))
-	{
-		outRef.type = IntersectedType::Surface;
-		outRef.object = this;
-		outMaterial = &material;
-		return true;
-	}
-	return false;
-}
-
-XMVECTOR Scene::PointLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& material) const
-{
-	XMVECTOR viewDirection = XMVector3Normalize(cameraPos - fragPos);
-	XMVECTOR lightDirection = XMVector3Normalize(this->center - fragPos);
-	float distance = XMVectorGetX(XMVector3Length(this->center - fragPos));
-
-	XMVECTOR halfDir = XMVector3Normalize(lightDirection + viewDirection);
-
-	//diff
-	float attenuation = 1.0 / (m_quadraticIntens * distance * distance);
-
-	XMVECTOR diffuse = max(XMVectorGetX(XMVector3Dot(fragNorm, lightDirection)), 0.0f) * material->albedo * attenuation;
-
-	//spec
-	float spec = pow(max(XMVectorGetX(XMVector3Dot(fragNorm, halfDir)), 0.0f), material->glossines) * material->specular;
-	XMVECTOR specular = XMVectorSet(spec, spec, spec, 0.0f);
-
-
-	XMVECTOR Li = m_lightColor / (m_linearIntens * distance);
-	return  Li * (diffuse + specular);
-}
-
-XMVECTOR Scene::DirectionalLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& material) const
-{
-	XMVECTOR viewDirection = XMVector3Normalize(cameraPos - fragPos);
-	XMVECTOR lightDirection = -XMVector3Normalize(m_direction);
-	XMVECTOR halfDir = XMVector3Normalize(lightDirection + viewDirection);
-
-	XMVECTOR diffuse = max(XMVectorGetX(XMVector3Dot(fragNorm, lightDirection)), 0.0f) * material->albedo;
-
-	//spec
-	float spec = pow(max(XMVectorGetX(XMVector3Dot(fragNorm, halfDir)), 0.0f), material->glossines) * material->specular;
-	XMVECTOR specular = XMVectorSet(spec, spec, spec, 0.0f);
-
-	return m_lightColor * (diffuse + specular);
-}
-
-XMVECTOR Scene::FlashLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& material) const
-{
-	XMVECTOR viewDirection = XMVector3Normalize(cameraPos - fragPos);
-	XMVECTOR lightDirection = XMVector3Normalize(this->center - fragPos);
-	float distance = XMVectorGetX(XMVector3Length(this->center - fragPos));
-
-	XMVECTOR halfDir = XMVector3Normalize(lightDirection + viewDirection);
-
-	//diff
-	float attenuation = 1.0 / (m_quadraticIntens * distance * distance);
-
-	XMVECTOR diffuse = max(XMVectorGetX(XMVector3Dot(fragNorm, lightDirection)), 0.0f) * material->albedo * attenuation;
-
-	//spec
-	float spec = pow(max(XMVectorGetX(XMVector3Dot(fragNorm, halfDir)), 0.0f), material->glossines) * material->specular;
-	XMVECTOR specular = XMVectorSet(spec, spec, spec, 0.0f);
-
-	// spotlight (soft edges)
-	float theta = XMVectorGetX(XMVector3Dot(lightDirection, -XMVector3Normalize(m_direction)));
-	float epsilon = (m_innerCutOff - m_outerCutOff);
-	float intensity = (theta - m_outerCutOff) / epsilon;
-	if (intensity < 0.0f)
-		intensity = 0.0f;
-	else if (intensity > 1.0f)
-		intensity = 1.0f;
-
-
-	XMVECTOR Li = m_lightColor / (m_linearIntens * distance);
-
-	return  Li * intensity * (diffuse + specular);
-}
-
-Scene::PointLight::PointLight(XMVECTOR position, XMVECTOR color, float constInten, float linearInten, float quadInten)
-{
-	m_lightColor = color;
-
-	this->center = position;
-	this->radius = LIGHTMODEL_SIZE;
-	
-	this->material = Material(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 1.0f, 1.0f, XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f));
-
-	m_constantIntens = constInten;
-	m_linearIntens = linearInten;
-	m_quadraticIntens = quadInten;
-
-}
-
-Scene::DirectionalLight::DirectionalLight(XMVECTOR direction, XMVECTOR color)
-	: m_direction(direction), m_lightColor(color)
-{
-}
-
-Scene::FlashLight::FlashLight(XMVECTOR position, XMVECTOR color, XMVECTOR direction, float innerCutOff, float outerCutOff,
-	float constTntensity, float linIntensity, float quadrIntensity)
-{
-	m_direction = XMVector3Normalize(direction);
-
-	m_lightColor = color;
-	this->center = position;
-	this->radius = LIGHTMODEL_SIZE;
-
-	this->material = Material(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 1.0f, 1.0f, XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f));
-
-	m_constantIntens = constTntensity;
-	m_linearIntens = linIntensity;
-	m_quadraticIntens = quadrIntensity;
-
-	m_innerCutOff = innerCutOff;
-	m_outerCutOff = outerCutOff;
-}
-
-Scene::SphereMover::SphereMover(Scene::Sphere* sphere, const XMVECTOR& pickedPos)
-	: sphere(sphere), pickedPosition(pickedPos)
-{
-}
-
-Scene::SphereMover::SphereMover(Scene::Sphere* sphere)
-	: sphere(sphere), pickedPosition(sphere->position())
-{
-}
-
-void Scene::SphereMover::moveTo(const XMVECTOR& offset)
-{
-	sphere->center = offset;
-	pickedPosition = offset;
-}
-
-void Scene::SphereMover::moveBy(const XMVECTOR& offset)
-{
-	sphere->center += offset;
-	pickedPosition += offset;
-}
-
-XMVECTOR Scene::SphereMover::getPickedPos()
-{
-	return pickedPosition;
-}
-
-Scene::ModelMover::ModelMover(Model* model, const XMVECTOR& pickedPosition)
-	: model(model), pickedPosition(pickedPosition)
-{
-}
-
-Scene::ModelMover::ModelMover(Model* model)
-	: model(model), pickedPosition(model->position())
-{
-}
-
-void Scene::ModelMover::moveTo(const XMVECTOR& position)
-{
-	model->m_modelMat.r[3] = position;
-	model->m_modelInvMat = XMMatrixInverse(nullptr, model->m_modelMat);
-	pickedPosition = position;
-}
-
-void Scene::ModelMover::moveBy(const XMVECTOR& position)
-{
-	model->m_modelMat.r[3] += position;
-	model->m_modelInvMat = XMMatrixInverse(nullptr, model->m_modelMat);
-	pickedPosition += position;
-}
-
-XMVECTOR Scene::ModelMover::getPickedPos()
-{
-	return pickedPosition;
-}
-
-Scene::PointLightMover::PointLightMover(PointLight* pointLight, const XMVECTOR& pickedPosition)
-	: pointLight(pointLight), pickedPosition(pickedPosition)
-{
-}
-
-Scene::PointLightMover::PointLightMover(PointLight* pointLight)
-	: pointLight(pointLight), pickedPosition(pointLight->center)
-{
-}
-
-void Scene::PointLightMover::moveTo(const XMVECTOR& position)
-{
-	pointLight->center = position;
-	pickedPosition = position;
-}
-
-void Scene::PointLightMover::moveBy(const XMVECTOR& offset)
-{
-	pointLight->center += offset;
-	pickedPosition += offset;
-}
-
-XMVECTOR Scene::PointLightMover::getPickedPos()
-{
-	return pickedPosition;
-}
-
-Scene::FlashLightMover::FlashLightMover(FlashLight* pointLight, const XMVECTOR& pickedPosition)
-	: flashLight(pointLight), pickedPosition(pickedPosition)
-{
-}
-
-Scene::FlashLightMover::FlashLightMover(FlashLight* pointLight)
-	: flashLight(pointLight), pickedPosition(pointLight->center)
-{
-}
-
-void Scene::FlashLightMover::moveTo(const XMVECTOR& position)
-{
-	flashLight->center = position;
-	pickedPosition = position;
-}
-
-void Scene::FlashLightMover::moveBy(const XMVECTOR& offset)
-{
-	flashLight->center += offset;
-	pickedPosition += offset;
-}
-
-XMVECTOR Scene::FlashLightMover::getPickedPos()
-{
-	return pickedPosition;
 }

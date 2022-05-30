@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-float math::clamp(const float& x, const float& upper, const float& lower)
+float math::clamp(const float& x, const float& lower, const float& upper)
 {
     return std::min(upper, std::max(x, lower));
 }

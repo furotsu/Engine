@@ -24,7 +24,7 @@ void Controller::init(Window& win, Scene& scene)
 
 	scene.addDirLight(Scene::DirectionalLight(XMVectorSet(-0.1f, -0.9f, 0.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f)));
 
-	scene.addFlashLight(Scene::FlashLight(XMVectorSet(0.0f, -50.0f, 0.0f, 0.0f), XMVectorSet(5.0f, 5.0f, 5.0f, 0.0f), XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),	0.91f, 0.82f));
+	scene.addFlashLight(Scene::SpotLight(XMVectorSet(0.0f, -50.0f, 0.0f, 0.0f), XMVectorSet(5.0f, 5.0f, 5.0f, 0.0f), XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),	0.91f, 0.82f));
 
 	m_camera = Camera(XMVectorSet(0.0f, 20.0f, 300.0f, 1.0f),  {0.0f, 0.0f, 0.0f});
 	m_camera.setPerspective(45.0f, win.m_width, win.m_height, 0.1f, 800.0f);

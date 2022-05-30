@@ -51,7 +51,6 @@ XMVECTOR Window::screenToNDC(const uint16_t& x, const uint16_t& y) const
 {
 	float xNDC = (2.0f * x) / m_width - 1.0f;
 	float yNDC = 1.0f - (2.0f * y) / m_height;
-	std::cout << "x: " <<  xNDC << " y: " << yNDC << std::endl;
 	return XMVectorSet(xNDC, yNDC, 1.0f, 1.0f);
 }
 

@@ -106,7 +106,7 @@ MSG Application::run()
 			controller.processFrame(window, scene);
 			window.flush();
 
-			//std::cout << "fps: " << 1.0f / m_deltaTime << std::endl;
+			std::cout << "fps: " << 1.0f / m_deltaTime << std::endl;
 		}
 	}
 	return msg;

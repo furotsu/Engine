@@ -1,14 +1,12 @@
 #pragma once
 
 #include <DirectXMath.h>
-/*
+using namespace DirectX;
 namespace math
 {
-	void invertOrthonormal(XMMATRIX& src, XMMATRIX& dst);
+	void invertOrthonormal(const XMMATRIX& src, XMMATRIX& dst);
 
-	void invertOrthogonal(XMMATRIX& src, XMMATRIX& dst);
+	void invertOrthogonal(const XMMATRIX& src, XMMATRIX& dst);
 
-	XMVECTOR rowAsVec3(const XMMATRIX&, int i);
-	void setRowAsVec3(XMMATRIX&, const XMVECTOR&, int);
+	inline void setRowAsVec3(XMMATRIX&, const XMVECTOR&, int);
 }
-*/

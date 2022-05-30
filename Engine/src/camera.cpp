@@ -9,11 +9,9 @@ void Camera::setPerspective(float fov, float width, float height, float nearP, f
 	m_proj = XMMatrixSet(
 		h, 0.0f, 0.0f, 0.0f,
 		0.0f, w, 0.0f, 0.0f,
-		0.0f, 0.0f, -(farP) / (-nearP + farP), -1.0f,
-		0.0f, 0.0f, -(nearP * farP) / (farP - nearP), 0.0f
+		0.0f, 0.0f, (farP) / (nearP - farP), -1.0f ,
+		0.0f, 0.0f, (nearP * farP)/(nearP - farP), 0.0f
 	);
-
-
 
 	m_projInv = XMMatrixInverse(nullptr, m_proj);
 
@@ -94,7 +92,6 @@ void Camera::addRelativeAngles(const Angles& angles)
 
 	math::normalizeQuat(transformation.rotation);
 
-
 	// optional, to remove accumulating floating point errors
 	// and keep the quaternion of length 1.0, so it represents a valid 3D rotation
 	// Also we can do it only from time to time, like every 100th call of rotating functions.
@@ -115,7 +112,7 @@ void Camera::updateMatrices()
 
 	updateBasis();
 
-	m_view = XMMatrixInverse(nullptr, m_viewInv);
+	math::invertOrthonormal(m_viewInv, m_view);
 
 
 	m_viewProj = m_view * m_proj;

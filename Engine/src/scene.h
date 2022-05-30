@@ -60,7 +60,7 @@ public:
 
 
 		Model() = default;
-		Model(XMVECTOR position, XMVECTOR scale, Angles rotation, const std::shared_ptr<Mesh>& mesh, const Material& material = Material());
+		Model(XMVECTOR position, XMVECTOR scale, const std::shared_ptr<Mesh>& mesh, const Material& material = Material());
 
 		XMVECTOR position();
 
@@ -129,7 +129,7 @@ public:
 		float m_outerCutOff;
 		FlashLight() = default;
 		FlashLight(DirectX::XMVECTOR position, DirectX::XMVECTOR color, DirectX::XMVECTOR direction, float innerCutOff, float outerCutOff,
-			float constTntensity = 1.0f, float linearInten = 0.014f, float quadInten = 0.007f);
+			float constTntensity = 1.0f, float linearInten = 0.034f, float quadInten = 0.03f);
 
 		DirectX::XMVECTOR illuminate(const DirectX::XMVECTOR& fragPos, const DirectX::XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& material) const;
 	};

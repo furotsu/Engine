@@ -171,8 +171,6 @@ void Scene::render(Window& window, Camera& camera)
 	BR = XMVector4Transform(BR, camera.m_projInv);
 	BL = XMVector4Transform(BL, camera.m_projInv);
 
-	//std::cout << XMVectorGetW(TL) << std::endl;
-
 	TL /=  XMVectorGetW(TL);
 	TR /=  XMVectorGetW(TR);
 	BR /=  XMVectorGetW(BR);
@@ -223,13 +221,14 @@ void Scene::addFlashLight(const FlashLight& light) { m_flashLights.push_back(lig
 
 void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos)
 {
-
 	XMVECTOR point = XMVector4Transform(mousePos, camera.m_projInv);
 	point /= XMVectorGetW(point);
 	point = XMVector4Transform(point, camera.m_viewInv);
+
 	ray r(camera.position(), point);
 	r.direction = -r.origin + point;
 	r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
+
 	pickedObjMoverQuery.intersection.reset();
 	findIntersection(r, pickedObjMoverQuery);
 }
@@ -264,7 +263,7 @@ XMVECTOR Scene::Model::position()
 	return m_modelMat.r[3];
 }
 
-Scene::Model::Model(XMVECTOR position, XMVECTOR scale, Angles rotation, const std::shared_ptr<Mesh>& mesh, const Material& material)
+Scene::Model::Model(XMVECTOR position, XMVECTOR scale, const std::shared_ptr<Mesh>& mesh, const Material& material)
 {
 	m_mesh = mesh;
 	m_transformation.position = position;
@@ -284,7 +283,6 @@ Scene::Model::Model(XMVECTOR position, XMVECTOR scale, Angles rotation, const st
 bool Scene::Model::hit(math::ray r, ObjRef& outRef, math::Intersection& rec, Material*& outMaterial)
 {
 	r.origin = XMVector4Transform(r.origin, m_modelInvMat);
-	r.direction = XMVector3Normalize(r.direction);
 
 	if (m_mesh->hit(r, rec))
 	{
@@ -292,6 +290,7 @@ bool Scene::Model::hit(math::ray r, ObjRef& outRef, math::Intersection& rec, Mat
 		outRef.object = this;
 		outMaterial = &material;
 		rec.point = XMVector4Transform(rec.point, m_modelMat);
+
 		return true;
 	}
 	return false;
@@ -323,7 +322,7 @@ XMVECTOR Scene::PointLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& 
 	XMVECTOR halfDir = XMVector3Normalize(lightDirection + viewDirection);
 
 	//diff
-	float attenuation = 1.0 / (m_quadraticIntens * m_quadraticIntens * distance * distance);
+	float attenuation = 1.0 / (m_quadraticIntens * distance * distance);
 
 	XMVECTOR diffuse = max(XMVectorGetX(XMVector3Dot(fragNorm, lightDirection)), 0.0f) * material->albedo * attenuation;
 
@@ -341,7 +340,6 @@ XMVECTOR Scene::DirectionalLight::illuminate(const XMVECTOR& fragPos, const XMVE
 	XMVECTOR viewDirection = XMVector3Normalize(cameraPos - fragPos);
 	XMVECTOR lightDirection = -XMVector3Normalize(m_direction);
 	XMVECTOR halfDir = XMVector3Normalize(lightDirection + viewDirection);
-
 
 	XMVECTOR diffuse = max(XMVectorGetX(XMVector3Dot(fragNorm, lightDirection)), 0.0f) * material->albedo;
 
@@ -361,14 +359,13 @@ XMVECTOR Scene::FlashLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& 
 	XMVECTOR halfDir = XMVector3Normalize(lightDirection + viewDirection);
 
 	//diff
-	float attenuation = 1.0 / (m_quadraticIntens * m_quadraticIntens * distance * distance);
+	float attenuation = 1.0 / (m_quadraticIntens * distance * distance);
 
 	XMVECTOR diffuse = max(XMVectorGetX(XMVector3Dot(fragNorm, lightDirection)), 0.0f) * material->albedo * attenuation;
 
 	//spec
 	float spec = pow(max(XMVectorGetX(XMVector3Dot(fragNorm, halfDir)), 0.0f), material->glossines) * material->specular;
 	XMVECTOR specular = XMVectorSet(spec, spec, spec, 0.0f);
-
 
 	// spotlight (soft edges)
 	float theta = XMVectorGetX(XMVector3Dot(lightDirection, -XMVector3Normalize(m_direction)));

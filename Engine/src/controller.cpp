@@ -15,12 +15,12 @@ void Controller::init(Window& win, Scene& scene)
 
 	scene.setSurface(Scene::Surface(Plane(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMVectorSet(0.0f, -100.0f, 0.0f, 0.0f)), greenRubber));
 
-	scene.addModel(Scene::Model(XMVectorSet(40.0f, -20.0f, -100.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), Angles(0.0f, 0.0f, 0.0f), cube, bronze));
+	scene.addModel(Scene::Model(XMVectorSet(40.0f, -20.0f, -100.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), cube, bronze));
 	scene.addSphere(Scene::Sphere(XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), 10.0f, bronze));
 
 	scene.setAmbient({ 0.2f, 0.2f, 0.2f, 0.0f });
 
-	scene.addPointLight(Scene::PointLight(XMVectorSet(130.0f, 60.0f, -110.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f)));
+	scene.addPointLight(Scene::PointLight(XMVectorSet(130.0f, 60.0f, -60.0f, 0.0f), XMVectorSet(0.9f, 0.3f, 0.3f, 0.0f)));
 
 	scene.addDirLight(Scene::DirectionalLight(XMVectorSet(-0.1f, -0.9f, 0.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f)));
 
@@ -46,7 +46,7 @@ void Controller::update(float deltaTime, WPARAM& wParam, Scene& scene, Window& w
 		if (m_lmbDown)
 		{
 
-			rotateCamera(m_currentPos.x - m_pressedPos.x, m_currentPos.y - m_pressedPos.y);
+			rotateCamera((m_currentPos.x - m_pressedPos.x)/(float)window.m_width, (m_currentPos.y - m_pressedPos.y)/(float)window.m_height);
 		}
 		if (m_rmbDown)
 		{

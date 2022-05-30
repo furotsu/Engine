@@ -20,9 +20,9 @@ namespace math
 			vertices[1] = y;
 			vertices[2] = z;
 
-			DirectX::XMVECTOR v1 = z - x;
-			DirectX::XMVECTOR v2 = z - y;
-			normal = DirectX::XMVector3Cross(v1, v2);
+			DirectX::XMVECTOR zx = x - z;
+			DirectX::XMVECTOR zy = y - z;
+			normal = XMVector3Normalize(XMVector3Cross(zx, zy));
 		}
 
 		bool hit(const ray& r, Intersection& rec, float tMin = RAY_MIN, float tMax = RAY_MAX) const;

@@ -8,7 +8,9 @@
 
 constexpr float FRAME_DURATION = 1.0f / 60.0f;
 constexpr float CAMERA_SPEED = 50.0f;
-constexpr float MOUSE_SENSITIVITY = 0.2f;
+
+// half of screen - 180 degrees/second 
+constexpr float MOUSE_SENSITIVITY = 180.0f;
 
 
 class Controller
@@ -17,7 +19,6 @@ public:
 	bool m_rmbDown;
 	bool m_lmbDown;
 	bool m_mouseMoved;
-
 	float m_cameraSpeed;
 	float m_mouseSensitivity;
 

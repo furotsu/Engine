@@ -1,69 +1,46 @@
 #include "matrixAlg.h"
 
-/*
-XMVECTOR math::rowAsVec3(const glm::mat4& m, int i)
+void math::setRowAsVec3(XMMATRIX& dst, const XMVECTOR& v, int row)
 {
-	XMVECTOR res;
-	res[0] = m[0][i];
-	res[1] = m[1][i];
-	res[2] = m[2][i];
-
-	return res;
+	dst.r[row] = XMVectorSet(XMVectorGetX(v), XMVectorGetY(v), XMVectorGetZ(v), XMVectorGetX(dst.r[row]));
 }
 
-void math::setRowAsVec3(glm::mat4& dst, const XMVECTOR& v, int row)
+void math::invertOrthonormal(const XMMATRIX& src, XMMATRIX& dst)
 {
-	dst[0][row] = v[0];
-	dst[1][row] = v[1];
-	dst[2][row] = v[2];
+
+	dst = XMMatrixSet
+	(
+		XMVectorGetX(src.r[0]), XMVectorGetX(src.r[1]), XMVectorGetX(src.r[2]), XMVectorGetW(src.r[0]),
+		XMVectorGetY(src.r[0]), XMVectorGetY(src.r[1]), XMVectorGetY(src.r[2]), XMVectorGetW(src.r[1]),
+		XMVectorGetZ(src.r[0]), XMVectorGetZ(src.r[1]), XMVectorGetZ(src.r[2]), XMVectorGetW(src.r[2]),
+		XMVectorGetX(src.r[3]), XMVectorGetY(src.r[3]), XMVectorGetZ(src.r[3]), XMVectorGetW(src.r[3])
+		);
+
+	dst.r[3] = -XMVectorScale(dst.r[0], XMVectorGetX(src.r[3])) - XMVectorScale(dst.r[1], XMVectorGetY(src.r[3])) - XMVectorScale(dst.r[2], XMVectorGetZ(src.r[3]));
+
+	dst.r[3] = XMVectorSet(XMVectorGetX(dst.r[3]), XMVectorGetY(dst.r[3]), XMVectorGetZ(dst.r[3]), 1.0f);
 }
 
-void math::invertOrthonormal(glm::mat4& src, glm::mat4& dst)
+void math::invertOrthogonal(const XMMATRIX& src, XMMATRIX& dst)
 {
-	glm::mat4 tmp = src;
+	dst = XMMatrixSet
+	(
+		XMVectorGetX(src.r[0]), XMVectorGetX(src.r[1]), XMVectorGetX(src.r[2]), XMVectorGetW(src.r[0]),
+		XMVectorGetY(src.r[0]), XMVectorGetY(src.r[1]), XMVectorGetY(src.r[2]), XMVectorGetW(src.r[1]),
+		XMVectorGetZ(src.r[0]), XMVectorGetZ(src.r[1]), XMVectorGetZ(src.r[2]), XMVectorGetW(src.r[2]),
+		XMVectorGetX(src.r[3]), XMVectorGetY(src.r[3]), XMVectorGetZ(src.r[3]), XMVectorGetW(src.r[3])
+	);
 
-	src = glm::transpose(src);
+	float lengthXYZ[3] = {XMVectorGetX(XMVector3Length(dst.r[0])), XMVectorGetX(XMVector3Length(dst.r[1])), XMVectorGetX(XMVector3Length(dst.r[2]))};
 
-	src[0][3] = tmp[0][3];
-	src[1][3] = tmp[1][3];
-	src[2][3] = tmp[2][3];
-	src[3] = tmp[3];
 
-	const XMVECTOR& pos = XMVECTOR(src[0][3], src[1][3], src[2][3]);
+	dst.r[0] = XMVectorDivide(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), XMVectorScale(dst.r[0], lengthXYZ[0]));
+	dst.r[1] = XMVectorDivide(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), XMVectorScale(dst.r[1], lengthXYZ[1]));
+	dst.r[2] = XMVectorDivide(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), XMVectorScale(dst.r[2], lengthXYZ[2]));
 
-	XMVECTOR tmpV = -pos[0] * rowAsVec3(dst, 0) - pos[1] * rowAsVec3(dst, 1) - pos[2] * rowAsVec3(dst, 2);
-	
-	dst[0][3] = tmpV[0];
-	dst[1][3] = tmpV[1];
-	dst[2][3] = tmpV[2];
+	dst.r[3] = -XMVectorScale(XMVectorScale(dst.r[0], XMVectorGetX(src.r[0])), 1.0f/lengthXYZ[0]) \
+				- XMVectorScale(XMVectorScale(dst.r[1], XMVectorGetX(src.r[1])), 1.0f / lengthXYZ[1]) \
+				- XMVectorScale(XMVectorScale(dst.r[2], XMVectorGetX(src.r[2])), 1.0f / lengthXYZ[2]);
 
-	dst[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	dst.r[3] = XMVectorSet(XMVectorGetX(dst.r[3]), XMVectorGetY(dst.r[3]), XMVectorGetZ(dst.r[3]), 1.0f);
 }
-
-void math::invertOrthogonal(glm::mat4& src, glm::mat4& dst)
-{
-	glm::mat4 tmp = src;
-
-	src = glm::transpose(src);
-
-	src[0][3] = tmp[0][3];
-	src[1][3] = tmp[1][3];
-	src[2][3] = tmp[2][3];
-	src[3] = tmp[3];
-
-	float lengthsXYZ[3] = { rowAsVec3(dst, 0).length(), rowAsVec3(dst, 1).length(), rowAsVec3(dst, 2).length() };
-
-
-	setRowAsVec3(dst, XMVECTOR(1.0f, 1.0f, 1.0f) / (rowAsVec3(dst, 0) * lengthsXYZ[0]), 0);
-	setRowAsVec3(dst, XMVECTOR(1.0f, 1.0f, 1.0f) / (rowAsVec3(dst, 1) * lengthsXYZ[1]), 1);
-	setRowAsVec3(dst, XMVECTOR(1.0f, 1.0f, 1.0f) / (rowAsVec3(dst, 2) * lengthsXYZ[2]), 2);
-
-	const XMVECTOR& pos = XMVECTOR(src[0][3], src[1][3], src[2][3]);
-
-	setRowAsVec3(dst, -pos[0] * rowAsVec3(dst, 0) / lengthsXYZ[0]
-		- pos[1] * rowAsVec3(dst, 1) / lengthsXYZ[1]
-		- pos[2] * rowAsVec3(dst, 2) / lengthsXYZ[2], 3);
-
-	dst[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-}
-*/

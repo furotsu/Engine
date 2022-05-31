@@ -5,8 +5,6 @@ using namespace DirectX;
 
 bool math::Triangle::hit(const ray& r, Intersection& rec, float tMin, float tMax) const
 {
-	XMVECTOR direction = XMVector3Normalize(r.direction);
-
 	float NdotRayDirection = XMVectorGetX(XMVector3Dot(normal, r.direction));
 
 	if (fabs(NdotRayDirection) < 0.01f)

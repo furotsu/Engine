@@ -13,6 +13,7 @@ Scene::Sphere::Sphere(XMVECTOR position, float radius, const Material& material)
 	this->center = position;
 	this->radius = radius;
 	this->material = material;
+	this->type = IntersectedType::Sphere;
 }
 
 XMVECTOR Scene::Sphere::position()
@@ -24,7 +25,7 @@ bool Scene::Sphere::hit(const math::ray& ray, ObjRef& outRef, math::Intersection
 {
 	if (math::Sphere::hit(ray, rec))
 	{
-		outRef.type = IntersectedType::Sphere;
+		outRef.type = this->type;
 		outRef.object = this;
 		outMaterial = &material;
 		return true;
@@ -43,6 +44,7 @@ Scene::Model::Model(XMVECTOR position, XMVECTOR scale, const std::shared_ptr<Mes
 	m_transformation.position = position;
 	m_transformation.scale = scale;
 	this->material = material;
+	this->type = IntersectedType::Model;
 
 	m_modelMat = XMMatrixSet(
 		XMVectorGetX(scale), 0.0f, 0.0f, 0.0f,
@@ -60,7 +62,7 @@ bool Scene::Model::hit(math::ray r, ObjRef& outRef, math::Intersection& rec, Mat
 
 	if (m_mesh->hit(r, rec))
 	{
-		outRef.type = IntersectedType::Model;
+		outRef.type = this->type;
 		outRef.object = this;
 		outMaterial = &material;
 		rec.point = XMVector4Transform(rec.point, m_modelMat);

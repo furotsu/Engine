@@ -26,6 +26,9 @@ void Controller::init(Window& win, Scene& scene)
 
 	scene.addFlashLight(Scene::SpotLight(XMVectorSet(0.0f, -50.0f, 0.0f, 0.0f), XMVectorSet(5.0f, 5.0f, 5.0f, 0.0f), XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),	0.91f, 0.82f));
 
+	pickedObjMoverQuery = Scene::IntersectionQuery();
+	pickedObjMoverQuery.intersection.reset();
+
 	m_camera = Camera(XMVectorSet(0.0f, 20.0f, 300.0f, 1.0f),  {0.0f, 0.0f, 0.0f});
 	m_camera.setPerspective(45.0f, win.m_width, win.m_height, 0.1f, 800.0f);
 	m_cameraSpeed = CAMERA_SPEED;
@@ -35,9 +38,10 @@ void Controller::init(Window& win, Scene& scene)
 	m_lmbDown = false;
 }
 
-void Controller::update(float deltaTime, WPARAM& wParam, Scene& scene, Window& window)
+void Controller::update(float deltaTime, Scene& scene, Window& window)
 {
 	m_deltaTime = deltaTime;
+	processInput();
 
 	if (m_mouseMoved)
 	{
@@ -50,7 +54,7 @@ void Controller::update(float deltaTime, WPARAM& wParam, Scene& scene, Window& w
 		}
 		if (m_rmbDown)
 		{
-			if (scene.pickedObjMoverQuery.mover)
+			if (pickedObjMoverQuery.mover)
 			{
 				GetCursorPos(&m_currentPos);
 				ScreenToClient(FindWindowA(NULL, "Engine"), &m_currentPos);
@@ -66,20 +70,29 @@ void Controller::update(float deltaTime, WPARAM& wParam, Scene& scene, Window& w
 
 				r.direction = XMVector3Normalize( - r.origin + point);
 				
-				XMVECTOR holdPoint = r.origin + r.direction * scene.distToPickedObj;
+				XMVECTOR holdPoint = r.origin + r.direction * pickedObjMoverQuery.distToPickedObj;
 			
-				XMVECTOR offset = XMVectorSet(XMVectorGetX(holdPoint) - XMVectorGetX(scene.pickedObjMoverQuery.mover->getPickedPos()),
-					XMVectorGetY(holdPoint) - XMVectorGetY(scene.pickedObjMoverQuery.mover->getPickedPos()),
-					XMVectorGetZ(holdPoint) - XMVectorGetZ(scene.pickedObjMoverQuery.mover->getPickedPos()), 0.0f);
+				XMVECTOR offset = XMVectorSet(XMVectorGetX(holdPoint) - XMVectorGetX(pickedObjMoverQuery.mover->getPickedPos()),
+					XMVectorGetY(holdPoint) - XMVectorGetY(pickedObjMoverQuery.mover->getPickedPos()),
+					XMVectorGetZ(holdPoint) - XMVectorGetZ(pickedObjMoverQuery.mover->getPickedPos()), 0.0f);
 
-				scene.pickedObjMoverQuery.mover->moveBy(offset);
+				pickedObjMoverQuery.mover->moveBy(offset);
 				m_mouseMoved = false;
 			}
 		}
 	}
 
-	processInput(wParam);
 	m_camera.updateMatrices();
+}
+
+void Controller::onKeyDown(char key)
+{
+	m_buttonsState[key] = true;
+}
+
+void Controller::onKeyUp(char key)
+{
+	m_buttonsState[key] = false;
 }
 
 void Controller::processFrame(Window& window, Scene& scene)
@@ -87,47 +100,54 @@ void Controller::processFrame(Window& window, Scene& scene)
 	scene.render(window, m_camera);
 }
 
-void Controller::processInput(WPARAM& wParam)
+void Controller::processInput()
 {
-	switch (wParam)
+	//iterate through all possible buttons
+	for (int i = 0; i != 128; i++)
 	{
-		case 'W':
+		if (m_buttonsState[i])
 		{
-			moveCamera(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f));
-		} break;
-		case 'A':
-		{
-			moveCamera(XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f));
-		} break;
-		case 'S':
-		{
-			moveCamera(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
-		} break;
-		case 'D':
-		{
-			moveCamera(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
-		} break;
-		case VK_CONTROL:
-		{
-			moveCamera(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f));
-		} break;
-		case VK_SPACE:
-		{
-			moveCamera(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-		}
-		break;
-		case 'E':
-		{
-			rotateCamera(-1.0f);
-		}
-		break;
-		case 'Q':
-		{
-			rotateCamera(1.0f);
-		}
-		break;
-		default:
-		{
+			switch (i)
+			{
+			case 'W':
+			{
+				moveCamera(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f));
+			} break;
+			case 'A':
+			{
+				moveCamera(XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f));
+			} break;
+			case 'S':
+			{
+				moveCamera(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
+			} break;
+			case 'D':
+			{
+				moveCamera(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
+			} break;
+			case VK_CONTROL:
+			{
+				moveCamera(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f));
+			} break;
+			case VK_SPACE:
+			{
+				moveCamera(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+			}
+			break;
+			case 'E':
+			{
+				rotateCamera(-1.0f);
+			}
+			break;
+			case 'Q':
+			{
+				rotateCamera(1.0f);
+			}
+			break;
+			default:
+			{
+			}
+			}
 		}
 	}
 	m_mouseMoved = true;
@@ -157,7 +177,7 @@ void Controller::rotateCamera(const float& direction)
 
 	res.pitch = 0.0f;
 	float d = (direction > 0) ? 1.0f : -1.0f;
-	res.roll = d * m_deltaTime * 10.0f;
+	res.roll = d * m_deltaTime * ROLL_ROTATION_SPEED;
 	res.yaw = 0.0f;
 
 	m_camera.addRelativeAngles(res);

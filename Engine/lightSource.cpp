@@ -73,6 +73,7 @@ Scene::PointLight::PointLight(XMVECTOR position, XMVECTOR color, float constInte
 	this->radius = LIGHTMODEL_SIZE;
 
 	this->material = Material(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 1.0f, 1.0f, XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f));
+	this->type = IntersectedType::PointLight;
 
 	m_constantIntens = constInten;
 	m_linearIntens = linearInten;
@@ -95,6 +96,7 @@ Scene::SpotLight::SpotLight(XMVECTOR position, XMVECTOR color, XMVECTOR directio
 	this->radius = LIGHTMODEL_SIZE;
 
 	this->material = Material(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 1.0f, 1.0f, XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f));
+	this->type = IntersectedType::FlashLight;
 
 	m_constantIntens = constTntensity;
 	m_linearIntens = linIntensity;

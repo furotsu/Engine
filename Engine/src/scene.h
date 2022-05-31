@@ -37,6 +37,7 @@ public:
 	{
 	public:
 		Material material;
+		IntersectedType type;
 
 		Sphere() = default;
 		Sphere(XMVECTOR position, float radius, const Material& material);
@@ -55,6 +56,7 @@ public:
 		XMMATRIX m_modelMat;
 		XMMATRIX m_modelInvMat;
 		std::shared_ptr<Mesh> m_mesh;
+		IntersectedType type;
 
 		Material material;
 
@@ -71,9 +73,6 @@ public:
 
 	class Surface
 	{
-		XMMATRIX  m_modelMat;
-		XMMATRIX  m_modelInvMat;
-
 		math::Plane plane;
 		Material material;
 
@@ -209,6 +208,7 @@ public:
 	{
 		Intersection intersection;
 		Material* materialPtr;
+		float distToPickedObj;
 
 		std::unique_ptr<Scene::IobjectMover> mover;
 	};
@@ -218,10 +218,7 @@ public:
 	std::vector<Model> m_models;
 	std::vector<Sphere> m_spheres;
 
-	XMVECTOR tmp;
 
-	IntersectionQuery pickedObjMoverQuery;
-	float distToPickedObj;
 
 	XMVECTOR m_ambientLight;
 	std::vector<PointLight> m_pointLights;
@@ -232,7 +229,7 @@ public:
 
 	XMVECTOR getPixelColor(const ray& r, const XMVECTOR& cameraPos);
 
-	bool findIntersection(const math::ray& r, Intersection& outNearest,  Material*& outMaterial);
+	bool findIntersection(const math::ray& r, Intersection& outNearest, Material*& outMaterial);
 	bool findIntersection(const ray& r, IntersectionQuery& query);
 
 	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light);
@@ -250,10 +247,12 @@ public:
 	void addDirLight(const DirectionalLight& light);
 	void addFlashLight(const SpotLight& light);
 
-	void pickObject(const Camera& camera, const XMVECTOR&);
+	void pickObject(const Camera& camera, const XMVECTOR&, IntersectionQuery&);
 
 protected:
 	void findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial);
+	bool findIntersectionShadow(const ray& r, Intersection& outNearest);
+
 };
 
 

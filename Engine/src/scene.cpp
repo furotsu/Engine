@@ -30,7 +30,7 @@ XMVECTOR Scene::getPixelColor(const ray& r,  const XMVECTOR& cameraPos)
 	return resColor;
 }
 
-bool Scene::findIntersection(const math::ray& r, Intersection& outNearest,  Material*& outMaterial)
+bool Scene::findIntersection(const math::ray& r, Intersection& outNearest, Material*& outMaterial)
 {
 	ObjRef ref = { nullptr, IntersectedType::NUM };
 
@@ -38,7 +38,6 @@ bool Scene::findIntersection(const math::ray& r, Intersection& outNearest,  Mate
 
 	return ref.type != IntersectedType::NUM;
 }
-
 
 bool Scene::findIntersection(const ray& r, IntersectionQuery& query)
 {
@@ -51,25 +50,25 @@ bool Scene::findIntersection(const ray& r, IntersectionQuery& query)
 	{
 		Scene::Sphere* sphere = static_cast<Scene::Sphere*>(ref.object);
 		query.mover.reset(new SphereMover(sphere, query.intersection.point));
-		distToPickedObj = query.intersection.hitParam;
+		query.distToPickedObj = query.intersection.hitParam;
 	}break;
 	case IntersectedType::Model:
 	{
 		Model* model = static_cast<Model*>(ref.object);
 		query.mover.reset(new ModelMover(model, query.intersection.point));
-		distToPickedObj = query.intersection.hitParam;
+		query.distToPickedObj = query.intersection.hitParam;
 	}break;
 	case IntersectedType::PointLight:
 	{
 		PointLight* model = static_cast<PointLight*>(ref.object);
 		query.mover.reset(new PointLightMover(model, query.intersection.point));
-		distToPickedObj = query.intersection.hitParam;
+		query.distToPickedObj = query.intersection.hitParam;
 	}break;
 	case IntersectedType::FlashLight:
 	{
 		SpotLight* model = static_cast<SpotLight*>(ref.object);
 		query.mover.reset(new FlashLightMover(model, query.intersection.point));
-		distToPickedObj = query.intersection.hitParam;
+		query.distToPickedObj = query.intersection.hitParam;
 	}break;
 	}
 	return ref.type != IntersectedType::NUM;
@@ -77,22 +76,38 @@ bool Scene::findIntersection(const ray& r, IntersectionQuery& query)
 
 void Scene::findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial)
 {
-	bool foundIntersection = false;
-
-	foundIntersection |= m_surface.hit(r, outRef, outNearest, outMaterial);
+	m_surface.hit(r, outRef, outNearest, outMaterial);
 
 	for (auto& sphere : m_spheres)
-		foundIntersection |= sphere.hit(r, outRef, outNearest, outMaterial);
+		sphere.hit(r, outRef, outNearest, outMaterial);
 
 	for (auto& model : m_models)
-		foundIntersection |= model.hit(r, outRef, outNearest, outMaterial);
+		model.hit(r, outRef, outNearest, outMaterial);
 
 	for (auto& light : m_pointLights)
-		foundIntersection |= light.hit(r, outRef, outNearest, outMaterial);
+		light.hit(r, outRef, outNearest, outMaterial);
 
 	for (auto& light : m_flashLights)
-		foundIntersection |= light.hit(r, outRef, outNearest, outMaterial);
+		light.hit(r, outRef, outNearest, outMaterial);
 }
+
+bool Scene::findIntersectionShadow(const ray& r, Intersection& outNearest)
+{
+	bool foundIntersection = false;
+	ObjRef ref = { nullptr, IntersectedType::NUM };
+	Material* material;
+
+	foundIntersection |= m_surface.hit(r, ref, outNearest, material);
+
+	for (auto& sphere : m_spheres)
+		foundIntersection |= sphere.hit(r, ref, outNearest, material);
+
+	for (auto& model : m_models)
+		foundIntersection |= model.hit(r, ref, outNearest, material);
+
+	return foundIntersection;
+}
+
 
 XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light)
 {
@@ -103,9 +118,7 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 	tmp.reset();
 	tmp.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
 
-	Material* materialShadow;
-
-	if (findIntersection(r, tmp, materialShadow))
+	if (findIntersectionShadow(r, tmp))
 	{
 		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
@@ -122,10 +135,8 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 
 	Intersection tmp;
 	tmp.reset();
-	Material* materialShadow;
 
-
-	if (findIntersection(r, tmp, materialShadow))
+	if (findIntersectionShadow(r, tmp))
 	{
 		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
@@ -143,9 +154,8 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 	Intersection tmp;
 	tmp.reset();
 	tmp.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
-	Material* materialShadow;
 
-	if (findIntersection(r, tmp, materialShadow))
+	if (findIntersectionShadow(r, tmp))
 	{
 		return  XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
@@ -220,7 +230,7 @@ void Scene::addPointLight(const PointLight& light) {m_pointLights.push_back(ligh
 void Scene::addDirLight(const DirectionalLight& light) { m_directionalLights.push_back(light); }
 void Scene::addFlashLight(const SpotLight& light) { m_flashLights.push_back(light); }
 
-void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos)
+void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos, IntersectionQuery& queryOut)
 {
 	XMVECTOR point = XMVector4Transform(mousePos, camera.m_projInv);
 	point /= XMVectorGetW(point);
@@ -230,6 +240,5 @@ void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos)
 	r.direction = -r.origin + point;
 	r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
 
-	pickedObjMoverQuery.intersection.reset();
-	findIntersection(r, pickedObjMoverQuery);
+	findIntersection(r, queryOut);
 }

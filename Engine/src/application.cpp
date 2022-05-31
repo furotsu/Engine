@@ -61,17 +61,22 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 		ScreenToClient(FindWindowA(NULL, "Engine"), &controller.m_pressedPos);
 		controller.m_rmbDown = true;
 		controller.m_currentPos = controller.m_pressedPos;
-		scene.pickObject(controller.m_camera, window.screenToNDC(controller.m_currentPos.x, controller.m_currentPos.y));
+		controller.pickedObjMoverQuery.intersection.reset();
+		scene.pickObject(controller.m_camera, window.screenToNDC(controller.m_currentPos.x, controller.m_currentPos.y), controller.pickedObjMoverQuery);
 	} break;
 	case WM_RBUTTONUP:
 	{
 		controller.m_rmbDown = false;
-		scene.pickedObjMoverQuery.mover = nullptr;
+		controller.pickedObjMoverQuery.mover = nullptr;
 	}
 	case WM_KEYDOWN:
 	{
-		lastWParam = wParam;
+		controller.onKeyDown((char)wParam);
 	} break;
+	case WM_KEYUP:
+	{
+		controller.onKeyUp((char)wParam);
+	}
 	}
 
 	// Handle any messages the switch statement didn't
@@ -101,8 +106,8 @@ MSG Application::run()
 		{
 
 			timer.recordTime();
-			controller.update(m_deltaTime, lastWParam, scene, window);
 			lastWParam = WPARAM();
+			controller.update(m_deltaTime, scene, window);
 			controller.processFrame(window, scene);
 			window.flush();
 

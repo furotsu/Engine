@@ -131,7 +131,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math;$(SolutionDir)Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math;$(SolutionDir)Engine\src;$(SolutionDir)Engine\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
@@ -142,25 +142,43 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="lightSource.cpp" />
+    <ClCompile Include="math\matrixAlg.cpp" />
+    <ClCompile Include="math\plane.cpp" />
+    <ClCompile Include="math\quaternion.cpp" />
     <ClCompile Include="math\sphere.cpp" />
+    <ClCompile Include="math\triangle.cpp" />
+    <ClCompile Include="math\utility.cpp" />
+    <ClCompile Include="modelMover.cpp" />
+    <ClCompile Include="src\application.cpp" />
+    <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\canvas.cpp" />
     <ClCompile Include="src\controller.cpp" />
-    <ClCompile Include="src\lightSource.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\mesh.cpp" />
+    <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cube.h" />
     <ClInclude Include="math\hitable.h" />
-    <ClInclude Include="math\mat4.h" />
+    <ClInclude Include="math\matrixAlg.h" />
+    <ClInclude Include="math\plane.h" />
+    <ClInclude Include="math\quaternion.h" />
     <ClInclude Include="math\ray.h" />
     <ClInclude Include="math\sphere.h" />
-    <ClInclude Include="math\vec3.h" />
-    <ClInclude Include="math\vec4.h" />
+    <ClInclude Include="math\triangle.h" />
+    <ClInclude Include="math\utility.h" />
+    <ClInclude Include="src\application.h" />
+    <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\canvas.h" />
     <ClInclude Include="src\controller.h" />
-    <ClInclude Include="src\lightSource.h" />
+    <ClInclude Include="src\material.h" />
+    <ClInclude Include="src\mesh.h" />
+    <ClInclude Include="src\model.h" />
     <ClInclude Include="src\scene.h" />
+    <ClInclude Include="src\timer.h" />
     <ClInclude Include="src\window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

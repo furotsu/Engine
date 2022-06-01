@@ -13,63 +13,129 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{05ee096e-2772-49b5-b54c-610e4028317f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World">
+      <UniqueIdentifier>{6f190467-579e-43f0-bba1-75561dc66a45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{2ca5a884-40a2-4130-b561-c5f4869dfca5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor">
+      <UniqueIdentifier>{0105c1e7-3fd3-4644-b6b6-f13324c6e5ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\application.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="math\sphere.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="src\window.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="src\lightSource.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\model.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="math\plane.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="math\quaternion.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="src\scene.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="math\sphere.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="math\triangle.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="src\controller.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="math\matrixAlg.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="src\canvas.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="modelMover.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="lightSource.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="math\utility.cpp">
+      <Filter>Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="math\ray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="math\sphere.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="math\vec3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="math\hitable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="math\mat4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="math\vec4.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\lightSource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\controller.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\application.h">
+      <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="src\canvas.h">
-      <Filter>Header Files</Filter>
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\window.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="math\matrixAlg.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\plane.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\quaternion.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\sphere.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\triangle.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\hitable.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mesh.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\model.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\material.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="math\ray.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\scene.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\camera.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="cube.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="math\utility.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\timer.h">
+      <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

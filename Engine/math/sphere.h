@@ -2,27 +2,26 @@
 
 #include "hitable.h"
 
-class Sphere
+namespace math
 {
-public:
-	vec3 center;
-	float radius;
-
-	Sphere() :radius(0) {};
-	Sphere(vec3 center, float radius)
-		: center(center), radius(radius)
+	class Sphere
 	{
-	}
+	public:
+		DirectX::XMVECTOR center;
+		float radius;
 
-	bool hit(const ray& r, hitRecord& rec, float tMin = RAY_MIN, float tMax = RAY_MAX) const;
+		Sphere() = default;
+		Sphere(DirectX::XMVECTOR center, float radius)
+			: center(center), radius(radius)
+		{
+		}
 
-	inline vec3 getCenter() const { return center; }
-	inline float getRadius() const { return radius; }
+		bool hit(const ray& r, Intersection& rec, float tMin = RAY_MIN, float tMax = RAY_MAX) const;
 
-	void setCenter(vec3 newCenter) ;
-	void setRadius(float newRadius);
+		inline DirectX::XMVECTOR getCenter() const { return center; }
+		inline float getRadius() const { return radius; }
 
-};
+	};
 
-
+}
 

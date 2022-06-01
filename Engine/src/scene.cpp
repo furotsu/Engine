@@ -1,50 +1,244 @@
 #include "scene.h"
-
+#include <math.h>
+#include <algorithm>
 
 // For each pixel determine what color it should 
 //	   based on whether ray hit any object or not 
-vec3 Scene::getPixelColor(const ray& r)
+XMVECTOR Scene::getPixelColor(const ray& r,  const XMVECTOR& cameraPos)
 {
-	hitRecord hr;
+	Material* material;
+	Intersection hr;
+	hr.reset();
 
-	/*
-	if (r.origin.x() == m_light.m_position.x() || r.origin.y() == m_light.m_position.y())
+	// set initial value as a sky color
+	XMVECTOR resColor = XMVectorSet(0.678f, 0.847f, 0.902f, 0.0f);
+
+	if (findIntersection(r, hr, material))
 	{
-		return vec3(1.0f, 0.0f, 0.0f);
+		resColor = material->emmision + m_ambientLight * material->albedo;
+
+		for (auto& l0 : m_pointLights)
+			resColor += illuminate(hr, material, cameraPos, l0);
+
+		for (auto& l1 : m_directionalLights)
+			resColor += illuminate(hr, material, cameraPos, l1);
+
+		for (auto& l2 : m_flashLights)
+			resColor += illuminate(hr, material, cameraPos, l2);
 	}
 	
-	*/ 
-	if (sph.hit(r, hr))
-	{
-		vec3 resultColor(0.8f, 0.2f, 0.2f);
-		
-		return resultColor;
-	}
-
-	vec3 UDirection = unitVector(r.origin);
-	float t = 0.5f * (UDirection.y() + 1.0f);
-
-	return vec3(0.5f, 0.7f, 0.9f);
+	return resColor;
 }
 
-void Scene::render(Window& window)
+bool Scene::findIntersection(const math::ray& r, Intersection& outNearest, Material*& outMaterial)
 {
-	vec3 origin(0.0f, 0.0f, 0.0f);
-	vec3 direction(0.0f, 0.0f, -1.0f);
+	ObjRef ref = { nullptr, IntersectedType::NUM };
+
+	findIntersectionInternal(r, ref, outNearest, outMaterial);
+
+	return ref.type != IntersectedType::NUM;
+}
+
+bool Scene::findIntersection(const ray& r, IntersectionQuery& query)
+{
+	ObjRef ref = { nullptr, IntersectedType::NUM };
+
+	findIntersectionInternal(r, ref, query.intersection, query.materialPtr);
+	switch (ref.type)
+	{
+	case IntersectedType::Sphere:
+	{
+		Scene::Sphere* sphere = static_cast<Scene::Sphere*>(ref.object);
+		query.mover.reset(new SphereMover(sphere, query.intersection.point));
+		query.distToPickedObj = query.intersection.hitParam;
+	}break;
+	case IntersectedType::Model:
+	{
+		Model* model = static_cast<Model*>(ref.object);
+		query.mover.reset(new ModelMover(model, query.intersection.point));
+		query.distToPickedObj = query.intersection.hitParam;
+	}break;
+	case IntersectedType::PointLight:
+	{
+		PointLight* model = static_cast<PointLight*>(ref.object);
+		query.mover.reset(new PointLightMover(model, query.intersection.point));
+		query.distToPickedObj = query.intersection.hitParam;
+	}break;
+	case IntersectedType::FlashLight:
+	{
+		SpotLight* model = static_cast<SpotLight*>(ref.object);
+		query.mover.reset(new FlashLightMover(model, query.intersection.point));
+		query.distToPickedObj = query.intersection.hitParam;
+	}break;
+	}
+	return ref.type != IntersectedType::NUM;
+}
+
+void Scene::findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial)
+{
+	m_surface.hit(r, outRef, outNearest, outMaterial);
+
+	for (auto& sphere : m_spheres)
+		sphere.hit(r, outRef, outNearest, outMaterial);
+
+	for (auto& model : m_models)
+		model.hit(r, outRef, outNearest, outMaterial);
+
+	for (auto& light : m_pointLights)
+		light.hit(r, outRef, outNearest, outMaterial);
+
+	for (auto& light : m_flashLights)
+		light.hit(r, outRef, outNearest, outMaterial);
+}
+
+bool Scene::findIntersectionShadow(const ray& r, Intersection& outNearest)
+{
+	bool foundIntersection = false;
+	ObjRef ref = { nullptr, IntersectedType::NUM };
+	Material* material;
+
+	foundIntersection |= m_surface.hit(r, ref, outNearest, material);
+
+	for (auto& sphere : m_spheres)
+		foundIntersection |= sphere.hit(r, ref, outNearest, material);
+
+	for (auto& model : m_models)
+		foundIntersection |= model.hit(r, ref, outNearest, material);
+
+	return foundIntersection;
+}
+
+
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light)
+{
+	// adding small offset to avoid self-shadowing artifact
+	ray r(hr.point + 1.0f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
+
+	Intersection tmp;
+	tmp.reset();
+	tmp.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
+
+	if (findIntersectionShadow(r, tmp))
+	{
+		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		return light.illuminate(hr.point, hr.normal, cameraPos, material);
+	}
+}
+
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light)
+{
+	// adding small offset to avoid self-shadowing artifact
+	ray r(hr.point + 0.01f * hr.normal, -light.m_direction);
+
+	Intersection tmp;
+	tmp.reset();
+
+	if (findIntersectionShadow(r, tmp))
+	{
+		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		return light.illuminate(hr.point, hr.normal, cameraPos, material);
+	}
+}
+
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light)
+{
+	// adding small offset to avoid self-shadowing artifact
+	ray r(hr.point + 1.0f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
+
+	Intersection tmp;
+	tmp.reset();
+	tmp.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
+
+	if (findIntersectionShadow(r, tmp))
+	{
+		return  XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+	else
+	{
+		return light.illuminate(hr.point, hr.normal, cameraPos, material);
+	}
+}
+
+void Scene::render(Window& window, Camera& camera)
+{
+	ray r;
+	XMVECTOR point;
+
+	r.origin = camera.position();
+	
+	XMVECTOR TL = XMVectorSet(-1.0f, 1.0f, 1.0f, 1.0f);
+	XMVECTOR TR = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+	XMVECTOR BR = XMVectorSet(1.0f, -1.0f, 1.0f, 1.0f);
+	XMVECTOR BL = XMVectorSet(-1.0f, -1.0f, 1.0f, 1.0f);
+
+	TL = XMVector4Transform(TL, camera.m_projInv);
+	TR = XMVector4Transform(TR, camera.m_projInv);
+	BR = XMVector4Transform(BR, camera.m_projInv);
+	BL = XMVector4Transform(BL, camera.m_projInv);
+
+	TL /=  XMVectorGetW(TL);
+	TR /=  XMVectorGetW(TR);
+	BR /=  XMVectorGetW(BR);
+	BL /=  XMVectorGetW(BL);
+
+	TL = XMVector4Transform(TL, camera.m_viewInv);
+	TR = XMVector4Transform(TR, camera.m_viewInv);
+	BR = XMVector4Transform(BR, camera.m_viewInv);
+	BL = XMVector4Transform(BL, camera.m_viewInv);
 
 	for (int h = 0; h < window.canvas.getHeight(); h++)
 	{
 		for (int w = 0; w < window.canvas.getWidth(); w++)
 		{
-			ray r(origin + vec3(w, h, 0.0f), direction);
-			vec3 col = getPixelColor(r);
+			r.direction =  -r.origin + (BL + (BR - BL) * (w + 0.5f)/window.canvas.getWidth() + (TL - BL) * (window.canvas.getHeight() - h + 0.5f) / window.canvas.getHeight());
+			r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
+			XMVECTOR col = getPixelColor(r, camera.position());
 
-			window.canvas.setPixel(w, h, col.r() * 256, col.g() * 256, col.b() * 256);
+			float r = XMVectorGetX(col) < 1.0f ? XMVectorGetX(col) : 0.99f;
+			float g = XMVectorGetY(col) < 1.0f ? XMVectorGetY(col) : 0.99f;
+			float b = XMVectorGetZ(col) < 1.0f ? XMVectorGetZ(col) : 0.99f;
+			
+			window.canvas.setPixel(w, h, r * 255, g * 255, b * 255);
 		}
 	}
 }
 
-void Scene::addSphere(const vec3& position, const float& radius)
+void Scene::addSphere(const Sphere& sphereModel)
 {
-	sph = Sphere(position, radius);
+	m_spheres.push_back(sphereModel);
+}
+
+void Scene::addModel(Model model)
+{
+	m_models.push_back(model);
+}
+
+void Scene::setSurface(Surface surface)
+{
+	m_surface = surface;
+}
+
+void Scene::setAmbient(XMVECTOR ambient) { m_ambientLight = ambient; }
+
+void Scene::addPointLight(const PointLight& light) {m_pointLights.push_back(light);}
+void Scene::addDirLight(const DirectionalLight& light) { m_directionalLights.push_back(light); }
+void Scene::addFlashLight(const SpotLight& light) { m_flashLights.push_back(light); }
+
+void Scene::pickObject(const Camera& camera, const XMVECTOR& mousePos, IntersectionQuery& queryOut)
+{
+	XMVECTOR point = XMVector4Transform(mousePos, camera.m_projInv);
+	point /= XMVectorGetW(point);
+	point = XMVector4Transform(point, camera.m_viewInv);
+
+	ray r(camera.position(), point);
+	r.direction = -r.origin + point;
+	r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
+
+	findIntersection(r, queryOut);
 }

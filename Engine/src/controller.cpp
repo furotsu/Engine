@@ -104,13 +104,13 @@ void Controller::update(float deltaTime, Scene& scene, Window& window)
 	m_camera.updateMatrices();
 }
 
-void Controller::onKeyDown(int key)
+void Controller::onKeyDown(uint16_t key)
 {
 	m_buttonsState[key] = true;
-	m_keyup = true;
+	m_keydown = true;
 }
 
-void Controller::onKeyUp(int key)
+void Controller::onKeyUp(uint16_t key)
 {
 	m_buttonsState[key] = false;
 }
@@ -163,19 +163,19 @@ void Controller::processInput()
 			}break;
 			case VK_OEM_PLUS:
 			{
-				EVchange += m_keyup ? 1.0f : 0.0f;
-				m_keyup = false;
+				EVchange += m_keydown ? 1.0f : 0.0f;
+				m_keydown = false;
 
 			}break;
 			case VK_OEM_MINUS:
 			{
-				EVchange -= m_keyup ? 1.0f : 0.0f;
-				m_keyup = false;
+				EVchange -= m_keydown ? 1.0f : 0.0f;
+				m_keydown = false;
 			}break;
 			case 'R':
 			{
-				m_reflectionsOn = m_keyup ? !m_reflectionsOn : m_reflectionsOn;
-				m_keyup = false;
+				m_reflectionsOn = m_keydown ? !m_reflectionsOn : m_reflectionsOn;
+				m_keydown = false;
 			}
 			default:
 			{

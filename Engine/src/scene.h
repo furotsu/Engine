@@ -17,8 +17,9 @@
 using namespace math;
 
 constexpr float LIGHTMODEL_SIZE = 5.0f;
-constexpr uint32_t MAX_REFLECTION_DEPTH = 2u;
+constexpr uint32_t MAX_REFLECTION_DEPTH = 3u;
 constexpr float MAX_REFLECTION_ROUGHNESS = 0.12f;
+constexpr float REFLECTION_ROUGNESS_MULTIPLIER = 1.0f / MAX_REFLECTION_ROUGHNESS;
 
 XMVECTOR frensel(float NdotL, const XMVECTOR& F0);
 float smith(float rough2, float NoV, float NoL);
@@ -251,7 +252,7 @@ public:
 	bool findIntersection(const ray& r, IntersectionQuery& query);
 
 	
-	XMVECTOR illuminate(ray& r, Intersection& hr, Material*& material);
+	XMVECTOR illuminate(ray& r, Intersection& hr, Material*& material, uint32_t depth = 1u);
 
 	void render(Window& w, Camera& camera, ParallelExecutor& executor);
 
@@ -268,8 +269,8 @@ public:
 
 protected:
 	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light, uint32_t depth = 1u);
-	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light);
-	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light);
+	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light, uint32_t depth = 1u);
+	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light, uint32_t depth = 1u);
 
 	void findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial);
 	bool findIntersectionShadow(const ray& r, Intersection& outNearest, Material*& outMaterial);

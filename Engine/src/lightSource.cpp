@@ -48,7 +48,7 @@ XMVECTOR Scene::PointLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& 
 
 	XMVECTOR metalAlb = math::lerp(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), material->albedoMetallic, material->metalness);
 
-	XMVECTOR spec =  XMVectorScale(Fspek, G*D*0.25f / (NoV + 0.001f));
+	XMVECTOR spec = metalAlb * XMVectorScale(Fspek, G*D*0.25f / (NoV + 0.001f));
 
 	//diffuse
 	XMVECTOR Fdiff = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) - math::clamp3(frensel(NoL, material->F0), 0.0f, 1.0f);
@@ -57,7 +57,7 @@ XMVECTOR Scene::PointLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& 
 	float solidAngle = 2.0f * std::asin(this->radius / distance);
 	float attenuation = solidAngle / (2.0f * M_PI);	
 
-	XMVECTOR diff = Fdiff* material->albedo * m_lightColor * attenuation;
+	XMVECTOR diff = XMVectorScale(Fdiff* material->albedo * m_lightColor * attenuation, 1.0f/M_PI);
 
 	return  math::maxVec3( diff + spec, XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f)) * m_lightPower;
 }
@@ -88,7 +88,8 @@ XMVECTOR Scene::DirectionalLight::illuminate(const XMVECTOR& fragPos, const XMVE
 
 	//diffuse
 	XMVECTOR Fdiff = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) - math::clamp3(frensel(NoL, material->F0), 0.0f, 1.0f);
-	XMVECTOR diff = Fdiff * material->albedo * m_lightColor;
+
+	XMVECTOR diff = XMVectorScale(Fdiff * material->albedo * m_lightColor, 1.0f / M_PI);
 
 	return  math::maxVec3(diff + spec, XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f)) * m_lightPower;
 }
@@ -122,7 +123,7 @@ XMVECTOR Scene::SpotLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& f
 	float solidAngle = 2.0f * std::asin(this->radius / distance);
 	float attenuation = solidAngle / (2.0f * M_PI);
 
-	XMVECTOR diff = Fdiff * material->albedo * m_lightColor * attenuation;
+	XMVECTOR diff = XMVectorScale(Fdiff * material->albedo * m_lightColor * attenuation, 1.0f / M_PI);
 
 	// spotlight (soft edges)
 	float theta = XMVectorGetX(XMVector3Dot(lightDirection, -XMVector3Normalize(m_direction)));

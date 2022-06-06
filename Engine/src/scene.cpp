@@ -59,29 +59,6 @@ void Scene::computePixelColor(uint32_t posX, uint32_t posY, Window& win)
 	win.canvas.setPixel(posX, posY, XMVectorGetX(col) * 255, XMVectorGetY(col) * 255, XMVectorGetZ(col) * 255);
 }
 
-XMVECTOR Scene::illuminate(ray& r, Intersection& hr, Material*& material)
-{
-	// set initial value as a sky color
-	XMVECTOR color = m_ambientLight;
-	if (findIntersection(r, hr, material))
-	{
-		color = (material->emmision + m_ambientLight) * material->albedo;
-
-		if (XMVectorGetX(material->emmision) == 0.0f)
-		{
-			for (auto& l0 : m_pointLights)
-				color += illuminate(hr, material, cameraPos, l0);
-
-			for (auto& l1 : m_directionalLights)
-				color += illuminate(hr, material, cameraPos, l1);
-
-			for (auto& l2 : m_flashLights)
-				color += illuminate(hr, material, cameraPos, l2);
-		}
-	}
-	return color;
-}
-
 bool Scene::findIntersection(const math::ray& r, Intersection& outNearest, Material*& outMaterial)
 {
 	ObjRef ref = { nullptr, IntersectedType::NUM };
@@ -159,6 +136,29 @@ bool Scene::findIntersectionShadow(const ray& r, Intersection& outNearest, Mater
 	return foundIntersection;
 }
 
+XMVECTOR Scene::illuminate(ray& r, Intersection& hr, Material*& material, uint32_t depth)
+{
+	// set initial value as a sky color
+	XMVECTOR color = m_ambientLight;
+	if (findIntersection(r, hr, material))
+	{
+		color = (material->emmision + m_ambientLight) * material->albedo;
+
+		if (XMVectorGetX(material->emmision) == 0.0f)
+		{
+			for (auto& l0 : m_pointLights)
+				color += illuminate(hr, material, cameraPos, l0, depth);
+
+			for (auto& l1 : m_directionalLights)
+				color += illuminate(hr, material, cameraPos, l1, depth);
+
+			for (auto& l2 : m_flashLights)
+				color += illuminate(hr, material, cameraPos, l2, depth);
+		}
+	}
+	return color;
+}
+
 XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light, uint32_t depth)
 {
 	// adding small offset to avoid self-shadowing artifact
@@ -181,14 +181,14 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 		r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
 		hr2.reset();
 
-		XMVECTOR colorRefl = illuminate(r, hr2, mat);
-		return math::lerp(colorRefl, color, 1.0f / MAX_REFLECTION_ROUGHNESS * material->roughness);
+		XMVECTOR colorRefl = illuminate(r, hr2, mat, ++depth);
+		return math::lerp(colorRefl, color, REFLECTION_ROUGNESS_MULTIPLIER * material->roughness);
 	}
 	
 	return color;
 }
 
-XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light)
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light, uint32_t depth)
 {
 	// adding small offset to avoid self-shadowing artifact
 	ray r(hr.point + 0.01f * hr.normal, -light.m_direction);
@@ -204,20 +204,20 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 	
 	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
 
-	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS)
+	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS && depth < MAX_REFLECTION_DEPTH)
 	{
 		r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
 		hr2.reset();
 
 		// set initial value as a sky color
-		XMVECTOR colorRefl = illuminate(r, hr2, mat);
-		return math::lerp(colorRefl, color, 10.0f * material->roughness);
+		XMVECTOR colorRefl = illuminate(r, hr2, mat, ++depth);
+		return math::lerp(colorRefl, color, REFLECTION_ROUGNESS_MULTIPLIER * material->roughness);
 	}
 
 	return color;
 }
 
-XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light)
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light, uint32_t depth)
 {
 	// adding small offset to avoid self-shadowing artifact
 	// adding small offset to avoid self-shadowing artifact
@@ -235,14 +235,14 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 
 	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
 
-	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS)
+	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS && depth < MAX_REFLECTION_DEPTH)
 	{
 		r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
 		hr2.reset();
 
 		// set initial value as a sky color
-		XMVECTOR colorRefl = illuminate(r, hr2, mat);
-		return math::lerp(colorRefl, color, 10.0f * material->roughness);
+		XMVECTOR colorRefl = illuminate(r, hr2, mat, ++depth);
+		return math::lerp(colorRefl, color, REFLECTION_ROUGNESS_MULTIPLIER * material->roughness);
 	}
 
 	return color;

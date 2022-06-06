@@ -19,7 +19,7 @@ class Controller
 public:
 	bool m_rmbDown;
 	bool m_lmbDown;
-	bool m_keyup;
+	bool m_keydown;
 
 	float EVchange;
 	bool m_mouseMoved;
@@ -45,8 +45,8 @@ public:
 
 	void update(float deltaTime, Scene& scene, Window& window);
 
-	void onKeyDown(int key);
-	void onKeyUp(int key);
+	void onKeyDown(uint16_t key);
+	void onKeyUp(uint16_t key);
 
 	void processFrame(Window& window, Scene& scene, ParallelExecutor& executor);
 

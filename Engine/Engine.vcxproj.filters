@@ -69,14 +69,17 @@
     <ClCompile Include="src\camera.cpp">
       <Filter>World</Filter>
     </ClCompile>
-    <ClCompile Include="modelMover.cpp">
+    <ClCompile Include="src\modelMover.cpp">
       <Filter>Actor</Filter>
     </ClCompile>
-    <ClCompile Include="lightSource.cpp">
+    <ClCompile Include="src\lightSource.cpp">
       <Filter>World</Filter>
     </ClCompile>
     <ClCompile Include="math\utility.cpp">
       <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\parallelExecutor.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +139,12 @@
     </ClInclude>
     <ClInclude Include="src\timer.h">
       <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\parallelExecutor.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cube.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

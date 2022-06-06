@@ -2,32 +2,84 @@
 #include <math.h>
 #include <algorithm>
 
+
+XMVECTOR acesHdr2Ldr(const XMVECTOR& hdr)
+{
+	XMMATRIX m1 = XMMatrixSet(
+		0.59719f, 0.07600f, 0.02840f, 0.0f,
+		0.35458f, 0.90834f, 0.13383f, 0.0f,
+		0.04823f, 0.01566f, 0.83777f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f
+	);
+	XMMATRIX m2 = XMMatrixSet(
+		1.60475f, -0.10208, -0.00327f, 0.0f,
+		-0.53108f, 1.10813, -0.07276f, 0.0f,
+		-0.07367f, -0.00605, 1.07602f, 0.0f,
+		0.0f, 0.0f, 0.0f, 0.0f
+	);
+	XMVECTOR v = XMVector3Transform(hdr, m1);
+	XMVECTOR a = v * (v + XMVectorSet(0.0245786f, 0.0245786f, 0.0245786f, 0.0f)) - XMVectorSet(0.000090537f, 0.000090537f, 0.000090537f, 0.0f);
+	XMVECTOR b = v * (XMVectorSet(0.983729f, 0.983729f, 0.983729f, 0.0f) * v + XMVectorSet(0.4329510f, 0.4329510f, 0.4329510f, 0.0f)) + XMVectorSet(0.238081f, 0.238081f, 0.238081f, 0.0f);
+	XMVECTOR ldr = math::clamp3(XMVector3Transform(a / b, m2), 0.0f, 1.0f);
+	return ldr;
+}
+
+XMVECTOR adjustExposure(const XMVECTOR& color, float EV100)
+{
+	float LMax = (78.0f / (0.65f * 100.0f)) * powf(2.0f, EV100);
+	return color * (1.0f / LMax);
+}
+
+XMVECTOR correctGamma(const XMVECTOR& color, float gamma)
+{
+	XMVECTOR g = XMVectorSet(gamma, gamma, gamma, 0.0f);
+	return XMVectorPow(color, XMVectorDivide(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), g));
+}
+
+
 // For each pixel determine what color it should 
 //	   based on whether ray hit any object or not 
-XMVECTOR Scene::getPixelColor(const ray& r,  const XMVECTOR& cameraPos)
+void Scene::computePixelColor(uint32_t posX, uint32_t posY, Window& win)
 {
+	ray r;
+	r.origin = cameraPos;
+	r.direction = -r.origin + (BL + (BR - BL) * (posX + 0.5f) / win.canvas.getWidth() + (TL - BL) * (win.canvas.getHeight() - posY + 0.5f) / win.canvas.getHeight());
+	r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
+
 	Material* material;
 	Intersection hr;
 	hr.reset();
 
-	// set initial value as a sky color
-	XMVECTOR resColor = XMVectorSet(0.678f, 0.847f, 0.902f, 0.0f);
+	XMVECTOR col = illuminate(r, hr, material);
 
+	col = adjustExposure(col, EV100);
+	col = acesHdr2Ldr(col);
+	col = correctGamma(col, 2.2f);
+
+	win.canvas.setPixel(posX, posY, XMVectorGetX(col) * 255, XMVectorGetY(col) * 255, XMVectorGetZ(col) * 255);
+}
+
+XMVECTOR Scene::illuminate(ray& r, Intersection& hr, Material*& material)
+{
+	// set initial value as a sky color
+	XMVECTOR color = m_ambientLight;
 	if (findIntersection(r, hr, material))
 	{
-		resColor = material->emmision + m_ambientLight * material->albedo;
+		color = (material->emmision + m_ambientLight) * material->albedo;
 
-		for (auto& l0 : m_pointLights)
-			resColor += illuminate(hr, material, cameraPos, l0);
+		if (XMVectorGetX(material->emmision) == 0.0f)
+		{
+			for (auto& l0 : m_pointLights)
+				color += illuminate(hr, material, cameraPos, l0);
 
-		for (auto& l1 : m_directionalLights)
-			resColor += illuminate(hr, material, cameraPos, l1);
+			for (auto& l1 : m_directionalLights)
+				color += illuminate(hr, material, cameraPos, l1);
 
-		for (auto& l2 : m_flashLights)
-			resColor += illuminate(hr, material, cameraPos, l2);
+			for (auto& l2 : m_flashLights)
+				color += illuminate(hr, material, cameraPos, l2);
+		}
 	}
-	
-	return resColor;
+	return color;
 }
 
 bool Scene::findIntersection(const math::ray& r, Intersection& outNearest, Material*& outMaterial)
@@ -91,41 +143,49 @@ void Scene::findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection&
 		light.hit(r, outRef, outNearest, outMaterial);
 }
 
-bool Scene::findIntersectionShadow(const ray& r, Intersection& outNearest)
+bool Scene::findIntersectionShadow(const ray& r, Intersection& outNearest, Material*& outMaterial)
 {
 	bool foundIntersection = false;
 	ObjRef ref = { nullptr, IntersectedType::NUM };
-	Material* material;
 
-	foundIntersection |= m_surface.hit(r, ref, outNearest, material);
+	foundIntersection |= m_surface.hit(r, ref, outNearest, outMaterial);
 
 	for (auto& sphere : m_spheres)
-		foundIntersection |= sphere.hit(r, ref, outNearest, material);
+		foundIntersection |= sphere.hit(r, ref, outNearest, outMaterial);
 
 	for (auto& model : m_models)
-		foundIntersection |= model.hit(r, ref, outNearest, material);
+		foundIntersection |= model.hit(r, ref, outNearest, outMaterial);
 
 	return foundIntersection;
 }
 
-
-XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light)
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light, uint32_t depth)
 {
 	// adding small offset to avoid self-shadowing artifact
 	ray r(hr.point + 1.0f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
 
-	Intersection tmp;
-	tmp.reset();
-	tmp.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
+	Intersection hr2;
+	Material* mat;
+	hr2.reset();
+	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
 
-	if (findIntersectionShadow(r, tmp))
+	if (findIntersectionShadow(r, hr2, mat) && shadowsOn)
 	{
 		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
-	else
+
+	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
+
+	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS && depth < MAX_REFLECTION_DEPTH)
 	{
-		return light.illuminate(hr.point, hr.normal, cameraPos, material);
+		r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
+		hr2.reset();
+
+		XMVECTOR colorRefl = illuminate(r, hr2, mat);
+		return math::lerp(colorRefl, color, 1.0f / MAX_REFLECTION_ROUGHNESS * material->roughness);
 	}
+	
+	return color;
 }
 
 XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light)
@@ -133,49 +193,72 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 	// adding small offset to avoid self-shadowing artifact
 	ray r(hr.point + 0.01f * hr.normal, -light.m_direction);
 
-	Intersection tmp;
-	tmp.reset();
+	Intersection hr2;
+	hr2.reset();
+	Material* mat;
 
-	if (findIntersectionShadow(r, tmp))
+	if (findIntersectionShadow(r, hr2, mat) && shadowsOn)
 	{
 		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
-	else
+	
+	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
+
+	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS)
 	{
-		return light.illuminate(hr.point, hr.normal, cameraPos, material);
+		r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
+		hr2.reset();
+
+		// set initial value as a sky color
+		XMVECTOR colorRefl = illuminate(r, hr2, mat);
+		return math::lerp(colorRefl, color, 10.0f * material->roughness);
 	}
+
+	return color;
 }
 
 XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light)
 {
 	// adding small offset to avoid self-shadowing artifact
+	// adding small offset to avoid self-shadowing artifact
 	ray r(hr.point + 1.0f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
 
-	Intersection tmp;
-	tmp.reset();
-	tmp.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
+	Intersection hr2;
+	Material* mat;
+	hr2.reset();
+	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
 
-	if (findIntersectionShadow(r, tmp))
+	if (findIntersectionShadow(r, hr2, mat) && shadowsOn)
 	{
-		return  XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
-	else
+
+	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
+
+	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS)
 	{
-		return light.illuminate(hr.point, hr.normal, cameraPos, material);
+		r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
+		hr2.reset();
+
+		// set initial value as a sky color
+		XMVECTOR colorRefl = illuminate(r, hr2, mat);
+		return math::lerp(colorRefl, color, 10.0f * material->roughness);
 	}
+
+	return color;
 }
 
-void Scene::render(Window& window, Camera& camera)
+void Scene::render(Window& window, Camera& camera, ParallelExecutor& executor)
 {
 	ray r;
 	XMVECTOR point;
 
-	r.origin = camera.position();
+	cameraPos = camera.position();
 	
-	XMVECTOR TL = XMVectorSet(-1.0f, 1.0f, 1.0f, 1.0f);
-	XMVECTOR TR = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
-	XMVECTOR BR = XMVectorSet(1.0f, -1.0f, 1.0f, 1.0f);
-	XMVECTOR BL = XMVectorSet(-1.0f, -1.0f, 1.0f, 1.0f);
+	TL = XMVectorSet(-1.0f, 1.0f, 1.0f, 1.0f);
+	TR = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+	BR = XMVectorSet(1.0f, -1.0f, 1.0f, 1.0f);
+	BL = XMVectorSet(-1.0f, -1.0f, 1.0f, 1.0f);
 
 	TL = XMVector4Transform(TL, camera.m_projInv);
 	TR = XMVector4Transform(TR, camera.m_projInv);
@@ -192,21 +275,8 @@ void Scene::render(Window& window, Camera& camera)
 	BR = XMVector4Transform(BR, camera.m_viewInv);
 	BL = XMVector4Transform(BL, camera.m_viewInv);
 
-	for (int h = 0; h < window.canvas.getHeight(); h++)
-	{
-		for (int w = 0; w < window.canvas.getWidth(); w++)
-		{
-			r.direction =  -r.origin + (BL + (BR - BL) * (w + 0.5f)/window.canvas.getWidth() + (TL - BL) * (window.canvas.getHeight() - h + 0.5f) / window.canvas.getHeight());
-			r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
-			XMVECTOR col = getPixelColor(r, camera.position());
-
-			float r = XMVectorGetX(col) < 1.0f ? XMVectorGetX(col) : 0.99f;
-			float g = XMVectorGetY(col) < 1.0f ? XMVectorGetY(col) : 0.99f;
-			float b = XMVectorGetZ(col) < 1.0f ? XMVectorGetZ(col) : 0.99f;
-			
-			window.canvas.setPixel(w, h, r * 255, g * 255, b * 255);
-		}
-	}
+	auto func = [this, &window](uint32_t threadIndex, uint32_t taskIndex) { computePixelColor(taskIndex % window.canvas.getWidth(), taskIndex / window.canvas.getWidth(), window); };
+	executor.execute(func, window.canvas.getWidth() * window.canvas.getHeight(), 20);
 }
 
 void Scene::addSphere(const Sphere& sphereModel)

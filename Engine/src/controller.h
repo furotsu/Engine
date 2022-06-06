@@ -19,15 +19,18 @@ class Controller
 public:
 	bool m_rmbDown;
 	bool m_lmbDown;
+	bool m_keyup;
+
+	float EVchange;
 	bool m_mouseMoved;
 	float m_cameraSpeed;
 	float m_mouseSensitivity;
-
+	bool m_reflectionsOn;
 	Scene::IntersectionQuery pickedObjMoverQuery;
 
 	float m_deltaTime;
 
-	bool m_buttonsState[127];
+	bool m_buttonsState[256];
 
 	POINT m_pressedPos;
 	POINT m_currentPos;
@@ -42,10 +45,10 @@ public:
 
 	void update(float deltaTime, Scene& scene, Window& window);
 
-	void onKeyDown(char key);
-	void onKeyUp(char key);
+	void onKeyDown(int key);
+	void onKeyUp(int key);
 
-	void processFrame(Window& window, Scene& scene);
+	void processFrame(Window& window, Scene& scene, ParallelExecutor& executor);
 
 
 	void moveCamera(const XMVECTOR& direction);

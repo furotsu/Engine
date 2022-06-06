@@ -142,14 +142,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="lightSource.cpp" />
+    <ClCompile Include="src\lightSource.cpp" />
     <ClCompile Include="math\matrixAlg.cpp" />
     <ClCompile Include="math\plane.cpp" />
     <ClCompile Include="math\quaternion.cpp" />
     <ClCompile Include="math\sphere.cpp" />
     <ClCompile Include="math\triangle.cpp" />
     <ClCompile Include="math\utility.cpp" />
-    <ClCompile Include="modelMover.cpp" />
+    <ClCompile Include="src\modelMover.cpp" />
+    <ClCompile Include="src\parallelExecutor.cpp" />
     <ClCompile Include="src\application.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\canvas.cpp" />
@@ -170,6 +171,8 @@
     <ClInclude Include="math\sphere.h" />
     <ClInclude Include="math\triangle.h" />
     <ClInclude Include="math\utility.h" />
+    <ClInclude Include="src\cube.h" />
+    <ClInclude Include="src\parallelExecutor.h" />
     <ClInclude Include="src\application.h" />
     <ClInclude Include="src\camera.h" />
     <ClInclude Include="src\canvas.h" />

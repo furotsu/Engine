@@ -17,14 +17,14 @@ class Canvas
 public:
 
 	Canvas() = default;
-	Canvas(int width, int height, int offsetX, int offsetY);
+	Canvas(uint32_t width, uint32_t height, uint32_t offsetX, uint32_t offsetY);
 	
 	BITMAPINFO createDIB();
 
-	void setPixel(int x, int y, BYTE r, BYTE g, BYTE b); // set color into m_pixels
+	void setPixel(uint32_t x, uint32_t y, BYTE r, BYTE g, BYTE b); // set color into m_pixels
 	void printToScreen(const HDC, const HWND, uint16_t windWidth, uint16_t windHeight); // call StretchDIBits / SetDIBitsToDevice
 
-	void onResize(const int& width, const int& height);
+	void onResize(const uint32_t& width, const uint32_t& height);
 
 	inline int getWidth() const { return m_width; }
 	inline int getHeight() const { return m_height; }

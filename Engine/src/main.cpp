@@ -5,16 +5,20 @@
 
 constexpr int SCREEN_WIDTH = 400;
 constexpr int SCREEN_HEIGHT = 200;
+const uint32_t ParallelExecutor::MAX_THREADS = max(1u, std::thread::hardware_concurrency());
+const uint32_t ParallelExecutor::HALF_THREADS = max(1u, std::thread::hardware_concurrency() / 2);
 
 Application app;
+ParallelExecutor executor(max(1u, max(ParallelExecutor::MAX_THREADS - 4u, ParallelExecutor::HALF_THREADS)));
+
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	app.initConsole();
-
+	
 	app.init(hInstance, hPrevInstance, lpCmdLine, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	MSG msg = app.run();
+	MSG msg = app.run(executor);
 
 	// return this part of the WM_QUIT message to Windows
 	return msg.wParam;

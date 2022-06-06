@@ -1,5 +1,6 @@
 #include "application.h"
 
+
 void Application::init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height)
 {
 	this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
@@ -71,11 +72,11 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 	}
 	case WM_KEYDOWN:
 	{
-		controller.onKeyDown((char)wParam);
+		controller.onKeyDown(wParam);
 	} break;
 	case WM_KEYUP:
 	{
-		controller.onKeyUp((char)wParam);
+		controller.onKeyUp(wParam);
 	}
 	}
 
@@ -83,7 +84,7 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-MSG Application::run()
+MSG Application::run(ParallelExecutor& executor)
 {
 	MSG msg = { 0 };
 
@@ -106,9 +107,8 @@ MSG Application::run()
 		{
 
 			timer.recordTime();
-			lastWParam = WPARAM();
 			controller.update(m_deltaTime, scene, window);
-			controller.processFrame(window, scene);
+			controller.processFrame(window, scene, executor);
 			window.flush();
 
 			std::cout << "fps: " << 1.0f / m_deltaTime << std::endl;

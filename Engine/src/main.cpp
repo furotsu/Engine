@@ -3,8 +3,7 @@
 
 #include "application.h"
 
-constexpr int SCREEN_WIDTH = 400;
-constexpr int SCREEN_HEIGHT = 200;
+
 const uint32_t ParallelExecutor::MAX_THREADS = max(1u, std::thread::hardware_concurrency());
 const uint32_t ParallelExecutor::HALF_THREADS = max(1u, std::thread::hardware_concurrency() / 2);
 

@@ -3,10 +3,9 @@
 #include <DirectXMath.h>
 #include <iostream>
 
+#include "constants.h"
 #include "utility.h"
 using namespace DirectX;
-
-constexpr XMVECTOR inF0({ 0.04f, 0.04f, 0.04f, 0.0f });
 
 struct Material
 {

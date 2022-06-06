@@ -1,9 +1,9 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include "constants.h"
 
-constexpr float RAY_MIN = 1.0f;
-constexpr float RAY_MAX = 100000.0f;
+
 
 using namespace DirectX;
 

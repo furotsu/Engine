@@ -144,6 +144,9 @@
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="src\cube.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

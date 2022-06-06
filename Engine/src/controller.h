@@ -6,12 +6,6 @@
 #include "scene.h"
 #include "camera.h"
 
-constexpr float FRAME_DURATION = 1.0f / 60.0f;
-constexpr float CAMERA_SPEED = 150.0f;
-constexpr float ROLL_ROTATION_SPEED = 60.0f;
-
-// half of screen - 180 degrees/second 
-constexpr float MOUSE_SENSITIVITY = 180.0f;
 
 
 class Controller

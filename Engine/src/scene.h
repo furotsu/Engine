@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "window.h"
-
+#include "constants.h"
 #include "plane.h"
 #include "sphere.h"
 #include "model.h"
@@ -16,10 +16,6 @@
 
 using namespace math;
 
-constexpr float LIGHTMODEL_SIZE = 5.0f;
-constexpr uint32_t MAX_REFLECTION_DEPTH = 3u;
-constexpr float MAX_REFLECTION_ROUGHNESS = 0.12f;
-constexpr float REFLECTION_ROUGNESS_MULTIPLIER = 1.0f / MAX_REFLECTION_ROUGHNESS;
 
 XMVECTOR frensel(float NdotL, const XMVECTOR& F0);
 float smith(float rough2, float NoV, float NoL);

@@ -19,7 +19,6 @@ public:
 	Scene scene;
 	Timer timer;
 
-
 	float m_deltaTime;
 
 	Application() = default;

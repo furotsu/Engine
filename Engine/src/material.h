@@ -10,7 +10,6 @@ using namespace DirectX;
 struct Material
 {
 	XMVECTOR albedo;
-	XMVECTOR albedoMetallic;
 	float roughness;
 	XMVECTOR F0;
 	float metalness;
@@ -18,8 +17,8 @@ struct Material
 
 
 	Material() = default;
-	Material(XMVECTOR albedo, XMVECTOR albedoMetallic, float roughness, float metalness, XMVECTOR emmision = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f))
-		: albedo(albedo), albedoMetallic(albedoMetallic), roughness(roughness), metalness(metalness), emmision(emmision)
+	Material(XMVECTOR albedo, float roughness, float metalness, XMVECTOR emmision = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), XMVECTOR inF0 = XMVectorSet(0.04f, 0.04f, 0.04f, 0.0f))
+		: albedo(albedo), roughness(roughness), metalness(metalness), emmision(emmision)
 	{
 		F0 = math::lerp(inF0, XMVectorScale(albedo, 0.1f), metalness);
 	}

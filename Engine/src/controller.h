@@ -6,20 +6,24 @@
 #include "scene.h"
 #include "camera.h"
 
-
-
 class Controller
 {
 public:
 	bool m_rmbDown;
 	bool m_lmbDown;
 	bool m_keydown;
+	bool userInputReceived;
+	bool sceneDrawn;
+	bool speedIncreased;
 
-	float EVchange;
+	float EVvalue;
 	bool m_mouseMoved;
 	float m_cameraSpeed;
 	float m_mouseSensitivity;
+
 	bool m_reflectionsOn;
+	bool m_globalIlluminationOn;
+
 	Scene::IntersectionQuery pickedObjMoverQuery;
 
 	float m_deltaTime;
@@ -44,9 +48,11 @@ public:
 
 	void processFrame(Window& window, Scene& scene, ParallelExecutor& executor);
 
+	void changeEv(float valuePerSec);
 
+	void changeCameraSpeed(bool increase);
 	void moveCamera(const XMVECTOR& direction);
-	void rotateCamera(const float& xOffset, const float& yOffset);
-	void rotateCamera(const float& direction);
+	void rotateCamera(float xOffset, float yOffset);
+	void rotateCamera(float direction);
 
 };

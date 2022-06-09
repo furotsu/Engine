@@ -162,8 +162,7 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="constants.h" />
-    <ClInclude Include="cube.h" />
+    <ClInclude Include="src\constants.h" />
     <ClInclude Include="math\hitable.h" />
     <ClInclude Include="math\matrixAlg.h" />
     <ClInclude Include="math\plane.h" />

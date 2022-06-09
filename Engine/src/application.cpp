@@ -38,7 +38,7 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 		window.onResize(rect.right - rect.left, rect.bottom - rect.top);
 		controller.m_camera.setPerspective(45.0f, window.m_width, window.m_height, 1.0f, 10000.0f);
-
+		controller.userInputReceived = true;
 	} break;
 	case WM_MOUSEMOVE:
 	{
@@ -51,6 +51,7 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 		//determine position relative to init window
 		ScreenToClient(FindWindowA(NULL, "Engine"), &controller.m_pressedPos);
 		controller.m_currentPos = controller.m_pressedPos;
+		controller.userInputReceived = true;
 	} break;
 	case WM_LBUTTONUP:
 	{
@@ -64,19 +65,28 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 		controller.m_currentPos = controller.m_pressedPos;
 		controller.pickedObjMoverQuery.intersection.reset();
 		scene.pickObject(controller.m_camera, window.screenToNDC(controller.m_currentPos.x, controller.m_currentPos.y), controller.pickedObjMoverQuery);
+		controller.userInputReceived = true;
 	} break;
 	case WM_RBUTTONUP:
 	{
 		controller.m_rmbDown = false;
 		controller.pickedObjMoverQuery.mover = nullptr;
-	}
+	}break;
 	case WM_KEYDOWN:
 	{
 		controller.onKeyDown(wParam);
+		controller.userInputReceived = true;
 	} break;
 	case WM_KEYUP:
 	{
 		controller.onKeyUp(wParam);
+	}break;
+	case WM_MOUSEWHEEL:
+	{
+		controller.changeCameraSpeed(GET_WHEEL_DELTA_WPARAM(wParam) > 0.0f);
+	}break;
+	default:
+	{
 	}
 	}
 

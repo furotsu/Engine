@@ -14,7 +14,7 @@ ParallelExecutor executor(max(1u, max(ParallelExecutor::MAX_THREADS - 4u, Parall
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	app.initConsole();
-	
+
 	app.init(hInstance, hPrevInstance, lpCmdLine, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	MSG msg = app.run(executor);

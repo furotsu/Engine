@@ -35,7 +35,7 @@ BITMAPINFO Canvas::createDIB()
 	return bmi;
 }
 
-void Canvas::onResize(const uint32_t& width, const uint32_t& height)
+void Canvas::onResize(uint32_t width, uint32_t height)
 {
 	m_pixels.clear();
 

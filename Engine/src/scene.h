@@ -1,5 +1,7 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+
 #include <windows.h>
 #include <windowsx.h>
 
@@ -24,6 +26,14 @@ float ggx(float rough2, float NoH, float lightAngleSin = 0.0f, float lightAngleC
 XMVECTOR acesHdr2Ldr(const XMVECTOR& hdr);
 XMVECTOR adjustExposure(const XMVECTOR& color, float EV100);
 XMVECTOR correctGamma(const XMVECTOR& color, float gamma);
+
+XMVECTOR approximateClosestSphereDir(bool& intersects, XMVECTOR reflectionDir, float sphereCos, \
+										XMVECTOR sphereRelPos, XMVECTOR sphereDir, float sphereDist, float sphereRadius);
+void clampDirToHorizon(XMVECTOR& dir, float& NoD, XMVECTOR normal, float minNoD);
+
+
+void branchlessONB(const XMVECTOR& n, XMVECTOR& b1, XMVECTOR& b2);
+
 
 class Scene
 {
@@ -112,9 +122,10 @@ public:
 		XMVECTOR m_lightColor;
 		XMVECTOR m_direction;
 		float m_lightPower;
+		float solidAngle;
 
 		DirectionalLight() = default;
-		DirectionalLight(DirectX::XMVECTOR direction, DirectX::XMVECTOR color, float power = 1.0f);
+		DirectionalLight(DirectX::XMVECTOR direction, DirectX::XMVECTOR color, float power = 1.0f, float solidAngle = 2.0f * M_PI);
 
 		DirectX::XMVECTOR illuminate(const DirectX::XMVECTOR& fragPos, const DirectX::XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& albedo) const;
 
@@ -237,6 +248,7 @@ public:
 	std::vector<DirectionalLight> m_directionalLights;
 	std::vector<SpotLight> m_flashLights;
 
+	bool globalIlluminationOn;
 	bool reflectionsOn;
 	bool shadowsOn;
 
@@ -246,9 +258,9 @@ public:
 
 	bool findIntersection(const math::ray& r, Intersection& outNearest, Material*& outMaterial);
 	bool findIntersection(const ray& r, IntersectionQuery& query);
-
 	
-	XMVECTOR illuminate(ray& r, Intersection& hr, Material*& material, uint32_t depth = 1u);
+	XMVECTOR illuminate(ray& r, uint32_t depth = 1u);
+	XMVECTOR illuminateIndirect(const Intersection& hr, const XMVECTOR& cameraPos, uint32_t depth);
 
 	void render(Window& w, Camera& camera, ParallelExecutor& executor);
 
@@ -264,9 +276,9 @@ public:
 	void pickObject(const Camera& camera, const XMVECTOR&, IntersectionQuery&);
 
 protected:
-	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light, uint32_t depth = 1u);
-	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light, uint32_t depth = 1u);
-	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light, uint32_t depth = 1u);
+	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light);
+	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light);
+	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light);
 
 	void findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial);
 	bool findIntersectionShadow(const ray& r, Intersection& outNearest, Material*& outMaterial);

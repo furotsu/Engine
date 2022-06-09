@@ -1,7 +1,10 @@
-#include "scene.h"
+#define _USE_MATH_DEFINES
+
 #include <math.h>
 #include <algorithm>
+#include <cmath>
 
+#include "scene.h"
 
 XMVECTOR acesHdr2Ldr(const XMVECTOR& hdr)
 {
@@ -36,6 +39,14 @@ XMVECTOR correctGamma(const XMVECTOR& color, float gamma)
 	return XMVectorPow(color, XMVectorDivide(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), g));
 }
 
+void branchlessONB(const XMVECTOR& n, XMVECTOR& b1, XMVECTOR& b2)
+{
+	float sign = copysignf(1.0f, XMVectorGetZ(n));
+	const float a = -1.0f / (sign + XMVectorGetZ(n));
+	const float b = XMVectorGetX(n) * XMVectorGetY(n) * a;
+	b1 = XMVectorSet(1.0f + sign * XMVectorGetX(n) * XMVectorGetX(n) * a, sign * b, -sign * XMVectorGetX(n), 0.0f);
+	b2 = XMVectorSet(b, sign + XMVectorGetY(n) * XMVectorGetY(n) * a, -XMVectorGetY(n), 0.0f);
+}
 
 // For each pixel determine what color it should 
 //	   based on whether ray hit any object or not 
@@ -46,11 +57,7 @@ void Scene::computePixelColor(uint32_t posX, uint32_t posY, Window& win)
 	r.direction = -r.origin + (BL + (BR - BL) * (posX + 0.5f) / win.canvas.getWidth() + (TL - BL) * (win.canvas.getHeight() - posY + 0.5f) / win.canvas.getHeight());
 	r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
 
-	Material* material;
-	Intersection hr;
-	hr.reset();
-
-	XMVECTOR col = illuminate(r, hr, material);
+	XMVECTOR col = illuminate(r);
 
 	col = adjustExposure(col, EV100);
 	col = acesHdr2Ldr(col);
@@ -136,114 +143,149 @@ bool Scene::findIntersectionShadow(const ray& r, Intersection& outNearest, Mater
 	return foundIntersection;
 }
 
-XMVECTOR Scene::illuminate(ray& r, Intersection& hr, Material*& material, uint32_t depth)
+XMVECTOR Scene::illuminate(ray& r, uint32_t depth)
 {
 	// set initial value as a sky color
 	XMVECTOR color = m_ambientLight;
-	if (findIntersection(r, hr, material))
+
+	Material* material;
+	Intersection hr;
+	hr.reset();
+
+	bool interFound = false;
+
+	if (depth == 1.0f)
+		interFound = findIntersection(r, hr, material);
+	else
+		interFound = findIntersectionShadow(r, hr, material);
+
+	if (interFound)
 	{
-		color = (material->emmision + m_ambientLight) * material->albedo;
+		if (globalIlluminationOn && depth < MAX_REFLECTION_DEPTH)
+		{
+			//calculate indirect light value from hemisphere instead of using ambient constant value
+			color = (material->emmision + illuminateIndirect(hr, cameraPos, depth)) * material->albedo;
+		}
+		else
+		{
+			color = (material->emmision + m_ambientLight) * material->albedo;
+		}
 
 		if (XMVectorGetX(material->emmision) == 0.0f)
 		{
 			for (auto& l0 : m_pointLights)
-				color += illuminate(hr, material, cameraPos, l0, depth);
+				color += illuminate(hr, material, cameraPos, l0);
 
 			for (auto& l1 : m_directionalLights)
-				color += illuminate(hr, material, cameraPos, l1, depth);
+				color += illuminate(hr, material, cameraPos, l1);
 
 			for (auto& l2 : m_flashLights)
-				color += illuminate(hr, material, cameraPos, l2, depth);
+				color += illuminate(hr, material, cameraPos, l2);
+
+			//reflections
+			if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS && depth < MAX_REFLECTION_DEPTH)
+			{
+				r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
+
+				XMVECTOR colorRefl = illuminate(r, ++depth);
+				return math::lerp(colorRefl, color, REFLECTION_ROUGNESS_MULTIPLIER * material->roughness);
+			}
 		}
 	}
 	return color;
 }
 
-XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light, uint32_t depth)
+XMVECTOR Scene::illuminateIndirect(const Intersection& hr, const XMVECTOR& cameraPos, uint32_t depth)
 {
-	// adding small offset to avoid self-shadowing artifact
-	ray r(hr.point + 1.0f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
+	XMVECTOR color = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
-	Intersection hr2;
-	Material* mat;
-	hr2.reset();
-	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
+	XMVECTOR xAxis = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	XMVECTOR yAxis = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	//should be normalized
+	XMVECTOR zAxis = hr.normal;
+	branchlessONB(zAxis, xAxis, yAxis);
+	//matrix to convert hemisphere coordinates for coords where fragment normal will be z-part of basis matrix
+	XMMATRIX transformMat = XMMatrixTranspose({ (XMVectorGetZ(zAxis) < 0.0f) ? xAxis : -xAxis, -yAxis, zAxis, {0.0f, 0.0f, 0.0f, 0.0f} });
 
-	if (findIntersectionShadow(r, hr2, mat) && shadowsOn)
+	const float goldenRatio = (1.0f + sqrtf(5.0f)) / 2.0f;
+
+	for (uint32_t i = 0; i != RAYS_ABOVE_HEMISPHERE_COUNT; i++)
 	{
-		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	}
-
-	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
-
-	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS && depth < MAX_REFLECTION_DEPTH)
-	{
-		r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
-		hr2.reset();
-
-		XMVECTOR colorRefl = illuminate(r, hr2, mat, ++depth);
-		return math::lerp(colorRefl, color, REFLECTION_ROUGNESS_MULTIPLIER * material->roughness);
-	}
+		float theta = 2.0f * M_PI * i / goldenRatio;
+		float phi = std::acos(1.0f - 2.0f * (static_cast<float>(i) + 0.5f) / static_cast<float>(RAYS_ABOVE_HEMISPHERE_COUNT));
 	
-	return color;
-}
+		float x = std::cos(theta) * std::sin(phi);
+		float y = std::sin(theta) * std::sin(phi);
+		float z = -std::cos(phi);
+		z = (z < 0.0f) ? -z : z;
+		XMVECTOR pos = XMVector3Transform(XMVectorSet(x, y, z, 0.0f), transformMat);
 
-XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light, uint32_t depth)
-{
-	// adding small offset to avoid self-shadowing artifact
-	ray r(hr.point + 0.01f * hr.normal, -light.m_direction);
-
-	Intersection hr2;
-	hr2.reset();
-	Material* mat;
-
-	if (findIntersectionShadow(r, hr2, mat) && shadowsOn)
-	{
-		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	}
+		ray sampleRay(hr.point, XMVector3Normalize(pos));
 	
-	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
-
-	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS && depth < MAX_REFLECTION_DEPTH)
-	{
-		r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
-		hr2.reset();
-
-		// set initial value as a sky color
-		XMVECTOR colorRefl = illuminate(r, hr2, mat, ++depth);
-		return math::lerp(colorRefl, color, REFLECTION_ROUGNESS_MULTIPLIER * material->roughness);
+		color += illuminate(sampleRay, ++depth);
 	}
+	color = XMVectorScale(color, 1.0f / static_cast<float>(RAYS_ABOVE_HEMISPHERE_COUNT));
 
 	return color;
 }
 
-XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light, uint32_t depth)
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light)
 {
 	// adding small offset to avoid self-shadowing artifact
-	// adding small offset to avoid self-shadowing artifact
-	ray r(hr.point + 1.0f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
+	ray r(hr.point + 0.0001f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
 
 	Intersection hr2;
 	Material* mat;
 	hr2.reset();
-	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 1.0f;
+	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 0.0001f;
+
+	// also do not light if fragment inside of the light source
+	if ((findIntersectionShadow(r, hr2, mat) && shadowsOn) || XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) < light.getRadius())
+	{
+			return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+
+	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
+
+	return color;
+}
+
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light)
+{
+	// adding small offset to avoid self-shadowing artifact
+	ray r(hr.point + 0.0001f * hr.normal, -light.m_direction);
+
+	Intersection hr2;
+	hr2.reset();
+	Material* mat;
 
 	if (findIntersectionShadow(r, hr2, mat) && shadowsOn)
 	{
 		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
-
+	
 	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
 
-	if (reflectionsOn && material->roughness < MAX_REFLECTION_ROUGHNESS && depth < MAX_REFLECTION_DEPTH)
-	{
-		r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
-		hr2.reset();
+	return color;
+}
 
-		// set initial value as a sky color
-		XMVECTOR colorRefl = illuminate(r, hr2, mat, ++depth);
-		return math::lerp(colorRefl, color, REFLECTION_ROUGNESS_MULTIPLIER * material->roughness);
+XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light)
+{
+	// adding small offset to avoid self-shadowing artifact
+	ray r(hr.point + 0.0001f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
+
+	Intersection hr2;
+	Material* mat;
+	hr2.reset();
+	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 0.00001f;
+
+	// also do not light if fragment inside of the light source
+	if ((findIntersectionShadow(r, hr2, mat) && shadowsOn) || XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) < light.getRadius())
+	{
+		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
+
+	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
 
 	return color;
 }

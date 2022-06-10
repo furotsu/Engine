@@ -50,7 +50,7 @@ public:
 
 	void changeEv(float valuePerSec);
 
-	void changeCameraSpeed(bool increase);
+	void changeCameraSpeed(float increase);
 	void moveCamera(const XMVECTOR& direction);
 	void rotateCamera(float xOffset, float yOffset);
 	void rotateCamera(float direction);

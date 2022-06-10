@@ -106,13 +106,13 @@ public:
 	{
 	public:
 
-		DirectX::XMVECTOR m_lightColor;
+		XMVECTOR m_lightColor;
 		float m_lightPower;
 
 		PointLight() = default;
-		PointLight(DirectX::XMVECTOR position, DirectX::XMVECTOR color, float power = 1.0f, float radius = LIGHTMODEL_SIZE);
+		PointLight(XMVECTOR position, XMVECTOR color, float power = 1.0f, float radius = LIGHTMODEL_SIZE);
 
-		DirectX::XMVECTOR illuminate(const DirectX::XMVECTOR& fragPos, const DirectX::XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& albedo) const;
+		XMVECTOR illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& albedo) const;
 	};
 
 	class DirectionalLight
@@ -125,9 +125,9 @@ public:
 		float solidAngle;
 
 		DirectionalLight() = default;
-		DirectionalLight(DirectX::XMVECTOR direction, DirectX::XMVECTOR color, float power = 1.0f, float solidAngle = 2.0f * M_PI);
+		DirectionalLight(XMVECTOR direction, XMVECTOR color, float power = 1.0f, float solidAngle = 2.0f * M_PI);
 
-		DirectX::XMVECTOR illuminate(const DirectX::XMVECTOR& fragPos, const DirectX::XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& albedo) const;
+		XMVECTOR illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& albedo) const;
 
 	};
 
@@ -135,17 +135,17 @@ public:
 	{
 	private:
 	public:
-		DirectX::XMVECTOR m_lightColor;
-		DirectX::XMVECTOR m_direction;
+		XMVECTOR m_lightColor;
+		XMVECTOR m_direction;
 		float m_lightPower;
 
 
 		float m_innerCutOff;
 		float m_outerCutOff;
 		SpotLight() = default;
-		SpotLight(DirectX::XMVECTOR position, DirectX::XMVECTOR color, DirectX::XMVECTOR direction, float innerCutOff, float outerCutOff, float power = 1.0f, float radius = LIGHTMODEL_SIZE);
+		SpotLight(XMVECTOR position, XMVECTOR color, XMVECTOR direction, float innerCutOff, float outerCutOff, float power = 1.0f, float radius = LIGHTMODEL_SIZE);
 
-		DirectX::XMVECTOR illuminate(const DirectX::XMVECTOR& fragPos, const DirectX::XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& material) const;
+		XMVECTOR illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& material) const;
 	};
 
 	// --------------------- Object Decorators ---------------------

@@ -117,7 +117,7 @@ XMVECTOR Scene::DirectionalLight::illuminate(const XMVECTOR& fragPos, const XMVE
 
 	XMVECTOR metalAlb = math::lerp(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), material->albedo, material->metalness);
 
-	XMVECTOR spec = metalAlb * XMVectorScale(Fspec, G * min(1.0f, D * 0.25f / (NoL * NoV)));
+	XMVECTOR spec = metalAlb * XMVectorScale(Fspec, G * min(1.0f, solidAngle * D * 0.25f / (NoL * NoV)));
 
 	//diffuse
 	XMVECTOR Fdiff = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) - math::clamp3(frensel(NoL, material->F0), 0.0f, 1.0f);

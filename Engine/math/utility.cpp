@@ -21,6 +21,11 @@ XMVECTOR math::lerp(const XMVECTOR& vec1, const XMVECTOR& vec2, float t)
     return vec1 + XMVectorScale(vec2 - vec1, t);
 }
 
+float math::lerp(float f1, const float f2, float t)
+{
+    return f1 + t*(f2 - f1);
+}
+
 XMVECTOR math::minVec3(const XMVECTOR& v1, const XMVECTOR& v2)
 {
     float r = std::min(XMVectorGetX(v1), XMVectorGetX(v2));

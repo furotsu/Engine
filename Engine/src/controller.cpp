@@ -1,8 +1,9 @@
 #include "controller.h"
 
 #include <chrono>
-#include "cube.h"
+#include <cmath>
 
+#include "cube.h"
 Cube c;
 
 std::shared_ptr<Mesh> cube = std::make_shared<Mesh>(c.cubeVertices);
@@ -212,18 +213,21 @@ void Controller::changeEv(float valuePerSec)
 	EVvalue += m_deltaTime * valuePerSec;
 }
 
-void Controller::changeCameraSpeed(bool increase)
+void Controller::changeCameraSpeed(float increase)
 {
-	if (increase)
-		m_cameraSpeed *= 1.1f;
+	std::cout << increase << std::endl;
+	float delta = math::lerp(1.0f, 1.1f, static_cast<float>(abs(increase)) / 120.0f);
+	if (increase > 0)
+		m_cameraSpeed *= (delta);
 	else
-		m_cameraSpeed /= 1.1f;
+		m_cameraSpeed /= (delta);
 	m_cameraSpeed = math::clamp(m_cameraSpeed, MIN_CAMERA_SPEED, MAX_CAMERA_SPEED);
 }
 
 void Controller::moveCamera(const XMVECTOR& direction)
 {
 	XMVECTOR offset = direction * m_deltaTime * m_cameraSpeed * ((speedIncreased) ? 5.0f : 1.0f);
+	speedIncreased = false;
 	m_camera.addRelativeOffset(offset);
 	m_camera.updateMatrices();
 }

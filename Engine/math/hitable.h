@@ -12,8 +12,8 @@ namespace math
 	struct Intersection
 	{
 		float hitParam;
-		DirectX::XMVECTOR point;
-		DirectX::XMVECTOR normal;
+		XMVECTOR point;
+		XMVECTOR normal;
 
 		Intersection() = default;
 

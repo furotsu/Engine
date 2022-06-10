@@ -83,7 +83,7 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 	}break;
 	case WM_MOUSEWHEEL:
 	{
-		controller.changeCameraSpeed(GET_WHEEL_DELTA_WPARAM(wParam) > 0.0f);
+		controller.changeCameraSpeed(GET_WHEEL_DELTA_WPARAM(wParam));
 	}break;
 	default:
 	{

@@ -8,6 +8,7 @@ namespace math
 
 	XMVECTOR clamp3(const XMVECTOR& vec, float lower, float upper);
 	XMVECTOR lerp(const XMVECTOR& vec1, const XMVECTOR& vec2, float t);
+	 float lerp(float f1, const float f2, float t);
 	XMVECTOR minVec3(const XMVECTOR& v1, const XMVECTOR& v2);
 	XMVECTOR maxVec3(const XMVECTOR& v1, const XMVECTOR& v2);
 

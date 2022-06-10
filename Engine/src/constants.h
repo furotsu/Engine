@@ -13,7 +13,7 @@ constexpr float FRAME_DURATION = 1.0f / 60.0f;
 constexpr float CAMERA_SPEED = 100.0f;
 constexpr float ROLL_ROTATION_SPEED = 60.0f;
 constexpr float MIN_CAMERA_SPEED = 0.1f;
-constexpr float MAX_CAMERA_SPEED = 300.0f;
+constexpr float MAX_CAMERA_SPEED = 1000.0f;
 
 // half of screen - 180 degrees/second 
 constexpr float MOUSE_SENSITIVITY = 180.0f;

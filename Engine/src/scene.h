@@ -30,7 +30,8 @@ XMVECTOR correctGamma(const XMVECTOR& color, float gamma);
 XMVECTOR approximateClosestSphereDir(bool& intersects, XMVECTOR reflectionDir, float sphereCos, \
 										XMVECTOR sphereRelPos, XMVECTOR sphereDir, float sphereDist, float sphereRadius);
 void clampDirToHorizon(XMVECTOR& dir, float& NoD, XMVECTOR normal, float minNoD);
-
+XMVECTOR findReflectionSpec(const XMVECTOR& viewDir, const XMVECTOR& fragNorm, float solidAngle, const XMVECTOR& lightCenter,
+	const XMVECTOR& fragPos, const XMVECTOR& F0, float distance, float radius, float rough2);
 
 void branchlessONB(const XMVECTOR& n, XMVECTOR& b1, XMVECTOR& b2);
 
@@ -112,7 +113,7 @@ public:
 		PointLight() = default;
 		PointLight(XMVECTOR position, XMVECTOR color, float power = 1.0f, float radius = LIGHTMODEL_SIZE);
 
-		XMVECTOR illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& albedo) const;
+		XMVECTOR illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& albedo, bool reflOn = true) const;
 	};
 
 	class DirectionalLight
@@ -145,7 +146,7 @@ public:
 		SpotLight() = default;
 		SpotLight(XMVECTOR position, XMVECTOR color, XMVECTOR direction, float innerCutOff, float outerCutOff, float power = 1.0f, float radius = LIGHTMODEL_SIZE);
 
-		XMVECTOR illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& material) const;
+		XMVECTOR illuminate(const XMVECTOR& fragPos, const XMVECTOR& fragNorm, const XMVECTOR& cameraPos, Material*& material, bool reflOn = true) const;
 	};
 
 	// --------------------- Object Decorators ---------------------

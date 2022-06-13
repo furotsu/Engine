@@ -245,7 +245,7 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 			return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
-	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
+	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material, reflectionsOn);
 
 	return color;
 }
@@ -285,7 +285,7 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
-	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material);
+	XMVECTOR color = light.illuminate(hr.point, hr.normal, cameraPos, material, reflectionsOn);
 
 	return color;
 }

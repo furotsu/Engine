@@ -18,9 +18,10 @@ void Controller::init(Window& win, Scene& scene)
 	scene.shadowsOn = true;
 
 	scene.setAmbient({ 0.478f, 0.647f, 0.902f, 0.0f });
+	scene.setAmbient({ 0.0f, 0.0f, 0.0f, 0.0f });
 
-	scene.addPointLight(Scene::PointLight(XMVectorSet(-20.0f, 30.0f, -120.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 441.0f, 2.0f));
-	scene.addPointLight(Scene::PointLight(XMVectorSet(-120.0f, 30.0f, -20.0f, 0.0f), XMVectorSet(0.9f, 0.1f, 0.1f, 0.0f), 15.0f, 3.0f));
+	scene.addPointLight(Scene::PointLight(XMVectorSet(-20.0f, 30.0f, -120.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 10.0f, 5.0f));
+	scene.addPointLight(Scene::PointLight(XMVectorSet(-120.0f, 30.0f, -20.0f, 0.0f), XMVectorSet(0.9f, 0.1f, 0.1f, 0.0f), 15.0f, 10.0f));
 
 	scene.addDirLight(Scene::DirectionalLight(XMVectorSet(-0.1f, -0.9f, 0.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f), 0.3f));
 
@@ -215,7 +216,6 @@ void Controller::changeEv(float valuePerSec)
 
 void Controller::changeCameraSpeed(float increase)
 {
-	std::cout << increase << std::endl;
 	float delta = math::lerp(1.0f, 1.1f, static_cast<float>(abs(increase)) / 120.0f);
 	if (increase > 0)
 		m_cameraSpeed *= (delta);

@@ -20,8 +20,8 @@ void Controller::init(Window& win, Scene& scene)
 	scene.setAmbient({ 0.478f, 0.647f, 0.902f, 0.0f });
 	scene.setAmbient({ 0.0f, 0.0f, 0.0f, 0.0f });
 
-	scene.addPointLight(Scene::PointLight(XMVectorSet(-20.0f, 30.0f, -120.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 10.0f, 5.0f));
-	scene.addPointLight(Scene::PointLight(XMVectorSet(-120.0f, 30.0f, -20.0f, 0.0f), XMVectorSet(0.9f, 0.1f, 0.1f, 0.0f), 15.0f, 10.0f));
+	scene.addPointLight(Scene::PointLight(XMVectorSet(-20.0f, 30.0f, -120.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 20.0f, 5.0f));
+	scene.addPointLight(Scene::PointLight(XMVectorSet(-120.0f, 30.0f, -20.0f, 0.0f), XMVectorSet(0.9f, 0.1f, 0.1f, 0.0f), 20.0f, 20.0f));
 
 	scene.addDirLight(Scene::DirectionalLight(XMVectorSet(-0.1f, -0.9f, 0.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f), 0.3f));
 
@@ -62,7 +62,7 @@ void Controller::init(Window& win, Scene& scene)
 	m_rmbDown = false;
 	m_lmbDown = false;
 	m_reflectionsOn = true;
-	m_globalIlluminationOn = true;
+	m_globalIlluminationOn = false;
 	userInputReceived = true;
 	sceneDrawn = false;
 	EVvalue = 2.0f;
@@ -70,14 +70,15 @@ void Controller::init(Window& win, Scene& scene)
 
 void Controller::update(float deltaTime, Scene& scene, Window& window)
 {
+	m_deltaTime = deltaTime;
+	processInput();
 	if (userInputReceived)
 	{
-		m_deltaTime = deltaTime;
-		processInput();
-		scene.globalIlluminationOn = m_globalIlluminationOn;
+		scene.globalIlluminationOn = (scene.globalIlluminationOn) ? false : m_globalIlluminationOn;
 
 		scene.EV100 = EVvalue;
 		scene.reflectionsOn = m_reflectionsOn;
+		sceneDrawn = false;
 	}
 
 	if (m_mouseMoved)
@@ -86,7 +87,6 @@ void Controller::update(float deltaTime, Scene& scene, Window& window)
 		ScreenToClient(FindWindowA(NULL, "Engine"), &m_currentPos);
 		if (m_lmbDown)
 		{
-
 			rotateCamera((m_currentPos.x - m_pressedPos.x) / (float)window.m_width, (m_currentPos.y - m_pressedPos.y) / (float)window.m_height);
 			userInputReceived = true;
 		}
@@ -136,16 +136,22 @@ void Controller::onKeyUp(uint16_t key)
 
 void Controller::processFrame(Window& window, Scene& scene, ParallelExecutor& executor)
 {
-	if (userInputReceived && !sceneDrawn)
+	if (!scene.globalIlluminationOn)
 	{
 		scene.render(window, m_camera, executor);
 		userInputReceived = false;
-		m_globalIlluminationOn = false;
+	}
+	else if (!sceneDrawn)
+	{
+		scene.render(window, m_camera, executor);
+		userInputReceived = false;
+		sceneDrawn = true;
 	}
 }
 
 void Controller::processInput()
 {
+	m_globalIlluminationOn = false;
 	//iterate through all possible buttons
 	for (int i = 0; i != 256; i++)
 	{

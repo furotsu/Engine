@@ -1,4 +1,3 @@
-#define _USE_MATH_DEFINES
 
 #include <math.h>
 #include <algorithm>
@@ -6,47 +5,6 @@
 
 #include "scene.h"
 
-XMVECTOR acesHdr2Ldr(const XMVECTOR& hdr)
-{
-	XMMATRIX m1 = XMMatrixSet(
-		0.59719f, 0.07600f, 0.02840f, 0.0f,
-		0.35458f, 0.90834f, 0.13383f, 0.0f,
-		0.04823f, 0.01566f, 0.83777f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f
-	);
-	XMMATRIX m2 = XMMatrixSet(
-		1.60475f, -0.10208, -0.00327f, 0.0f,
-		-0.53108f, 1.10813, -0.07276f, 0.0f,
-		-0.07367f, -0.00605, 1.07602f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f
-	);
-	XMVECTOR v = XMVector3Transform(hdr, m1);
-	XMVECTOR a = v * (v + XMVectorSet(0.0245786f, 0.0245786f, 0.0245786f, 0.0f)) - XMVectorSet(0.000090537f, 0.000090537f, 0.000090537f, 0.0f);
-	XMVECTOR b = v * (XMVectorSet(0.983729f, 0.983729f, 0.983729f, 0.0f) * v + XMVectorSet(0.4329510f, 0.4329510f, 0.4329510f, 0.0f)) + XMVectorSet(0.238081f, 0.238081f, 0.238081f, 0.0f);
-	XMVECTOR ldr = math::clamp3(XMVector3Transform(a / b, m2), 0.0f, 1.0f);
-	return ldr;
-}
-
-XMVECTOR adjustExposure(const XMVECTOR& color, float EV100)
-{
-	float LMax = (78.0f / (0.65f * 100.0f)) * powf(2.0f, EV100);
-	return color * (1.0f / LMax);
-}
-
-XMVECTOR correctGamma(const XMVECTOR& color, float gamma)
-{
-	XMVECTOR g = XMVectorSet(gamma, gamma, gamma, 0.0f);
-	return XMVectorPow(color, XMVectorDivide(XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), g));
-}
-
-void branchlessONB(const XMVECTOR& n, XMVECTOR& b1, XMVECTOR& b2)
-{
-	float sign = copysignf(1.0f, XMVectorGetZ(n));
-	const float a = -1.0f / (sign + XMVectorGetZ(n));
-	const float b = XMVectorGetX(n) * XMVectorGetY(n) * a;
-	b1 = XMVectorSet(1.0f + sign * XMVectorGetX(n) * XMVectorGetX(n) * a, sign * b, -sign * XMVectorGetX(n), 0.0f);
-	b2 = XMVectorSet(b, sign + XMVectorGetY(n) * XMVectorGetY(n) * a, -XMVectorGetY(n), 0.0f);
-}
 
 // For each pixel determine what color it should 
 //	   based on whether ray hit any object or not 
@@ -64,15 +22,6 @@ void Scene::computePixelColor(uint32_t posX, uint32_t posY, Window& win)
 	col = correctGamma(col, 2.2f);
 
 	win.canvas.setPixel(posX, posY, XMVectorGetX(col) * 255, XMVectorGetY(col) * 255, XMVectorGetZ(col) * 255);
-}
-
-bool Scene::findIntersection(const math::ray& r, Intersection& outNearest, Material*& outMaterial)
-{
-	ObjRef ref = { nullptr, IntersectedType::NUM };
-
-	findIntersectionInternal(r, ref, outNearest, outMaterial);
-
-	return ref.type != IntersectedType::NUM;
 }
 
 bool Scene::findIntersection(const ray& r, IntersectionQuery& query)
@@ -127,20 +76,15 @@ void Scene::findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection&
 		light.hit(r, outRef, outNearest, outMaterial);
 }
 
-bool Scene::findIntersectionShadow(const ray& r, Intersection& outNearest, Material*& outMaterial)
+void Scene::findIntersectionShadow(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial)
 {
-	bool foundIntersection = false;
-	ObjRef ref = { nullptr, IntersectedType::NUM };
-
-	foundIntersection |= m_surface.hit(r, ref, outNearest, outMaterial);
+	m_surface.hit(r, outRef, outNearest, outMaterial);
 
 	for (auto& sphere : m_spheres)
-		foundIntersection |= sphere.hit(r, ref, outNearest, outMaterial);
+		sphere.hit(r, outRef, outNearest, outMaterial);
 
 	for (auto& model : m_models)
-		foundIntersection |= model.hit(r, ref, outNearest, outMaterial);
-
-	return foundIntersection;
+		model.hit(r, outRef, outNearest, outMaterial);
 }
 
 XMVECTOR Scene::illuminate(ray& r, uint32_t depth)
@@ -153,15 +97,17 @@ XMVECTOR Scene::illuminate(ray& r, uint32_t depth)
 	hr.reset();
 
 	bool interFound = false;
+	ObjRef ref = { nullptr, IntersectedType::NUM };
 
-	if (depth == 1.0f)
-		interFound = findIntersection(r, hr, material);
+	if (depth == 1u)
+		findIntersectionInternal(r, ref, hr, material);
 	else
-		interFound = findIntersectionShadow(r, hr, material);
+		findIntersectionShadow(r, ref, hr, material);
 
-	if (interFound)
+	if (ref.type != IntersectedType::NUM)
 	{
-		if (globalIlluminationOn && depth < MAX_REFLECTION_DEPTH)
+
+		if (globalIlluminationOn && depth == 1u)
 		{
 			//calculate indirect light value from hemisphere instead of using ambient constant value
 			color = (material->emmision + illuminateIndirect(hr, cameraPos, depth)) * material->albedo;
@@ -171,7 +117,7 @@ XMVECTOR Scene::illuminate(ray& r, uint32_t depth)
 			color = (material->emmision + m_ambientLight) * material->albedo;
 		}
 
-		if (XMVectorGetX(material->emmision) == 0.0f)
+		if (ref.type < IntersectedType::PointLight)
 		{
 			for (auto& l0 : m_pointLights)
 				color += illuminate(hr, material, cameraPos, l0);
@@ -187,8 +133,10 @@ XMVECTOR Scene::illuminate(ray& r, uint32_t depth)
 			{
 				r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
 
-				XMVECTOR colorRefl = illuminate(r, ++depth);
-				return math::lerp(colorRefl, color, REFLECTION_ROUGNESS_MULTIPLIER * material->roughness);
+				XMVECTOR fSpec = math::clamp3(frensel(XMVectorGetX(XMVector3Dot(hr.normal, -r.direction)), material->F0), 0.0f, 1.0f);
+
+				XMVECTOR colorRefl = illuminate(r, ++depth) * fSpec;
+				return colorRefl + color;
 			}
 		}
 	}
@@ -207,40 +155,36 @@ XMVECTOR Scene::illuminateIndirect(const Intersection& hr, const XMVECTOR& camer
 	//matrix to convert hemisphere coordinates for coords where fragment normal will be z-part of basis matrix
 	XMMATRIX transformMat = XMMatrixTranspose({ (XMVectorGetZ(zAxis) < 0.0f) ? xAxis : -xAxis, -yAxis, zAxis, {0.0f, 0.0f, 0.0f, 0.0f} });
 
-	const float goldenRatio = (1.0f + sqrtf(5.0f)) / 2.0f;
-
 	for (uint32_t i = 0; i != RAYS_ABOVE_HEMISPHERE_COUNT; i++)
 	{
-		float theta = 2.0f * M_PI * i / goldenRatio;
-		float phi = std::acos(1.0f - 2.0f * (static_cast<float>(i) + 0.5f) / static_cast<float>(RAYS_ABOVE_HEMISPHERE_COUNT));
-	
-		float x = std::cos(theta) * std::sin(phi);
-		float y = std::sin(theta) * std::sin(phi);
-		float z = -std::cos(phi);
-		z = (z < 0.0f) ? -z : z;
-		XMVECTOR pos = XMVector3Transform(XMVectorSet(x, y, z, 0.0f), transformMat);
+		XMVECTOR direction;
+		fibonacciHemisphereDirection(i, direction);
+		direction = XMVector3Transform(direction, transformMat);
 
-		ray sampleRay(hr.point, XMVector3Normalize(pos));
+		ray sampleRay(hr.point, XMVector3Normalize(direction));
 	
 		color += illuminate(sampleRay, ++depth);
+		//color += XMVector3Dot(hr.normal, direction);
 	}
-	color = XMVectorScale(color, 1.0f / static_cast<float>(RAYS_ABOVE_HEMISPHERE_COUNT));
 
+	color = XMVectorScale(color, 2.0f * M_PI / static_cast<float>(RAYS_ABOVE_HEMISPHERE_COUNT));
 	return color;
 }
 
 XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const PointLight& light)
 {
 	// adding small offset to avoid self-shadowing artifact
-	ray r(hr.point + 0.0001f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
-
+	ray r(hr.point + SMALL_OFFSET * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
+	
 	Intersection hr2;
 	Material* mat;
 	hr2.reset();
-	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 0.0001f;
+	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - SMALL_OFFSET;
 
-	// also do not light if fragment inside of the light source
-	if ((findIntersectionShadow(r, hr2, mat) && shadowsOn) || XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) < light.getRadius())
+	ObjRef ref = { nullptr, IntersectedType::NUM };
+	findIntersectionShadow(r, ref, hr2, mat);
+
+	if ((ref.type < IntersectedType::PointLight) && shadowsOn)
 	{
 			return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
@@ -253,13 +197,16 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const DirectionalLight& light)
 {
 	// adding small offset to avoid self-shadowing artifact
-	ray r(hr.point + 0.0001f * hr.normal, -light.m_direction);
+	ray r(hr.point + SMALL_OFFSET * hr.normal, -light.m_direction);
 
 	Intersection hr2;
 	hr2.reset();
 	Material* mat;
 
-	if (findIntersectionShadow(r, hr2, mat) && shadowsOn)
+	ObjRef ref = { nullptr, IntersectedType::NUM };
+	findIntersectionShadow(r, ref, hr2, mat);
+
+	if (ref.type < IntersectedType::PointLight && shadowsOn)
 	{
 		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}
@@ -272,15 +219,17 @@ XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XM
 XMVECTOR Scene::illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light)
 {
 	// adding small offset to avoid self-shadowing artifact
-	ray r(hr.point + 0.0001f * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
+	ray r(hr.point + SMALL_OFFSET * hr.normal, XMVector3Normalize(light.getCenter() - hr.point));
 
 	Intersection hr2;
 	Material* mat;
 	hr2.reset();
-	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - 0.00001f;
+	hr2.hitParam = XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) - light.getRadius() - SMALL_OFFSET;
 
-	// also do not light if fragment inside of the light source
-	if ((findIntersectionShadow(r, hr2, mat) && shadowsOn) || XMVectorGetX(XMVector3Length(hr.point - light.getCenter())) < light.getRadius())
+	ObjRef ref = { nullptr, IntersectedType::NUM };
+	findIntersectionShadow(r, ref, hr2, mat);
+
+	if ((ref.type < IntersectedType::PointLight) && shadowsOn)
 	{
 		return XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	}

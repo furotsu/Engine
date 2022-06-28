@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="lighting.cpp" />
     <ClCompile Include="src\lightSource.cpp" />
     <ClCompile Include="math\matrixAlg.cpp" />
     <ClCompile Include="math\plane.cpp" />

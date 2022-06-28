@@ -23,9 +23,14 @@ XMVECTOR frensel(float NdotL, const XMVECTOR& F0);
 float smith(float rough2, float NoV, float NoL);
 float ggx(float rough2, float NoH, float lightAngleSin = 0.0f, float lightAngleCos = 1.0f);
 
+void branchlessONB(const XMVECTOR& n, XMVECTOR& b1, XMVECTOR& b2);
+void fibonacciHemisphereDirection(uint32_t i, XMVECTOR& direction);
+
 XMVECTOR acesHdr2Ldr(const XMVECTOR& hdr);
 XMVECTOR adjustExposure(const XMVECTOR& color, float EV100);
 XMVECTOR correctGamma(const XMVECTOR& color, float gamma);
+
+float calcSolidAngle(float radius, float distance);
 
 XMVECTOR approximateClosestSphereDir(bool& intersects, XMVECTOR reflectionDir, float sphereCos, \
 										XMVECTOR sphereRelPos, XMVECTOR sphereDir, float sphereDist, float sphereRadius);
@@ -33,13 +38,11 @@ void clampDirToHorizon(XMVECTOR& dir, float& NoD, XMVECTOR normal, float minNoD)
 XMVECTOR findReflectionSpec(const XMVECTOR& viewDir, const XMVECTOR& fragNorm, float solidAngle, const XMVECTOR& lightCenter,
 	const XMVECTOR& fragPos, const XMVECTOR& F0, float distance, float radius, float rough2);
 
-void branchlessONB(const XMVECTOR& n, XMVECTOR& b1, XMVECTOR& b2);
-
-
 class Scene
 {
 	// ---------- Utility types hidden from user code ----------
 protected:
+	// Light sources should be after models for easier comparison
 	enum class IntersectedType {Sphere, Model, Surface, PointLight, FlashLight, NUM};
 
 	struct ObjRef
@@ -257,7 +260,6 @@ public:
 
 	void computePixelColor(uint32_t posX, uint32_t posY, Window& win);
 
-	bool findIntersection(const math::ray& r, Intersection& outNearest, Material*& outMaterial);
 	bool findIntersection(const ray& r, IntersectionQuery& query);
 	
 	XMVECTOR illuminate(ray& r, uint32_t depth = 1u);
@@ -282,7 +284,7 @@ protected:
 	XMVECTOR illuminate(const Intersection& hr, Material*& material, const XMVECTOR& cameraPos, const SpotLight& light);
 
 	void findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial);
-	bool findIntersectionShadow(const ray& r, Intersection& outNearest, Material*& outMaterial);
+	void findIntersectionShadow(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial);
 
 };
 

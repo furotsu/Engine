@@ -1,5 +1,6 @@
 #pragma once
 #include <DirectXMath.h>
+#include "constants.h"
 using namespace DirectX;
 
 namespace math
@@ -13,4 +14,7 @@ namespace math
 	XMVECTOR maxVec3(const XMVECTOR& v1, const XMVECTOR& v2);
 
 	float smoothstep(float edge0, float edge1, float x);
+
+	bool almostEqual(float a, float b, float epsilon = FLOAT_COMPARE_EPSILON);
+
 }

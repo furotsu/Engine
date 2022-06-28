@@ -1,5 +1,8 @@
+#define _USE_MATH_DEFINES
+
 #include "utility.h"
 
+#include <cmath>
 #include <algorithm>
 
 float math::clamp(float x, float lower, float upper)
@@ -42,10 +45,13 @@ XMVECTOR math::maxVec3(const XMVECTOR& v1, const XMVECTOR& v2)
     return XMVectorSet(r, g, b, 0.0f);
 }
 
-
-
 float math::smoothstep(float edge0, float edge1,  float x)
 {
     x = clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
     return x * x * (3 - 2 * x);
+}
+
+bool math::almostEqual(float a, float b, float epsilon)
+{
+    return fabs(a - b) < epsilon;
 }

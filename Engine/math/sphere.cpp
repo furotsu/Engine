@@ -24,7 +24,7 @@ namespace math
 			
 			rec.hitParam = hitParam;
 			rec.point = r.pointAtParameter(hitParam);
-			rec.normal = XMVector3Normalize((rec.point - this->center) / radius);
+			rec.normal = ((rec.point - this->center) / radius);
 			return true;
 			
 		}

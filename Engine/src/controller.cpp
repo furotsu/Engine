@@ -21,7 +21,7 @@ void Controller::init(Window& win, Scene& scene)
 	scene.setAmbient({ 0.0f, 0.0f, 0.0f, 0.0f });
 
 	scene.addPointLight(Scene::PointLight(XMVectorSet(-20.0f, 30.0f, -120.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 20.0f, 5.0f));
-	scene.addPointLight(Scene::PointLight(XMVectorSet(-120.0f, 30.0f, -20.0f, 0.0f), XMVectorSet(0.9f, 0.1f, 0.1f, 0.0f), 20.0f, 20.0f));
+	scene.addPointLight(Scene::PointLight(XMVectorSet(-120.0f, 30.0f, -20.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 20.0f, 20.0f));
 
 	scene.addDirLight(Scene::DirectionalLight(XMVectorSet(-0.1f, -0.9f, 0.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f), 0.3f));
 
@@ -43,10 +43,10 @@ void Controller::init(Window& win, Scene& scene)
 
 	for (uint16_t j = 0; j < 3; j++)
 	{
-		for (uint16_t i = 0; i < 7; i++)
+		for (uint16_t i = 0; i < 13; i++)
 		{
 			Material mat = Material(XMVectorSet(0.6f, 0.4f, 0.2f, 0.0f), \
-									min(0.01f + 0.15f * i, 1.0f), 0.5f * j);
+									min(0.01f + 0.053f * i, 1.0f), 0.5f * j);
 			scene.addSphere(Scene::Sphere(XMVectorSet(-250 + 30 * i, -15 + 30 * j, -200.0f, 0.0f), 10.0f, mat));
 		}
 	}

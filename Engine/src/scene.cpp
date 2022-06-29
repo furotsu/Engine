@@ -133,9 +133,12 @@ XMVECTOR Scene::illuminate(ray& r, uint32_t depth)
 			{
 				r = ray(hr.point, XMVector3Normalize(XMVector3Reflect(hr.point - cameraPos, hr.normal)));
 
-				XMVECTOR fSpec = math::clamp3(frensel(XMVectorGetX(XMVector3Dot(hr.normal, -r.direction)), material->F0), 0.0f, 1.0f);
+				XMVECTOR halfDir = XMVector3Normalize(r.direction + (hr.point - cameraPos));
+				XMVECTOR F = math::clamp3(frensel(XMVectorGetX(XMVector3Dot(hr.normal, r.direction)), material->F0), 0.0f, 1.0f);
 
-				XMVECTOR colorRefl = illuminate(r, ++depth) * fSpec;
+				XMVECTOR colorRefl = illuminate(r, ++depth) * F;
+				color = (XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) - F) * color;
+
 				return colorRefl + color;
 			}
 		}
@@ -164,7 +167,6 @@ XMVECTOR Scene::illuminateIndirect(const Intersection& hr, const XMVECTOR& camer
 		ray sampleRay(hr.point, XMVector3Normalize(direction));
 	
 		color += illuminate(sampleRay, ++depth);
-		//color += XMVector3Dot(hr.normal, direction);
 	}
 
 	color = XMVectorScale(color, 2.0f * M_PI / static_cast<float>(RAYS_ABOVE_HEMISPHERE_COUNT));

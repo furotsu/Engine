@@ -20,6 +20,6 @@ struct Material
 	Material(XMVECTOR albedo, float roughness, float metalness, XMVECTOR emmision = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), XMVECTOR inF0 = XMVectorSet(0.04f, 0.04f, 0.04f, 0.0f))
 		: albedo(albedo), roughness(roughness), metalness(metalness), emmision(emmision)
 	{
-		F0 = math::lerp(inF0, XMVectorScale(albedo, 0.1f), metalness);
+		F0 = math::lerp(inF0, albedo, metalness);
 	}
 };

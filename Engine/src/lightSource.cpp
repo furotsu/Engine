@@ -7,7 +7,7 @@ float calcSolidAngle(float radius, float distance)
 {
 	float h = 1.0f - sqrtf(1.0f - (radius / distance) * (radius / distance));
 
-	return 2.0f * M_PI * h;
+	return min(2.0f * M_PI * h, 2.0f * M_PI);
 }	
 
 // May return direction pointing beneath surface horizon (dot(N, dir) < 0), use clampDirToHorizon to fix it.

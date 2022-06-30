@@ -166,7 +166,7 @@ XMVECTOR Scene::illuminateIndirect(const Intersection& hr, const XMVECTOR& camer
 
 		ray sampleRay(hr.point, XMVector3Normalize(direction));
 	
-		color += illuminate(sampleRay, ++depth);
+		color += illuminate(sampleRay, depth + 1u);
 	}
 
 	color = XMVectorScale(color, 2.0f * M_PI / static_cast<float>(RAYS_ABOVE_HEMISPHERE_COUNT));

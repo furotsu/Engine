@@ -25,6 +25,9 @@
     <Filter Include="Actor">
       <UniqueIdentifier>{0105c1e7-3fd3-4644-b6b6-f13324c6e5ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EntityComponentSystem">
+      <UniqueIdentifier>{6b30c791-dbde-48fe-a7e2-dc4ab2c15ff0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application.cpp">

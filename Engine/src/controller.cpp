@@ -20,8 +20,8 @@ void Controller::init(Window& win, Scene& scene)
 	scene.setAmbient({ 0.478f, 0.647f, 0.902f, 0.0f });
 	scene.setAmbient({ 0.0f, 0.0f, 0.0f, 0.0f });
 
-	scene.addPointLight(Scene::PointLight(XMVectorSet(-20.0f, 30.0f, -120.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 20.0f, 5.0f));
-	scene.addPointLight(Scene::PointLight(XMVectorSet(-120.0f, 30.0f, -20.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 20.0f, 20.0f));
+	scene.addPointLight(Scene::PointLight(XMVectorSet(-20.0f, 30.0f, -120.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 13.0f, 5.0f));
+	scene.addPointLight(Scene::PointLight(XMVectorSet(-120.0f, 30.0f, -20.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 13.0f, 20.0f));
 
 	scene.addDirLight(Scene::DirectionalLight(XMVectorSet(-0.1f, -0.9f, 0.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f), 0.3f));
 
@@ -175,11 +175,11 @@ void Controller::processInput()
 			{
 				moveCamera(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
 			} break;
-			case 'E':
+			case 'Q':
 			{
 				moveCamera(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f));
 			}break;
-			case 'Q':
+			case 'E':
 			{
 				moveCamera(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 			}break;

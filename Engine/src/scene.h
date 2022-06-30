@@ -30,12 +30,12 @@ XMVECTOR acesHdr2Ldr(const XMVECTOR& hdr);
 XMVECTOR adjustExposure(const XMVECTOR& color, float EV100);
 XMVECTOR correctGamma(const XMVECTOR& color, float gamma);
 
-float calcSolidAngle(float radius, float distance);
+float calcAttenuation(float radius, float distance);
 
 XMVECTOR approximateClosestSphereDir(bool& intersects, XMVECTOR reflectionDir, float sphereCos, \
 										XMVECTOR sphereRelPos, XMVECTOR sphereDir, float sphereDist, float sphereRadius);
 void clampDirToHorizon(XMVECTOR& dir, float& NoD, XMVECTOR normal, float minNoD);
-XMVECTOR findReflectionSpec(const XMVECTOR& viewDir, const XMVECTOR& fragNorm, float solidAngle, const XMVECTOR& lightCenter,
+XMVECTOR CookTorrance_GGX(const XMVECTOR& viewDir, const XMVECTOR& fragNorm, float solidAngle, const XMVECTOR& lightCenter,
 	const XMVECTOR& fragPos, const XMVECTOR& F0, float distance, float radius, float rough2);
 
 class Scene

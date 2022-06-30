@@ -2,12 +2,13 @@
 
 #include "scene.h"
 
-
-float calcSolidAngle(float radius, float distance)
+// calculate attenuation as solidAgnle / (2.0f * M_PI)
+float calcAttenuation(float radius, float distance)
 {
+	distance = max(distance, radius);
 	float h = 1.0f - sqrtf(1.0f - (radius / distance) * (radius / distance));
 
-	return min(2.0f * M_PI * h, 2.0f * M_PI);
+	return h;
 }	
 
 // May return direction pointing beneath surface horizon (dot(N, dir) < 0), use clampDirToHorizon to fix it.
@@ -40,11 +41,9 @@ XMVECTOR CookTorrance_GGX(const XMVECTOR& viewDir, const XMVECTOR& fragNorm, flo
 	const XMVECTOR& fragPos, const XMVECTOR& F0, float distance, float radius, float rough2)
 {
 	XMVECTOR reflectionDir = XMVector3Normalize(XMVector3Reflect(viewDir, fragNorm));
-	bool intersects;
+	bool intersects = false;
 
-	float AngularDiam = 2.0f * atanf(radius / (2.0f * distance));
-
-	XMVECTOR lightSpecDirection = approximateClosestSphereDir(intersects, reflectionDir, std::cosf(XMConvertToRadians(AngularDiam)), (lightCenter - fragPos),
+	XMVECTOR lightSpecDirection = approximateClosestSphereDir(intersects, -reflectionDir, std::cosf(solidAngle), (lightCenter - fragPos),
 		(lightCenter - fragPos)/distance, distance, radius);
 
 	float NoL = max(XMVectorGetX(XMVector3Dot(fragNorm, lightSpecDirection)), 0.0f) + SMALL_OFFSET;
@@ -68,18 +67,18 @@ XMVECTOR Scene::PointLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& 
 	XMVECTOR viewDirection = XMVector3Normalize(cameraPos - fragPos);
 
 	float distance = XMVectorGetX(XMVector3Length(this->center - fragPos));
+
 	//solid angle
-	float solidAngle = calcSolidAngle(this->radius, distance);
+	float attenuation = calcAttenuation(this->radius, distance);
 
 	XMVECTOR lightDirection = XMVector3Normalize(this->center - fragPos);
 	float NoL = max(XMVectorGetX(XMVector3Dot(fragNorm, lightDirection)), 0.0f) + SMALL_OFFSET;
 
 	float rough2 = material->roughness * material->roughness;
 	//spec
-	XMVECTOR spec = CookTorrance_GGX(viewDirection, fragNorm, solidAngle, this->center, fragPos, material->F0, distance, this->radius, rough2);
+	XMVECTOR spec = CookTorrance_GGX(viewDirection, fragNorm, attenuation * (2.0f * M_PI) + SMALL_OFFSET, this->center, fragPos, material->F0, distance, this->radius, rough2);
 
 	//diffuse
-	float attenuation = solidAngle / (2.0f * M_PI);
 	XMVECTOR Fdiff = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) - frensel(NoL, material->F0);
 	XMVECTOR diff = XMVectorScale(Fdiff * material->albedo * m_lightColor * attenuation, 1.0f/ (M_PI));
 
@@ -121,18 +120,16 @@ XMVECTOR Scene::SpotLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& f
 	XMVECTOR viewDirection = XMVector3Normalize(cameraPos - fragPos);
 
 	float distance = XMVectorGetX(XMVector3Length(this->center - fragPos));
-	//solid angle
-	float solidAngle = calcSolidAngle(this->radius, distance);
+	float attenuation = calcAttenuation(this->radius, distance);
 
 	XMVECTOR lightDirection = XMVector3Normalize(this->center - fragPos);
 	float NoL = max(XMVectorGetX(XMVector3Dot(fragNorm, lightDirection)), 0.0f) + SMALL_OFFSET;
 
 	float rough2 = material->roughness * material->roughness;
 	//spec
-	XMVECTOR spec = CookTorrance_GGX(viewDirection, fragNorm, solidAngle, this->center, fragPos, material->F0, distance, this->radius, rough2);
+	XMVECTOR spec = CookTorrance_GGX(viewDirection, fragNorm, attenuation * (2.0f * M_PI), this->center, fragPos, material->F0, distance, this->radius, rough2);
 
 	//diffuse
-	float attenuation = solidAngle / (2.0f * M_PI);
 	XMVECTOR Fdiff = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) - frensel(NoL, material->F0);
 	XMVECTOR diff = XMVectorScale(Fdiff * material->albedo * m_lightColor * attenuation, 1.0f / (M_PI));
 

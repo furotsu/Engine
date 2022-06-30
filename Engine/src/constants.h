@@ -25,7 +25,7 @@ constexpr float LIGHTMODEL_SIZE = 5.0f;
 constexpr uint32_t MAX_REFLECTION_DEPTH = 4u;
 constexpr float MAX_REFLECTION_ROUGHNESS = 0.12f;
 constexpr float REFLECTION_ROUGNESS_MULTIPLIER = 1.0f / MAX_REFLECTION_ROUGHNESS;
-constexpr uint32_t RAYS_ABOVE_HEMISPHERE_COUNT = 300u;
+constexpr uint32_t RAYS_ABOVE_HEMISPHERE_COUNT = 2000u;
 
 constexpr float LIGHT_POWER_MULTIPLIER = 10.0f;
 

@@ -37,13 +37,13 @@ void clampDirToHorizon(XMVECTOR& dir, float& NoD, XMVECTOR normal, float minNoD)
 	}
 }
 
-XMVECTOR CookTorrance_GGX(const XMVECTOR& viewDir, const XMVECTOR& fragNorm, float solidAngle, const XMVECTOR& lightCenter,
+XMVECTOR CookTorrance_GGX(const XMVECTOR& viewDir, const XMVECTOR& fragNorm, float attenuation, const XMVECTOR& lightCenter,
 	const XMVECTOR& fragPos, const XMVECTOR& F0, float distance, float radius, float rough2)
 {
-	XMVECTOR reflectionDir = XMVector3Normalize(XMVector3Reflect(viewDir, fragNorm));
+	XMVECTOR reflectionDir = XMVector3Reflect(viewDir, fragNorm);
 	bool intersects = false;
 
-	XMVECTOR lightSpecDirection = approximateClosestSphereDir(intersects, -reflectionDir, std::cosf(solidAngle), (lightCenter - fragPos),
+	XMVECTOR lightSpecDirection = approximateClosestSphereDir(intersects, -reflectionDir, -(attenuation - 1.0f), (lightCenter - fragPos),
 		(lightCenter - fragPos)/distance, distance, radius);
 
 	float NoL = max(XMVectorGetX(XMVector3Dot(fragNorm, lightSpecDirection)), 0.0f) + SMALL_OFFSET;
@@ -58,7 +58,7 @@ XMVECTOR CookTorrance_GGX(const XMVECTOR& viewDir, const XMVECTOR& fragNorm, flo
 	XMVECTOR Fspec = math::clamp3(frensel(LoH, F0), 0.0f, 1.0f);
 	float D = ggx(rough2, NoH);
 	float G = smith(rough2, NoV, NoL);
-	XMVECTOR spec = XMVectorScale(Fspec, G * min(1.0f, solidAngle * D * 0.25f / (NoL * NoV)));
+	XMVECTOR spec = XMVectorScale(Fspec, G * min(1.0f, attenuation * (2.0f * M_PI) * D * 0.25f / (NoL * NoV)));
 	return spec;
 }
 
@@ -76,7 +76,7 @@ XMVECTOR Scene::PointLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& 
 
 	float rough2 = material->roughness * material->roughness;
 	//spec
-	XMVECTOR spec = CookTorrance_GGX(viewDirection, fragNorm, attenuation * (2.0f * M_PI) + SMALL_OFFSET, this->center, fragPos, material->F0, distance, this->radius, rough2);
+	XMVECTOR spec = CookTorrance_GGX(viewDirection, fragNorm, attenuation, this->center, fragPos, material->F0, distance, this->radius, rough2);
 
 	//diffuse
 	XMVECTOR Fdiff = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) - frensel(NoL, material->F0);
@@ -127,7 +127,7 @@ XMVECTOR Scene::SpotLight::illuminate(const XMVECTOR& fragPos, const XMVECTOR& f
 
 	float rough2 = material->roughness * material->roughness;
 	//spec
-	XMVECTOR spec = CookTorrance_GGX(viewDirection, fragNorm, attenuation * (2.0f * M_PI), this->center, fragPos, material->F0, distance, this->radius, rough2);
+	XMVECTOR spec = CookTorrance_GGX(viewDirection, fragNorm, attenuation, this->center, fragPos, material->F0, distance, this->radius, rough2);
 
 	//diffuse
 	XMVECTOR Fdiff = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) - frensel(NoL, material->F0);

@@ -125,12 +125,35 @@ void Controller::update(float deltaTime, Scene& scene, Window& window)
 
 void Controller::onKeyDown(uint16_t key)
 {
-	m_buttonsState[key] = true;
-	m_keydown = true;
+	m_globalIlluminationOn = false;
+	userInputReceived = true;
+	switch (key)
+	{
+	case 'R':
+	{
+		m_reflectionsOn = m_buttonsState[key] ? m_reflectionsOn : !m_reflectionsOn;
+		m_buttonsState[key] = true;
+	}break;
+	case 'G':
+	{
+		m_globalIlluminationOn = m_buttonsState[key] ? m_globalIlluminationOn : !m_globalIlluminationOn;
+		m_buttonsState[key] = true;
+	}break;
+	default:
+	{
+		if (!m_buttonsState[key])
+		{
+			m_activeButtons.push_back(key);
+			m_buttonsState[key] = true;
+		}
+	}
+	}
+
 }
 
 void Controller::onKeyUp(uint16_t key)
 {
+	m_activeButtons.erase(std::remove(m_activeButtons.begin(), m_activeButtons.end(), key), m_activeButtons.end());
 	m_buttonsState[key] = false;
 }
 
@@ -151,65 +174,50 @@ void Controller::processFrame(Window& window, Scene& scene, ParallelExecutor& ex
 
 void Controller::processInput()
 {
-	m_globalIlluminationOn = false;
 	//iterate through all possible buttons
-	for (int i = 0; i != 256; i++)
+	for (uint16_t& button : m_activeButtons)
 	{
-		if (m_buttonsState[i])
+		switch (button)
 		{
-			switch (i)
-			{
-			case 'W':
-			{
-				moveCamera(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f));
-			} break;
-			case 'A':
-			{
-				moveCamera(XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f));
-			} break;
-			case 'S':
-			{
-				moveCamera(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
-			} break;
-			case 'D':
-			{
-				moveCamera(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
-			} break;
-			case 'Q':
-			{
-				moveCamera(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f));
-			}break;
-			case 'E':
-			{
-				moveCamera(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-			}break;
-			case VK_OEM_PLUS:
-			{
-				changeEv(1.0f);
-			}break;
-			case VK_OEM_MINUS:
-			{
-				changeEv(-1.0f);
-			}break;
-			case 'R':
-			{
-				m_reflectionsOn = m_keydown ? !m_reflectionsOn : m_reflectionsOn;
-				m_keydown = false;
-			}break;
-			case 'G':
-			{
-				m_globalIlluminationOn = m_keydown ? !m_globalIlluminationOn : m_globalIlluminationOn;;
-				m_keydown = false;
-			}break;
-			case VK_SHIFT:
-			{
-				speedIncreased = true;
-			}break;
-			default:
-			{
-			}
-			}
-
+		case 'W':
+		{
+			moveCamera(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f));
+		} break;
+		case 'A':
+		{
+			moveCamera(XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f));
+		} break;
+		case 'S':
+		{
+			moveCamera(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
+		} break;
+		case 'D':
+		{
+			moveCamera(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
+		} break;
+		case 'Q':
+		{
+			moveCamera(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f));
+		}break;
+		case 'E':
+		{
+			moveCamera(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+		}break;
+		case VK_OEM_PLUS:
+		{
+			changeEv(0.5f);
+		}break;
+		case VK_OEM_MINUS:
+		{
+			changeEv(-0.5f);
+		}break;
+		case VK_SHIFT:
+		{
+			speedIncreased = true;
+		}break;
+		default:
+		{
+		}
 		}
 	}
 	m_mouseMoved = true;

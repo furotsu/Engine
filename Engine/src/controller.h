@@ -11,7 +11,6 @@ class Controller
 public:
 	bool m_rmbDown;
 	bool m_lmbDown;
-	bool m_keydown;
 	bool userInputReceived;
 	bool sceneDrawn;
 	bool speedIncreased;
@@ -29,6 +28,7 @@ public:
 	float m_deltaTime;
 
 	bool m_buttonsState[256];
+	std::vector<uint16_t> m_activeButtons;
 
 	POINT m_pressedPos;
 	POINT m_currentPos;

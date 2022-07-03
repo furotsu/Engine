@@ -54,9 +54,13 @@ void Camera::setWorldAngles(const Angles& angles)
 	m_updatedBasis = false;
 	m_updatedMatrices = false;
 
-	transformation.rotation = math::Quaternion({ 0.0f, 0.0f, 1.0f, 0.0f }, angles.roll);
-	transformation.rotation *= math::Quaternion({ 1.0f, 0.0f, 0.0f, 0.0f }, angles.pitch);
-	transformation.rotation *= math::Quaternion({ 0.0f, 1.0f, 1.0f, 0.0f }, angles.yaw);
+	transformation.rotation = math::Quaternion({ 1.0f, 0.0f, 0.0f, 0.0f }, angles.pitch);
+	transformation.rotation *= math::Quaternion({ 0.0f, 1.0f, 0.0f, 0.0f }, angles.yaw);
+
+	if (m_rollEnabled)
+	{
+		transformation.rotation *= math::Quaternion({ 0.0f, 0.0f, 1.0f, 0.0f }, angles.roll);
+	}
 
 	m_angles = angles;
 
@@ -71,9 +75,13 @@ void Camera::addWorldAngles(const Angles& angles)
 	m_updatedBasis = false;
 	m_updatedMatrices = false;
 
-	transformation.rotation *= math::Quaternion({ 0.0f, 0.0f, 1.0f, 0.0f }, angles.roll);
 	transformation.rotation *= math::Quaternion({ 1.0f, 0.0f, 0.0f, 0.0f }, angles.pitch);
-	transformation.rotation *= math::Quaternion({ 0.0f, 1.0f, 1.0f, 0.0f }, angles.yaw);
+	transformation.rotation *= math::Quaternion({ 0.0f, 1.0f, 0.0f, 0.0f }, angles.yaw);
+
+	if (m_rollEnabled)
+	{
+		transformation.rotation *= math::Quaternion({ 0.0f, 0.0f, 1.0f, 0.0f }, angles.roll);
+	}
 
 	math::normalizeQuat(transformation.rotation);
 
@@ -85,10 +93,18 @@ void Camera::addRelativeAngles(const Angles& angles)
 {
 	m_updatedBasis = false;
 	m_updatedMatrices = false;
-
-	transformation.rotation *= math::Quaternion(forward(), angles.roll);
-	transformation.rotation *= math::Quaternion(right(), angles.pitch);
-	transformation.rotation *= math::Quaternion(top(), angles.yaw);
+	
+	if (m_rollEnabled)
+	{
+		transformation.rotation *= math::Quaternion(right(), angles.pitch);
+		transformation.rotation *= math::Quaternion(top(), angles.yaw);
+		transformation.rotation *= math::Quaternion(forward(), angles.roll);
+	}
+	else
+	{
+		transformation.rotation *= math::Quaternion(right(), angles.pitch);
+		transformation.rotation *= math::Quaternion({ 0.0f, 1.0f, 0.0f, 0.0f }, angles.yaw);
+	}
 
 	math::normalizeQuat(transformation.rotation);
 

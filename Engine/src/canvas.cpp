@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Canvas::Canvas(int width, int height, int offsetX, int offsetY)
+Canvas::Canvas(uint32_t width, uint32_t height, uint32_t offsetX, uint32_t offsetY)
 {
 	m_width = width - width % 4;
 	m_height = height;
@@ -17,7 +17,8 @@ BITMAPINFO Canvas::createDIB()
 	int iBmiSize;
 	int iSurfaceSize;
 
-	// Initialize bitmap info header
+	
+	//Initialize bitmap info header
 	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bmi.bmiHeader.biWidth = m_width;
 	bmi.bmiHeader.biHeight = -(signed)m_height; // To render image top-down
@@ -34,7 +35,7 @@ BITMAPINFO Canvas::createDIB()
 	return bmi;
 }
 
-void Canvas::onResize(const int& width, const int& height)
+void Canvas::onResize(uint32_t width, uint32_t height)
 {
 	m_pixels.clear();
 
@@ -47,7 +48,7 @@ void Canvas::onResize(const int& width, const int& height)
 	m_pixels = std::vector<uint32_t>(m_width * m_height );
 }
 
-void Canvas::setPixel(int x, int y, BYTE r, BYTE g, BYTE b)
+void Canvas::setPixel(uint32_t x, uint32_t y, BYTE r, BYTE g, BYTE b)
 {
 	int iOffset = bmi.bmiHeader.biWidth * y + x;
 

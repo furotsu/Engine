@@ -1,8 +1,9 @@
 #include "controller.h"
 
 #include <chrono>
-#include "cube.h"
+#include <cmath>
 
+#include "cube.h"
 Cube c;
 
 std::shared_ptr<Mesh> cube = std::make_shared<Mesh>(c.cubeVertices);
@@ -10,38 +11,75 @@ std::shared_ptr<math::Sphere> sphere = std::make_shared <math:: Sphere> (XMVecto
 
 void Controller::init(Window& win, Scene& scene)
 {
-	Material bronze(XMVectorSet(0.714f, 0.4284f, 0.18144f, 0.0f), 0.25f, 0.2f);
-	Material greenRubber(XMVectorSet(0.4f, 0.5f, 0.4f, 0.0f), 0.1f, 0.078125f);
 
-	scene.setSurface(Scene::Surface(Plane(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMVectorSet(0.0f, -100.0f, 0.0f, 0.0f)), greenRubber));
+	scene.EV100 = 2.0f;
+	scene.globalIlluminationOn = true;
+	scene.reflectionsOn = true;
+	scene.shadowsOn = true;
 
-	scene.addModel(Scene::Model(XMVectorSet(40.0f, -20.0f, -100.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), cube, bronze));
-	scene.addSphere(Scene::Sphere(XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f), 10.0f, bronze));
+	scene.setAmbient({ 0.478f, 0.647f, 0.902f, 0.0f });
+	scene.setAmbient({ 0.0f, 0.0f, 0.0f, 0.0f });
 
-	scene.setAmbient({ 0.2f, 0.2f, 0.2f, 0.0f });
+	scene.addPointLight(Scene::PointLight(XMVectorSet(-20.0f, 30.0f, -120.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 13.0f, 5.0f));
+	scene.addPointLight(Scene::PointLight(XMVectorSet(-120.0f, 30.0f, -20.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), 13.0f, 20.0f));
 
-	scene.addPointLight(Scene::PointLight(XMVectorSet(130.0f, 60.0f, -60.0f, 0.0f), XMVectorSet(0.9f, 0.3f, 0.3f, 0.0f)));
+	scene.addDirLight(Scene::DirectionalLight(XMVectorSet(-0.1f, -0.9f, 0.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f), 0.3f));
 
-	scene.addDirLight(Scene::DirectionalLight(XMVectorSet(-0.1f, -0.9f, 0.0f, 0.0f), XMVectorSet(0.3f, 0.3f, 0.3f, 0.0f)));
+	scene.addFlashLight(Scene::SpotLight(XMVectorSet(0.0f, 20.0f, -12.0f, 0.0f), XMVectorSet(5.0f, 5.0f, 5.0f, 0.0f), XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),	0.91f, 0.32f, 20.0f));
 
-	scene.addFlashLight(Scene::SpotLight(XMVectorSet(0.0f, -50.0f, 0.0f, 0.0f), XMVectorSet(5.0f, 5.0f, 5.0f, 0.0f), XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),	0.91f, 0.82f));
+	Material materialSurface(XMVectorSet(0.99f, 0.99f, 0.99f, 0.0f), 0.9f, 0.1f);
+	Material materialModel1(XMVectorSet(0.99f, 0.2f, 0.2f, 0.0f), 0.2f, 0.1f);
+	Material materialModel2(XMVectorSet(0.99f, 0.99f, 0.99f, 0.0f), 0.8f, 0.1f);
+	Material mat1 = Material(XMVectorSet(0.3f + 0.1f * 2, 0.2f, 0.3f + 0.05f * 7, 0.0f), \
+		min(0.01f + 0.1f * 7, 1.0f), 0.1f);
+	Material mat2 = Material(XMVectorSet(0.01f, 0.99f, 0.01f, 0.9f), \
+		min(0.01f + 0.1f * 7, 1.0f), 0.1f);
+	scene.addModel(Scene::Model(XMVectorSet(10.0f, -10.0f,  -45.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), cube, materialModel1));
+	scene.addModel(Scene::Model(XMVectorSet(-10.0f, -25.0f, -30.0f, 0.0f), XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), cube, materialModel2));
+	
+	scene.addSphere(Scene::Sphere(XMVectorSet(10.0f, -25.0f, -20.0f, 0.0f), 10.0f, mat1));
+	scene.addSphere(Scene::Sphere(XMVectorSet(-9.0f, -20.0f, -3.0f, 0.0f), 10.0f, mat2));
+	scene.setSurface(Scene::Surface(Plane(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), XMVectorSet(0.0f, -20.0f, 0.0f, 0.0f)), materialSurface));
 
+	for (uint16_t j = 0; j < 3; j++)
+	{
+		for (uint16_t i = 0; i < 13; i++)
+		{
+			Material mat = Material(XMVectorSet(0.6f, 0.4f, 0.2f, 0.0f), \
+									min(0.01f + 0.053f * i, 1.0f), 0.5f * j);
+			scene.addSphere(Scene::Sphere(XMVectorSet(-250 + 30 * i, -15 + 30 * j, -200.0f, 0.0f), 10.0f, mat));
+		}
+	}
+	
 	pickedObjMoverQuery = Scene::IntersectionQuery();
 	pickedObjMoverQuery.intersection.reset();
 
-	m_camera = Camera(XMVectorSet(0.0f, 20.0f, 300.0f, 1.0f),  {0.0f, 0.0f, 0.0f});
+	m_camera = Camera(XMVectorSet(40.0f, 0.0f, 30.0f, 1.0f),  {0.0f, -13.0f, 40.0f});
 	m_camera.setPerspective(45.0f, win.m_width, win.m_height, 0.1f, 800.0f);
 	m_cameraSpeed = CAMERA_SPEED;
 	m_mouseSensitivity = MOUSE_SENSITIVITY;
-
+	
 	m_rmbDown = false;
 	m_lmbDown = false;
+	m_reflectionsOn = true;
+	m_globalIlluminationOn = false;
+	userInputReceived = true;
+	sceneDrawn = false;
+	EVvalue = 2.0f;
 }
 
 void Controller::update(float deltaTime, Scene& scene, Window& window)
 {
 	m_deltaTime = deltaTime;
 	processInput();
+	if (userInputReceived)
+	{
+		scene.globalIlluminationOn = (scene.globalIlluminationOn) ? false : m_globalIlluminationOn;
+
+		scene.EV100 = EVvalue;
+		scene.reflectionsOn = m_reflectionsOn;
+		sceneDrawn = false;
+	}
 
 	if (m_mouseMoved)
 	{
@@ -49,8 +87,8 @@ void Controller::update(float deltaTime, Scene& scene, Window& window)
 		ScreenToClient(FindWindowA(NULL, "Engine"), &m_currentPos);
 		if (m_lmbDown)
 		{
-
-			rotateCamera((m_currentPos.x - m_pressedPos.x)/(float)window.m_width, (m_currentPos.y - m_pressedPos.y)/(float)window.m_height);
+			rotateCamera((m_currentPos.x - m_pressedPos.x) / (float)window.m_width, (m_currentPos.y - m_pressedPos.y) / (float)window.m_height);
+			userInputReceived = true;
 		}
 		if (m_rmbDown)
 		{
@@ -68,99 +106,147 @@ void Controller::update(float deltaTime, Scene& scene, Window& window)
 				r.direction = XMVector3Normalize(XMVectorSet(XMVectorGetX(r.direction), XMVectorGetY(r.direction), XMVectorGetZ(r.direction), 0.0f));
 
 
-				r.direction = XMVector3Normalize( - r.origin + point);
-				
+				r.direction = XMVector3Normalize(-r.origin + point);
+
 				XMVECTOR holdPoint = r.origin + r.direction * pickedObjMoverQuery.distToPickedObj;
-			
+
 				XMVECTOR offset = XMVectorSet(XMVectorGetX(holdPoint) - XMVectorGetX(pickedObjMoverQuery.mover->getPickedPos()),
 					XMVectorGetY(holdPoint) - XMVectorGetY(pickedObjMoverQuery.mover->getPickedPos()),
 					XMVectorGetZ(holdPoint) - XMVectorGetZ(pickedObjMoverQuery.mover->getPickedPos()), 0.0f);
 
 				pickedObjMoverQuery.mover->moveBy(offset);
 				m_mouseMoved = false;
+				userInputReceived = true;
 			}
 		}
 	}
-
 	m_camera.updateMatrices();
 }
 
-void Controller::onKeyDown(char key)
+void Controller::onKeyDown(uint16_t key)
 {
-	m_buttonsState[key] = true;
+	m_globalIlluminationOn = false;
+	userInputReceived = true;
+	switch (key)
+	{
+	case 'R':
+	{
+		m_reflectionsOn = m_buttonsState[key] ? m_reflectionsOn : !m_reflectionsOn;
+		m_buttonsState[key] = true;
+	}break;
+	case 'G':
+	{
+		m_globalIlluminationOn = m_buttonsState[key] ? m_globalIlluminationOn : !m_globalIlluminationOn;
+		m_buttonsState[key] = true;
+	}break;
+	default:
+	{
+		if (!m_buttonsState[key])
+		{
+			m_activeButtons.push_back(key);
+			m_buttonsState[key] = true;
+		}
+	}
+	}
+
 }
 
-void Controller::onKeyUp(char key)
+void Controller::onKeyUp(uint16_t key)
 {
+	m_activeButtons.erase(std::remove(m_activeButtons.begin(), m_activeButtons.end(), key), m_activeButtons.end());
 	m_buttonsState[key] = false;
 }
 
-void Controller::processFrame(Window& window, Scene& scene)
+void Controller::processFrame(Window& window, Scene& scene, ParallelExecutor& executor)
 {
-	scene.render(window, m_camera);
+	if (!scene.globalIlluminationOn)
+	{
+		scene.render(window, m_camera, executor);
+		userInputReceived = false;
+	}
+	else if (!sceneDrawn)
+	{
+		scene.render(window, m_camera, executor);
+		userInputReceived = false;
+		sceneDrawn = true;
+	}
 }
 
 void Controller::processInput()
 {
 	//iterate through all possible buttons
-	for (int i = 0; i != 128; i++)
+	for (uint16_t& button : m_activeButtons)
 	{
-		if (m_buttonsState[i])
+		switch (button)
 		{
-			switch (i)
-			{
-			case 'W':
-			{
-				moveCamera(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f));
-			} break;
-			case 'A':
-			{
-				moveCamera(XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f));
-			} break;
-			case 'S':
-			{
-				moveCamera(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
-			} break;
-			case 'D':
-			{
-				moveCamera(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
-			} break;
-			case VK_CONTROL:
-			{
-				moveCamera(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f));
-			} break;
-			case VK_SPACE:
-			{
-				moveCamera(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-			}
-			break;
-			case 'E':
-			{
-				rotateCamera(-1.0f);
-			}
-			break;
-			case 'Q':
-			{
-				rotateCamera(1.0f);
-			}
-			break;
-			default:
-			{
-			}
-			}
+		case 'W':
+		{
+			moveCamera(XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f));
+		} break;
+		case 'A':
+		{
+			moveCamera(XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f));
+		} break;
+		case 'S':
+		{
+			moveCamera(XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f));
+		} break;
+		case 'D':
+		{
+			moveCamera(XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
+		} break;
+		case 'Q':
+		{
+			moveCamera(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f));
+		}break;
+		case 'E':
+		{
+			moveCamera(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+		}break;
+		case VK_OEM_PLUS:
+		{
+			changeEv(0.5f);
+		}break;
+		case VK_OEM_MINUS:
+		{
+			changeEv(-0.5f);
+		}break;
+		case VK_SHIFT:
+		{
+			speedIncreased = true;
+		}break;
+		default:
+		{
+		}
 		}
 	}
 	m_mouseMoved = true;
 }
 
+void Controller::changeEv(float valuePerSec)
+{
+	EVvalue += m_deltaTime * valuePerSec;
+}
+
+void Controller::changeCameraSpeed(float increase)
+{
+	float delta = math::lerp(1.0f, 1.1f, static_cast<float>(abs(increase)) / 120.0f);
+	if (increase > 0)
+		m_cameraSpeed *= (delta);
+	else
+		m_cameraSpeed /= (delta);
+	m_cameraSpeed = math::clamp(m_cameraSpeed, MIN_CAMERA_SPEED, MAX_CAMERA_SPEED);
+}
+
 void Controller::moveCamera(const XMVECTOR& direction)
 {
-	XMVECTOR offset = direction * m_deltaTime * m_cameraSpeed;
+	XMVECTOR offset = direction * m_deltaTime * m_cameraSpeed * ((speedIncreased) ? 5.0f : 1.0f);
+	speedIncreased = false;
 	m_camera.addRelativeOffset(offset);
 	m_camera.updateMatrices();
 }
 
-void Controller::rotateCamera(const float& xOffset, const float& yOffset)
+void Controller::rotateCamera(float xOffset, float yOffset)
 {
 	Angles res;
 
@@ -171,7 +257,7 @@ void Controller::rotateCamera(const float& xOffset, const float& yOffset)
 	m_camera.addRelativeAngles(res);
 }
 
-void Controller::rotateCamera(const float& direction)
+void Controller::rotateCamera(float direction)
 {
 	Angles res;
 

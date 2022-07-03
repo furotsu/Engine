@@ -1,5 +1,6 @@
 #include "application.h"
 
+
 void Application::init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height)
 {
 	this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
@@ -37,7 +38,7 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 		window.onResize(rect.right - rect.left, rect.bottom - rect.top);
 		controller.m_camera.setPerspective(45.0f, window.m_width, window.m_height, 1.0f, 10000.0f);
-
+		controller.userInputReceived = true;
 	} break;
 	case WM_MOUSEMOVE:
 	{
@@ -50,6 +51,7 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 		//determine position relative to init window
 		ScreenToClient(FindWindowA(NULL, "Engine"), &controller.m_pressedPos);
 		controller.m_currentPos = controller.m_pressedPos;
+		controller.userInputReceived = true;
 	} break;
 	case WM_LBUTTONUP:
 	{
@@ -63,19 +65,28 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 		controller.m_currentPos = controller.m_pressedPos;
 		controller.pickedObjMoverQuery.intersection.reset();
 		scene.pickObject(controller.m_camera, window.screenToNDC(controller.m_currentPos.x, controller.m_currentPos.y), controller.pickedObjMoverQuery);
+		controller.userInputReceived = true;
 	} break;
 	case WM_RBUTTONUP:
 	{
 		controller.m_rmbDown = false;
 		controller.pickedObjMoverQuery.mover = nullptr;
-	}
+	}break;
 	case WM_KEYDOWN:
 	{
-		controller.onKeyDown((char)wParam);
+		controller.onKeyDown(wParam);
+		controller.userInputReceived = true;
 	} break;
 	case WM_KEYUP:
 	{
-		controller.onKeyUp((char)wParam);
+		controller.onKeyUp(wParam);
+	}break;
+	case WM_MOUSEWHEEL:
+	{
+		controller.changeCameraSpeed(GET_WHEEL_DELTA_WPARAM(wParam));
+	}break;
+	default:
+	{
 	}
 	}
 
@@ -83,7 +94,7 @@ LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPA
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-MSG Application::run()
+MSG Application::run(ParallelExecutor& executor)
 {
 	MSG msg = { 0 };
 
@@ -106,9 +117,8 @@ MSG Application::run()
 		{
 
 			timer.recordTime();
-			lastWParam = WPARAM();
 			controller.update(m_deltaTime, scene, window);
-			controller.processFrame(window, scene);
+			controller.processFrame(window, scene, executor);
 			window.flush();
 
 			std::cout << "fps: " << 1.0f / m_deltaTime << std::endl;

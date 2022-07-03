@@ -8,6 +8,7 @@
 #include "controller.h"
 #include "window.h"
 #include "timer.h"
+#include "parallelExecutor.h"
 
 
 class Application
@@ -18,10 +19,7 @@ public:
 	Scene scene;
 	Timer timer;
 
-	WPARAM lastWParam;
-
 	float m_deltaTime;
-
 
 	Application() = default;
 
@@ -31,7 +29,7 @@ public:
 
 	LRESULT CALLBACK processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Scene& scene, Window& w);
 
-	MSG run();
+	MSG run(ParallelExecutor& executor);
 
 };
 

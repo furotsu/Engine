@@ -26,12 +26,14 @@ public:
 
 	Transform transformation;
 
+	bool m_rollEnabled;
 	bool m_updatedBasis = false;
 	bool m_updatedMatrices = false;
 
 
 	Camera() = default;
-	Camera(XMVECTOR position, Angles rotation)
+	Camera(XMVECTOR position, Angles rotation, bool rollEnabled = false)
+		:m_rollEnabled(rollEnabled)
 	{
 		setWorldOffset(position);
 		setWorldAngles(rotation);

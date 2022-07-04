@@ -4,55 +4,38 @@
 #include <iostream>
 
 #include "scene.h"
-#include "camera.h"
+#include "shader.h"
 
-class Controller
+namespace engine
 {
-public:
-	bool m_rmbDown;
-	bool m_lmbDown;
-	bool userInputReceived;
-	bool sceneDrawn;
-	bool speedIncreased;
+	class Controller
+	{
+	public:
+		bool m_rmbDown;
+		bool m_lmbDown;
+		bool userInputReceived;
 
-	float EVvalue;
-	bool m_mouseMoved;
-	float m_cameraSpeed;
-	float m_mouseSensitivity;
+		float m_deltaTime;
 
-	bool m_reflectionsOn;
-	bool m_globalIlluminationOn;
+		std::shared_ptr<Mesh> triangleMesh;
+		Scene::Model triangle;
+		ShaderProgram shaderProgram;
 
-	Scene::IntersectionQuery pickedObjMoverQuery;
+		bool m_buttonsState[256];
+		std::vector<uint16_t> m_activeButtons;
 
-	float m_deltaTime;
+		Controller() = default;
 
-	bool m_buttonsState[256];
-	std::vector<uint16_t> m_activeButtons;
+		void init(Window& win, Scene& scene);
 
-	POINT m_pressedPos;
-	POINT m_currentPos;
-	
-	Camera m_camera;
+		void processInput();
 
-	Controller() = default;
+		void update(float deltaTime, Scene& scene, Window& window);
 
-	void init(Window& win, Scene& scene);
+		void onKeyDown(uint16_t key);
+		void onKeyUp(uint16_t key);
 
-	void processInput();
+		void processFrame(Window& window, Scene& scene);
 
-	void update(float deltaTime, Scene& scene, Window& window);
-
-	void onKeyDown(uint16_t key);
-	void onKeyUp(uint16_t key);
-
-	void processFrame(Window& window, Scene& scene, ParallelExecutor& executor);
-
-	void changeEv(float valuePerSec);
-
-	void changeCameraSpeed(float increase);
-	void moveCamera(const XMVECTOR& direction);
-	void rotateCamera(float xOffset, float yOffset);
-	void rotateCamera(float direction);
-
-};
+	};
+}

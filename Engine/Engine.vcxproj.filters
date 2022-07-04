@@ -28,31 +28,22 @@
     <Filter Include="EntityComponentSystem">
       <UniqueIdentifier>{6b30c791-dbde-48fe-a7e2-dc4ab2c15ff0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="utility">
+      <UniqueIdentifier>{acb74daa-e254-44f7-82db-0cb88694d81b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render">
+      <UniqueIdentifier>{5727df85-ff71-47b7-8c6a-7f343c35fd6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\application.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\model.cpp">
-      <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="math\plane.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="src\mesh.cpp">
-      <Filter>Actor</Filter>
-    </ClCompile>
     <ClCompile Include="math\quaternion.cpp">
       <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="src\scene.cpp">
-      <Filter>World</Filter>
     </ClCompile>
     <ClCompile Include="math\sphere.cpp">
       <Filter>Math</Filter>
@@ -60,47 +51,50 @@
     <ClCompile Include="math\triangle.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="src\controller.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
     <ClCompile Include="math\matrixAlg.cpp">
       <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="src\canvas.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="src\camera.cpp">
-      <Filter>World</Filter>
-    </ClCompile>
-    <ClCompile Include="src\modelMover.cpp">
-      <Filter>Actor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\lightSource.cpp">
-      <Filter>World</Filter>
     </ClCompile>
     <ClCompile Include="math\utility.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="src\application.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="render\d3d.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\debug.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="render\globals.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="lighting.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
     <ClCompile Include="src\parallelExecutor.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="lighting.cpp">
+    <ClCompile Include="src\actor\mesh.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene.cpp">
       <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="render\shader.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\actor\model.cpp">
+      <Filter>Actor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\application.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\canvas.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\controller.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="src\window.h">
-      <Filter>Application</Filter>
-    </ClInclude>
     <ClInclude Include="math\matrixAlg.h">
       <Filter>Math</Filter>
     </ClInclude>
@@ -119,38 +113,66 @@
     <ClInclude Include="math\hitable.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="src\mesh.h">
-      <Filter>Actor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\model.h">
-      <Filter>Actor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\material.h">
-      <Filter>Actor</Filter>
-    </ClInclude>
     <ClInclude Include="math\ray.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\utility.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\scene.h">
       <Filter>World</Filter>
     </ClInclude>
-    <ClInclude Include="src\camera.h">
-      <Filter>World</Filter>
-    </ClInclude>
-    <ClInclude Include="math\utility.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\timer.h">
-      <Filter>Application</Filter>
+    <ClInclude Include="src\cube.h">
+      <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="src\parallelExecutor.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="src\cube.h">
+    <ClInclude Include="src\actor\mesh.h">
       <Filter>Actor</Filter>
     </ClInclude>
-    <ClInclude Include="src\constants.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\actor\material.h">
+      <Filter>Actor</Filter>
     </ClInclude>
+    <ClInclude Include="src\controller.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\application.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\debug.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="src\window.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="render\shader.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\timer.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\actor\vertex.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="include\win.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="render\globals.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="render\DxRes.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="render\d3d.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\constants.h">
+      <Filter>utility</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="render\shaders\vertex.shader" />
+    <None Include="render\shaders\pixel.shader" />
   </ItemGroup>
 </Project>

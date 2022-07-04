@@ -1,8 +1,5 @@
 #pragma once
 
-#include <windows.h>
-#include <windowsx.h>
-
 #include <iostream>
 
 #include "controller.h"
@@ -10,26 +7,28 @@
 #include "timer.h"
 #include "parallelExecutor.h"
 
-
-class Application
+namespace engine
 {
-public:
-	Window window;
-	Controller controller;
-	Scene scene;
-	Timer timer;
+	class Application
+	{
+	public:
+		Window window;
+		Controller controller;
+		Scene scene;
+		Timer timer;
 
-	float m_deltaTime;
+		float m_deltaTime;
 
-	Application() = default;
+		Application() = default;
 
-	void init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height);
+		void init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height);
 
-	void initConsole();
+		void initConsole();
 
-	LRESULT CALLBACK processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Scene& scene, Window& w);
+		LRESULT CALLBACK processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Scene& scene, Window& w);
 
-	MSG run(ParallelExecutor& executor);
+		MSG run(ParallelExecutor& executor);
 
-};
+	};
 
+}

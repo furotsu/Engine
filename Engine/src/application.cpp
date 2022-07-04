@@ -39,7 +39,6 @@ namespace engine
 		case WM_SIZE:
 		{
 			RECT rect = { 0, 0, 0, 0 };
-
 			GetWindowRect(hWnd, &rect);
 
 			AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size

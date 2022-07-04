@@ -40,8 +40,8 @@ namespace engine
 
 		void init(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow);
 
-		void onResize(const int& width, const int& height);
-		XMVECTOR screenToNDC(const uint16_t& x, const uint16_t& y) const;
+		void onResize(uint16_t width, uint16_t height);
+		XMVECTOR screenToNDC(uint16_t x, uint16_t y) const;
 
 		//DirectX
 

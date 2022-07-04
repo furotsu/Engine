@@ -49,13 +49,23 @@ namespace engine
 		hdc = GetDC(hWnd);
 	}
 
-	void Window::onResize(const int& width, const int& height)
+	void Window::onResize(uint16_t width, uint16_t height)
 	{
-		m_width = width;
-		m_height = height;
+		if (hWnd)
+		{
+			m_width = width;
+			m_height = height;
+			
+			m_renderTargetView.release();
+			m_backbuffer.release();
+			m_swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+			
+			initBackBuffer();
+			initViewPort();
+		}
 	}
 
-	XMVECTOR Window::screenToNDC(const uint16_t& x, const uint16_t& y) const
+	XMVECTOR Window::screenToNDC( uint16_t x,  uint16_t y) const
 	{
 		float xNDC = (2.0f * x) / m_width - 1.0f;
 		float yNDC = 1.0f - (2.0f * y) / m_height;
@@ -81,7 +91,7 @@ namespace engine
 		desc.Stereo = false;
 		desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
-		HRESULT res = s_factory->CreateSwapChainForHwnd(s_device, hWnd, &desc, NULL, NULL, m_swapchain.access());
+		HRESULT res = s_factory->CreateSwapChainForHwnd(s_device, hWnd, &desc, NULL, NULL, m_swapchain.reset());
 
 		ALWAYS_ASSERT(res >= 0 && "CreateSwapChainForHwnd");
 	}
@@ -89,16 +99,9 @@ namespace engine
 	void Window::initBackBuffer() // may be called after resizing
 	{
 
-		if (m_backbuffer)
-		{
-			m_backbuffer->Release();
-			m_swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-		}
-
-		HRESULT result = m_swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)m_backbuffer.access());
+		HRESULT result = m_swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)m_backbuffer.reset());
 		ALWAYS_ASSERT(result >= 0);
-		result = s_device->CreateRenderTargetView(m_backbuffer, NULL, m_renderTargetView.access());
-		m_backbuffer->Release();
+		result = s_device->CreateRenderTargetView(m_backbuffer, NULL, m_renderTargetView.reset());
 		ALWAYS_ASSERT(result >= 0);
 
 		// set the render target as the back buffer
@@ -106,8 +109,9 @@ namespace engine
 		ID3D11Texture2D* pTextureInterface = 0;
 		m_backbuffer->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
 		pTextureInterface->GetDesc(&m_backbufferDesc);
+		m_backbuffer.release();
 		pTextureInterface->Release();
-
+		pTextureInterface = nullptr;
 	}
 
 	void Window::initViewPort()
@@ -115,8 +119,8 @@ namespace engine
 		ZeroMemory(&m_viewport, sizeof(D3D11_VIEWPORT));
 		m_viewport.TopLeftX = 0;
 		m_viewport.TopLeftY = 0;
-		m_viewport.Width = SCREEN_WIDTH;
-		m_viewport.Height = SCREEN_HEIGHT;
+		m_viewport.Width = m_width;
+		m_viewport.Height = m_height;
 		s_devcon->RSSetViewports(1, &m_viewport);
 	}
 }

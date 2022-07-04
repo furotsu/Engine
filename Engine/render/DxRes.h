@@ -70,7 +70,7 @@ namespace engine
 
 		bool valid()
 		{
-			return m_ptr == nullptr;
+			return m_ptr != nullptr;
 		}
 
 	protected:

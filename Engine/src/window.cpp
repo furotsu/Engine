@@ -1,7 +1,7 @@
-#include "window.h"
-#include "debug.h"
-#include "constants.h"
-#include "vertex.h"
+#include "window.hpp"
+#include "debug.hpp"
+#include "constants.hpp"
+#include "vertex.hpp"
 
 #include <d3d11.h>
 #include <d3dx11.h>
@@ -58,7 +58,7 @@ namespace engine
 			
 			m_renderTargetView.release();
 			m_backbuffer.release();
-			m_swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+			m_swapchain->ResizeBuffers(NULL, m_width, m_height, DXGI_FORMAT_UNKNOWN, NULL);
 			
 			initBackBuffer();
 			initViewPort();
@@ -83,10 +83,10 @@ namespace engine
 		desc.AlphaMode = DXGI_ALPHA_MODE::DXGI_ALPHA_MODE_UNSPECIFIED;
 		desc.BufferCount = 2;
 		desc.BufferUsage = DXGI_USAGE_BACK_BUFFER | DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		desc.Flags = 0;
+		desc.Flags = NULL;
 		desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		desc.SampleDesc.Count = 1;                               // how many multisamples
-		desc.SampleDesc.Quality = 0;                             // ???
+		desc.SampleDesc.Quality = 0;                            
 		desc.Scaling = DXGI_SCALING_NONE;
 		desc.Stereo = false;
 		desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
@@ -106,7 +106,7 @@ namespace engine
 
 		// set the render target as the back buffer
 
-		ID3D11Texture2D* pTextureInterface = 0;
+		ID3D11Texture2D* pTextureInterface = nullptr;
 		m_backbuffer->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
 		pTextureInterface->GetDesc(&m_backbufferDesc);
 		m_backbuffer.release();

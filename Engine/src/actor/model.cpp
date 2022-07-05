@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "scene.h"
+#include "scene.hpp"
 
 
 void engine::Scene::Model::init(const std::shared_ptr<Mesh>& mesh)

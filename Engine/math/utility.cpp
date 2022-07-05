@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "utility.h"
+#include "utility.hpp"
 
 #include <cmath>
 #include <algorithm>

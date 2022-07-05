@@ -1,5 +1,5 @@
-#include "application.h"
-#include "globals.h"
+#include "application.hpp"
+#include "globals.hpp"
 
 namespace engine
 {

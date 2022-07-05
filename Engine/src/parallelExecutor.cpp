@@ -1,5 +1,5 @@
-#include "parallelExecutor.h"
-#include "debug.h"
+#include "parallelExecutor.hpp"
+#include "debug.hpp"
 
 namespace engine
 {

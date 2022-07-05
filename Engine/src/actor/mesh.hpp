@@ -2,11 +2,11 @@
 
 #include <vector>
 
-#include "vertex.h"
-#include "triangle.h"
-#include "hitable.h"
+#include "vertex.hpp"
+#include "triangle.hpp"
+#include "hitable.hpp"
 
-#include "debug.h"
+#include "debug.hpp"
 
 namespace engine
 {

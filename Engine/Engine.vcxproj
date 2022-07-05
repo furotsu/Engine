@@ -171,31 +171,31 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\win.h" />
-    <ClInclude Include="math\hitable.h" />
-    <ClInclude Include="math\matrixAlg.h" />
-    <ClInclude Include="math\plane.h" />
-    <ClInclude Include="math\quaternion.h" />
-    <ClInclude Include="math\ray.h" />
-    <ClInclude Include="math\sphere.h" />
-    <ClInclude Include="math\triangle.h" />
-    <ClInclude Include="math\utility.h" />
-    <ClInclude Include="render\d3d.h" />
-    <ClInclude Include="render\DxRes.h" />
-    <ClInclude Include="render\globals.h" />
-    <ClInclude Include="render\shader.h" />
-    <ClInclude Include="src\actor\material.h" />
-    <ClInclude Include="src\actor\mesh.h" />
-    <ClInclude Include="src\actor\vertex.h" />
-    <ClInclude Include="src\application.h" />
-    <ClInclude Include="src\constants.h" />
-    <ClInclude Include="src\controller.h" />
-    <ClInclude Include="src\cube.h" />
-    <ClInclude Include="src\debug.h" />
-    <ClInclude Include="src\parallelExecutor.h" />
-    <ClInclude Include="src\scene.h" />
-    <ClInclude Include="src\timer.h" />
-    <ClInclude Include="src\window.h" />
+    <ClInclude Include="include\win.hpp" />
+    <ClInclude Include="math\hitable.hpp" />
+    <ClInclude Include="math\matrixAlg.hpp" />
+    <ClInclude Include="math\plane.hpp" />
+    <ClInclude Include="math\quaternion.hpp" />
+    <ClInclude Include="math\ray.hpp" />
+    <ClInclude Include="math\sphere.hpp" />
+    <ClInclude Include="math\triangle.hpp" />
+    <ClInclude Include="math\utility.hpp" />
+    <ClInclude Include="render\d3d.hpp" />
+    <ClInclude Include="render\DxRes.hpp" />
+    <ClInclude Include="render\globals.hpp" />
+    <ClInclude Include="render\shader.hpp" />
+    <ClInclude Include="src\actor\material.hpp" />
+    <ClInclude Include="src\actor\mesh.hpp" />
+    <ClInclude Include="src\actor\vertex.hpp" />
+    <ClInclude Include="src\application.hpp" />
+    <ClInclude Include="src\constants.hpp" />
+    <ClInclude Include="src\controller.hpp" />
+    <ClInclude Include="src\cube.hpp" />
+    <ClInclude Include="src\debug.hpp" />
+    <ClInclude Include="src\parallelExecutor.hpp" />
+    <ClInclude Include="src\scene.hpp" />
+    <ClInclude Include="src\timer.hpp" />
+    <ClInclude Include="src\window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\shaders\pixel.shader" />

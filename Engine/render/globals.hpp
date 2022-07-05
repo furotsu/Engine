@@ -1,4 +1,4 @@
-#include "DxRes.h"
+#include "DxRes.hpp"
 
 namespace engine
 {

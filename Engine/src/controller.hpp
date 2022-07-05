@@ -3,8 +3,8 @@
 #include <string>
 #include <iostream>
 
-#include "scene.h"
-#include "shader.h"
+#include "scene.hpp"
+#include "shader.hpp"
 
 namespace engine
 {

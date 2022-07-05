@@ -1,4 +1,4 @@
-#include "debug.h"
+#include "debug.hpp"
 
 void LogCall(const char* tag, std::string log)
 {

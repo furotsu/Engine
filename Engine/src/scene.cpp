@@ -2,9 +2,9 @@
 #include <algorithm>
 #include <cmath>
 
-#include "scene.h"
-#include "debug.h"
-#include "vertex.h"
+#include "scene.hpp"
+#include "debug.hpp"
+#include "vertex.hpp"
 
 namespace engine
 {

@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "controller.h"
-#include "window.h"
-#include "timer.h"
-#include "parallelExecutor.h"
+#include "controller.hpp"
+#include "window.hpp"
+#include "timer.hpp"
+#include "parallelExecutor.hpp"
 
 namespace engine
 {

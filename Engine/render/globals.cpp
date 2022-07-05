@@ -1,6 +1,6 @@
-#include "win.h"
-#include "globals.h"
-#include "debug.h"
+#include "win.hpp"
+#include "globals.hpp"
+#include "debug.hpp"
 // Say NVidia or AMD driver to prefer a dedicated GPU instead of an integrated.
 // This has effect on laptops.
 extern "C"

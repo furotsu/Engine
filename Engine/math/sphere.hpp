@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hitable.h"
+#include "hitable.hpp"
 
 namespace math
 {

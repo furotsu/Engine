@@ -4,13 +4,13 @@
 
 #include <vector>
 
-#include "window.h"
-#include "constants.h"
-#include "plane.h"
-#include "sphere.h"
-#include "mesh.h"
-#include "utility.h"
-#include "parallelExecutor.h"
+#include "window.hpp"
+#include "constants.hpp"
+#include "plane.hpp"
+#include "sphere.hpp"
+#include "mesh.hpp"
+#include "utility.hpp"
+#include "parallelExecutor.hpp"
 
 using namespace math;
 
@@ -66,8 +66,6 @@ namespace engine
 
 			std::unique_ptr<Scene::IobjectMover> mover;
 		};
-
-
 
 	public:
 

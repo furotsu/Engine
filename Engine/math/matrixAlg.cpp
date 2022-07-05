@@ -1,4 +1,4 @@
-#include "matrixAlg.h"
+#include "matrixAlg.hpp"
 
 void math::setRowAsVec3(XMMATRIX& dst, const XMVECTOR& v, int row)
 {

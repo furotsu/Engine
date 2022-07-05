@@ -1,9 +1,9 @@
-#include "controller.h"
+#include "controller.hpp"
 
 #include <chrono>
 #include <cmath>
 
-#include "cube.h"
+#include "cube.hpp"
 namespace engine
 {
 	void Controller::init(Window& win, Scene& scene)
@@ -22,7 +22,8 @@ namespace engine
 		// shaders for main triangle pipeline
 		std::vector<ShaderInfo> shaders1 = {
 			{ShaderType::VERTEX, L"render/shaders/vertex.shader", "main"},
-			{ShaderType::PIXEL,  L"render/shaders/pixel.shader",  "main"} };
+			{ShaderType::PIXEL,  L"render/shaders/pixel.shader",  "main"}
+		};
 
 		// create the input layout object
 		std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
@@ -47,6 +48,7 @@ namespace engine
 	void Controller::onKeyDown(uint16_t key)
 	{
 		userInputReceived = true;
+
 		switch (key)
 		{
 		default:

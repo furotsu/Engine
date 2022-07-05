@@ -1,4 +1,4 @@
-#include "scene.h"
+#include "scene.hpp"
 
 XMVECTOR acesHdr2Ldr(const XMVECTOR& hdr)
 {

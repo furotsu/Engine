@@ -5,8 +5,8 @@
 #include <memory>
 
 #include <DirectXMath.h>
-#include "DxRes.h"
-#include "debug.h"
+#include "DxRes.hpp"
+#include "debug.hpp"
 
 using namespace DirectX;
 

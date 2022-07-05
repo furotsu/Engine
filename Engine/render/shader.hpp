@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "debug.h"
-#include"DxRes.h"
+#include "debug.hpp"
+#include"DxRes.hpp"
 
 enum class ShaderType { VERTEX, PIXEL};
 
@@ -31,5 +31,9 @@ namespace engine
 
 		void init(std::vector<ShaderInfo> &shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied);
 
+		void compileShader(const ShaderInfo& shader, ID3D10Blob*& blob);
+
+		void bind();
+		void unbind();
 	};
 }

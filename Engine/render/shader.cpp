@@ -1,4 +1,4 @@
-#include "shader.h"
+#include "shader.hpp"
 
 #include <d3dx11.h>
 
@@ -14,15 +14,13 @@ void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders, std::vector<D
 		{
 		case ShaderType::VERTEX:
 		{
-			D3DX11CompileFromFile(shader.filePath, 0, 0, shader.funcName, "vs_4_0", 0, 0, 0, &VS, 0, 0);
-			ALWAYS_ASSERT(VS != nullptr && "vertex shader compilation failed");
-			// encapsulate both shaders into shader objects
+			compileShader(shader, VS);
 			s_device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, m_pVS.access());
 		}break;
 		case ShaderType::PIXEL:
 		{
-			D3DX11CompileFromFile(shader.filePath, 0, 0, shader.funcName, "ps_4_0", 0, 0, 0, &PS, 0, 0);
-			ALWAYS_ASSERT(PS != nullptr && "pixel shader compilation failed");
+
+			compileShader(shader, PS);
 			s_device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, m_pPS.access());
 		}break;
 		default:
@@ -31,8 +29,8 @@ void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders, std::vector<D
 	}
 	
 	// set the shader objects
-	s_devcon->VSSetShader(m_pVS, 0, 0);
-	s_devcon->PSSetShader(m_pPS, 0, 0);
+	s_devcon->VSSetShader(m_pVS, NULL, NULL);
+	s_devcon->PSSetShader(m_pPS, NULL, NULL);
 
 	auto res = s_device->CreateInputLayout(m_ied.data(), 2, VS->GetBufferPointer(), VS->GetBufferSize(), m_pLayout.access());
 	ALWAYS_ASSERT(res == S_OK);
@@ -40,3 +38,38 @@ void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders, std::vector<D
 	s_devcon->IASetInputLayout(m_pLayout);
 }
 
+void engine::ShaderProgram::compileShader(const ShaderInfo& shader, ID3D10Blob*& blob)
+{
+	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined( DEBUG ) || defined( _DEBUG )
+	flags |= D3DCOMPILE_DEBUG;
+#endif
+	LPCSTR profile = (shader.type == ShaderType::PIXEL) ? "ps_4_0" : "vs_4_0";
+	ID3D10Blob* errorBlob = nullptr;
+	HRESULT result = D3DX11CompileFromFile(shader.filePath, NULL, NULL, shader.funcName, profile, flags, NULL, NULL, &blob, &errorBlob, NULL);
+
+	if (result)
+	{
+		if (errorBlob)
+		{
+			std::cout <<  (char*)errorBlob->GetBufferPointer();
+		}
+		else
+		{
+			std::wstring wsrt(shader.filePath);
+			std::cout << std::string(std::string(wsrt.begin(), wsrt.end())) + " compilation failed";
+		}
+	}
+}
+
+void engine::ShaderProgram::bind()
+{
+	s_devcon->VSSetShader(m_pVS, NULL, NULL);
+	s_devcon->PSSetShader(m_pPS, NULL, NULL);
+}
+
+void engine::ShaderProgram::unbind()
+{
+	s_devcon->VSSetShader(NULL, NULL, NULL);
+	s_devcon->PSSetShader(NULL, NULL, NULL);
+}

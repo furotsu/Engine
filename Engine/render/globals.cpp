@@ -11,6 +11,18 @@ extern "C"
 
 namespace engine
 {
+	Globals::Globals()
+	{
+		initD3D();
+	}
+	Globals* Globals::GetInstance()
+	{
+		if (s_globals == nullptr)
+		{
+			s_globals = new Globals();
+		}
+		return s_globals;
+	}
 	void Globals::initD3D()
 	{
 		HRESULT result;
@@ -19,7 +31,7 @@ namespace engine
 		ASSERT(result >= 0 && "CreateDXGIFactory");
 
 		result = m_factory->QueryInterface(__uuidof(IDXGIFactory5), (void**)m_factory5.reset());
-		ALWAYS_ASSERT	(result >= 0 && "Query IDXGIFactory5");
+		ALWAYS_ASSERT(result >= 0 && "Query IDXGIFactory5");
 
 		{
 			uint32_t index = 0;
@@ -29,7 +41,7 @@ namespace engine
 				DXGI_ADAPTER_DESC1 desc;
 				adapter->GetDesc1(&desc);
 				std::wstring wsrt(desc.Description);
-				LOG("Globals.cpp",  "GPU # "  + std::to_string(index) + " " + std::string(wsrt.begin(), wsrt.end()));
+				LOG("Globals.cpp", "GPU # " + std::to_string(index) + " " + std::string(wsrt.begin(), wsrt.end()));
 			}
 		}
 
@@ -59,12 +71,12 @@ namespace engine
 	}
 	void Globals::clean()
 	{
-		m_factory.release();
-		m_factory5.release();
-		m_device.release();
-		m_device5.release();
-		m_devcon.release();
-		m_devdebug.release();
-		m_devcon4.release();
+		s_globals->m_factory.release();
+		s_globals->m_factory5.release();
+		s_globals->m_device.release();
+		s_globals->m_device5.release();
+		s_globals->m_devcon.release();
+		s_globals->m_devdebug.release();
+		s_globals->m_devcon4.release();
 	}
 }

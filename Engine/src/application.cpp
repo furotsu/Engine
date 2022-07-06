@@ -3,12 +3,12 @@
 
 namespace engine
 {
-	engine::Globals globals;
 	void Application::init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height)
 	{
 		this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
-		globals.initD3D();
+		//init globals
+		Globals::GetInstance();
 			
 		window.initSwapchain();
 		window.initBackBuffer();
@@ -21,7 +21,7 @@ namespace engine
 	{
 		controller.clean();
 		window.clean();
-		globals.clean();
+		Globals::GetInstance()->clean();
 	}
 
 	void Application::initConsole()

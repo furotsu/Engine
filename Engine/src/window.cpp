@@ -3,17 +3,12 @@
 #include "constants.hpp"
 #include "vertex.hpp"
 
-#include <d3d11.h>
-#include <d3dx11.h>
-#include <d3dx10.h>
+#include "d3d.hpp"
 
-// include the Direct3D Library file
-#pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dx11.lib")
-#pragma comment (lib, "d3dx10.lib")
 
 namespace engine
 {
+
 	void Window::init(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow)
 	{
 		ZeroMemory(&wc, sizeof(WNDCLASSEX));
@@ -48,6 +43,16 @@ namespace engine
 
 		hdc = GetDC(hWnd);
 	}
+
+	void Window::clean()
+	{
+		m_swapchain->SetFullscreenState(FALSE, NULL);    // switch to windowed mode
+		m_swapchain.release();
+		m_renderTargetView.release();
+		m_backbuffer.release();
+	}
+
+
 
 	void Window::onResize(uint16_t width, uint16_t height)
 	{
@@ -116,11 +121,14 @@ namespace engine
 
 	void Window::initViewPort()
 	{
+		RECT rect = { 0, 0, 0, 0 };
+		GetWindowRect(hWnd, &rect);
+
 		ZeroMemory(&m_viewport, sizeof(D3D11_VIEWPORT));
 		m_viewport.TopLeftX = 0;
 		m_viewport.TopLeftY = 0;
-		m_viewport.Width = m_width;
-		m_viewport.Height = m_height;
+		m_viewport.Width = rect.right - rect.left;
+		m_viewport.Height = rect.bottom - rect.top;
 		s_devcon->RSSetViewports(1, &m_viewport);
 	}
 }

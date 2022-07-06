@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 
+#include "d3d.hpp"
 #include "scene.hpp"
 #include "debug.hpp"
 #include "vertex.hpp"
@@ -26,7 +27,8 @@ namespace engine
 		s_devcon->OMSetRenderTargets(1, window.m_renderTargetView.access(), NULL);
 
 		// clear the back buffer to a deep blue
-		s_devcon->ClearRenderTargetView(window.m_renderTargetView.ptr(), D3DXCOLOR(0.0f, 0.2f, 0.4f, 1.0f));
+		FLOAT backgroundColor[4] { 0.0f, 0.2f, 0.4f, 1.0f };
+		s_devcon->ClearRenderTargetView(window.m_renderTargetView.ptr(), backgroundColor);
 
 		// select which vertex buffer to display
 		UINT stride = sizeof(Vertex);

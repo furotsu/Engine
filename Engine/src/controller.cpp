@@ -10,9 +10,9 @@ namespace engine
 	{
 		std::vector<Vertex> triangleVertices =
 		{
-			{0.0f, 0.7f, 0.0f, D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f)},
-			{0.45f, -0.5, 0.0f, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f) },
-			{-0.45f, -0.5f, 0.0f, D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f) }
+			{{0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+			{{0.45f, -0.5, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f} },
+			{{-0.45f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f} }
 		};
 
 		triangleMesh = std::make_shared<Mesh>(triangleVertices);
@@ -37,6 +37,12 @@ namespace engine
 		m_rmbDown = false;
 		m_lmbDown = false;
 		userInputReceived = true;
+	}
+
+	void Controller::clean()
+	{
+		triangle.cleanBuffers();
+		shaderProgram.release();
 	}
 
 	void Controller::update(float deltaTime, Scene& scene, Window& window)

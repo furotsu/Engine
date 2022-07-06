@@ -3,11 +3,11 @@
 
 namespace engine
 {
+	engine::Globals globals;
 	void Application::init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height)
 	{
 		this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
-		engine::Globals globals;
 		globals.initD3D();
 			
 		window.initSwapchain();
@@ -15,6 +15,13 @@ namespace engine
 		window.initViewPort();
 
 		controller.init(window, scene);
+	}
+
+	void Application::clean()
+	{
+		controller.clean();
+		window.clean();
+		globals.clean();
 	}
 
 	void Application::initConsole()
@@ -33,11 +40,13 @@ namespace engine
 		case WM_DESTROY:
 		{
 			// close the application entirely
+			clean();
 			PostQuitMessage(0);
 			return 0;
 		} break;
 		case WM_SIZE:
 		{
+
 			RECT rect = { 0, 0, 0, 0 };
 			GetWindowRect(hWnd, &rect);
 
@@ -68,7 +77,7 @@ namespace engine
 
 				DispatchMessage(&msg);
 				if (msg.message == WM_QUIT)
-					break;
+					return msg;
 			}
 
 			m_deltaTime = timer.elapsed();
@@ -81,6 +90,7 @@ namespace engine
 				std::cout << "fps: " << 1.0f / m_deltaTime << std::endl;
 			}
 		}
+
 		return msg;
 
 	}

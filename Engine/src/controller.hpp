@@ -27,7 +27,7 @@ namespace engine
 		Controller() = default;
 
 		void init(Window& win, Scene& scene);
-
+		void clean();
 		void processInput();
 
 		void update(float deltaTime, Scene& scene, Window& window);

@@ -22,7 +22,7 @@ namespace engine
 		Application() = default;
 
 		void init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height);
-
+		void clean();
 		void initConsole();
 
 		LRESULT CALLBACK processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Scene& scene, Window& w);

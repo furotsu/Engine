@@ -30,7 +30,6 @@ namespace engine
 		HDC hdc;
 
 		Window() = default;
-
 		Window(int width, int height, _In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow)
 		{
 			m_width = width;
@@ -39,7 +38,7 @@ namespace engine
 		}
 
 		void init(_In_ HINSTANCE& hInstance, _In_opt_ HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int nCmdShow);
-
+		void clean();
 		void onResize(uint16_t width, uint16_t height);
 		XMVECTOR screenToNDC(uint16_t x, uint16_t y) const;
 

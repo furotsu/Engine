@@ -30,7 +30,7 @@ namespace engine
 		ShaderProgram() = default;
 
 		void init(std::vector<ShaderInfo> &shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied);
-
+		void release();
 		void compileShader(const ShaderInfo& shader, ID3D10Blob*& blob);
 
 		void bind();

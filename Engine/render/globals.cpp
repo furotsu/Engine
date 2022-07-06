@@ -57,4 +57,14 @@ namespace engine
 		s_device = m_device5.ptr();
 		s_devcon = m_devcon4.ptr();
 	}
+	void Globals::clean()
+	{
+		m_factory.release();
+		m_factory5.release();
+		m_device.release();
+		m_device5.release();
+		m_devcon.release();
+		m_devdebug.release();
+		m_devcon4.release();
+	}
 }

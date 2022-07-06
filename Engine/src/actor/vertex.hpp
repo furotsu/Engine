@@ -1,11 +1,13 @@
 #pragma once
-#include <d3dx10.h>
+#include "d3d.hpp"
+#include <DirectXMath.h>
+using namespace DirectX;
 
 namespace engine
 {
 	struct Vertex
 	{
-		FLOAT x, y, z;
-		D3DXCOLOR Color;
+		XMFLOAT3 Position;
+		XMFLOAT4 Color;
 	};
 }

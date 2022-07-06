@@ -43,7 +43,7 @@ namespace engine
 
 			void init(const std::shared_ptr<Mesh>& mesh);
 			void initBuffers();
-
+			void cleanBuffers();
 			friend class Scene;
 		};
 
@@ -72,7 +72,6 @@ namespace engine
 		std::vector<Model> m_models;
 
 		Scene() = default;
-
 		bool findIntersection(const ray& r, IntersectionQuery& query);
 
 		void renderFrame(Window& window, Model& model);

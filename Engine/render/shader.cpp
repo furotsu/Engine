@@ -1,8 +1,6 @@
 #include "shader.hpp"
 
-#include <d3dx11.h>
-
-#pragma comment (lib, "d3dx11.lib")
+#include "d3d.hpp"
 
 void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied)
 {
@@ -27,7 +25,7 @@ void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders, std::vector<D
 		{}
 		}
 	}
-	
+
 	// set the shader objects
 	s_devcon->VSSetShader(m_pVS, NULL, NULL);
 	s_devcon->PSSetShader(m_pPS, NULL, NULL);
@@ -38,21 +36,28 @@ void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders, std::vector<D
 	s_devcon->IASetInputLayout(m_pLayout);
 }
 
+void engine::ShaderProgram::release()
+{
+	m_pLayout.release();
+	m_pVS.release();
+	m_pPS.release();
+}
+
 void engine::ShaderProgram::compileShader(const ShaderInfo& shader, ID3D10Blob*& blob)
 {
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 #if defined( DEBUG ) || defined( _DEBUG )
 	flags |= D3DCOMPILE_DEBUG;
 #endif
-	LPCSTR profile = (shader.type == ShaderType::PIXEL) ? "ps_4_0" : "vs_4_0";
+	LPCSTR profile = (shader.type == ShaderType::PIXEL) ? "ps_5_0" : "vs_5_0";
 	ID3D10Blob* errorBlob = nullptr;
-	HRESULT result = D3DX11CompileFromFile(shader.filePath, NULL, NULL, shader.funcName, profile, flags, NULL, NULL, &blob, &errorBlob, NULL);
+	HRESULT result = D3DCompileFromFile(shader.filePath, NULL, NULL, shader.funcName, profile, flags, NULL, &blob, &errorBlob);
 
 	if (result)
 	{
 		if (errorBlob)
 		{
-			std::cout <<  (char*)errorBlob->GetBufferPointer();
+			std::cout << (char*)errorBlob->GetBufferPointer();
 		}
 		else
 		{

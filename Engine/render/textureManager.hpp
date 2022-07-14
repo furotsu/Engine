@@ -24,7 +24,6 @@ namespace engine
 		static TextureManager* GetInstance();
 
 		static std::shared_ptr<Texture> getTexture(const wchar_t* filepath, TextureType type = TextureType::TEXTURE_DEFAULT);
-		static void clearUnusedTextures();
 
 
 		static void clean();

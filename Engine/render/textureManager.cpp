@@ -14,7 +14,7 @@ namespace engine
 		}
 		else
 		{
-			ERROR("Initializing \" Globals \" singleton more than once ");
+			ERROR("Initializing \" TextureManager \" singleton more than once ");
 		}
 	}
 
@@ -22,7 +22,7 @@ namespace engine
 	{
 		if (s_manager == nullptr)
 		{
-			ERROR("Trying to call \" Globals \" singleton  instance before initializing it");
+			ERROR("Trying to call \" TextureManager \" singleton  instance before initializing it");
 		}
 		return s_manager;
 	}
@@ -44,24 +44,6 @@ namespace engine
 			return res;
 		}
 		return nullptr;
-	}
-
-	void TextureManager::clearUnusedTextures()
-	{
-		//std::map<const wchar_t*, std::shared_ptr<Texture>>::iterator iter = GetInstance()->m_Textures.begin();
-		//std::map<const wchar_t*, std::shared_ptr<Texture>>::iterator endIter = GetInstance()->m_Textures.end();
-		//
-		//for (; iter != endIter; )
-		//{
-		//	if (iter->second.unique())
-		//	{
-		//		iter = GetInstance()->m_Textures.erase(iter);
-		//	}
-		//	else
-		//	{
-		//		iter++;
-		//	}
-		//}
 	}
 
 	void TextureManager::clean()

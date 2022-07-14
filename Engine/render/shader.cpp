@@ -42,8 +42,8 @@ void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders, std::vector<D
 
 void engine::ShaderProgram::clean()
 {
-	for (auto& elem : uniformBuffers)
-		elem.release();
+	for (auto& buffer : uniformBuffers)
+		buffer.release();
 	m_pVS.release();
 	m_pPS.release();
 	m_pLayout.release();

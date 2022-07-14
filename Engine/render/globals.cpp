@@ -15,14 +15,28 @@ namespace engine
 	{
 		initD3D();
 	}
-	Globals* Globals::GetInstance()
+
+	void Globals::init()
 	{
 		if (s_globals == nullptr)
 		{
 			s_globals = new Globals();
 		}
+		else
+		{
+			ERROR("Initializing \" Globals \" singleton more than once ");
+		}
+	}
+
+	Globals* Globals::GetInstance()
+	{
+		if (s_globals == nullptr)
+		{
+			ERROR("Trying to call \" Globals \" singleton  instance before initializing it");
+		}
 		return s_globals;
 	}
+
 	void Globals::initD3D()
 	{
 		HRESULT result;
@@ -46,7 +60,6 @@ namespace engine
 		}
 
 		// Init D3D Device & Context
-
 		const D3D_FEATURE_LEVEL featureLevelRequested = D3D_FEATURE_LEVEL_11_0;
 		D3D_FEATURE_LEVEL featureLevelInitialized = D3D_FEATURE_LEVEL_11_0;
 		result = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG,

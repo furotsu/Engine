@@ -17,6 +17,8 @@ struct ShaderInfo
 
 namespace engine
 {
+
+
 	class ShaderProgram
 	{
 	private:
@@ -26,10 +28,20 @@ namespace engine
 		DxResPtr<ID3D11PixelShader> m_pPS;
 		DxResPtr<ID3D11InputLayout> m_pLayout;   
 		std::vector<D3D11_INPUT_ELEMENT_DESC> m_ied;
+
+
 	public:
+		std::vector<DxResPtr<ID3D11Buffer>> uniformBuffers;
 		ShaderProgram() = default;
 
-		void init(std::vector<ShaderInfo> &shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied);
+		void init(std::vector<ShaderInfo> &shaders);
+		void init(std::vector<ShaderInfo>& shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied);
+
+		void clean();
+
+		void createUniform(UINT size);
+		void bindUniforms(const std::vector<const void*>& data, ShaderType = ShaderType::VERTEX);
+
 		void release();
 		void compileShader(const ShaderInfo& shader, ID3D10Blob*& blob);
 

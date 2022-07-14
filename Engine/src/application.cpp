@@ -1,5 +1,6 @@
 #include "application.hpp"
 #include "globals.hpp"
+#include "textureManager.hpp"
 
 namespace engine
 {
@@ -8,7 +9,8 @@ namespace engine
 		this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
 		//init globals
-		Globals::GetInstance();
+		Globals::init();
+		TextureManager::init();
 			
 		window.initSwapchain();
 		window.initBackBuffer();
@@ -19,9 +21,11 @@ namespace engine
 
 	void Application::clean()
 	{
+		scene.clean();
 		controller.clean();
 		window.clean();
-		Globals::GetInstance()->clean();
+		TextureManager::clean();
+		Globals::clean();
 	}
 
 	void Application::initConsole()
@@ -46,14 +50,43 @@ namespace engine
 		} break;
 		case WM_SIZE:
 		{
-
 			RECT rect = { 0, 0, 0, 0 };
 			GetWindowRect(hWnd, &rect);
 
-			AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 			window.onResize(rect.right - rect.left, rect.bottom - rect.top);
+			controller.onResize(window);
 			controller.userInputReceived = true;
 		} break;
+		case WM_MOUSEMOVE:
+		{
+			controller.m_mouseMoved = true;
+		} break;
+		case WM_LBUTTONDOWN:
+		{
+			controller.m_lmbDown = true;
+			GetCursorPos(&controller.m_pressedPos);
+			//determine position relative to init window
+			ScreenToClient(FindWindowA(NULL, "Engine"), &controller.m_pressedPos);
+			controller.m_currentPos = controller.m_pressedPos;
+			controller.userInputReceived = true;
+		} break;
+		case WM_LBUTTONUP:
+		{
+			controller.m_lmbDown = false;
+		} break;
+		case WM_KEYDOWN:
+		{
+			controller.onKeyDown(wParam);
+			controller.userInputReceived = true;
+		} break;
+		case WM_KEYUP:
+		{
+			controller.onKeyUp(wParam);
+		}break;
+		case WM_MOUSEWHEEL:
+		{
+			controller.changeCameraSpeed(GET_WHEEL_DELTA_WPARAM(wParam));
+		}break;
 		default:
 		{
 		}

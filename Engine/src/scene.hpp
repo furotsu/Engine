@@ -8,9 +8,11 @@
 #include "constants.hpp"
 #include "plane.hpp"
 #include "sphere.hpp"
-#include "mesh.hpp"
+#include "model.hpp"
 #include "utility.hpp"
 #include "parallelExecutor.hpp"
+#include "renderer.hpp"
+#include "camera.hpp"
 
 using namespace math;
 
@@ -30,22 +32,6 @@ namespace engine
 		};
 
 	public:
-
-		// --------------------- Scene Objects ---------------------
-
-		class Model
-		{
-			DxResPtr<ID3D11Buffer> m_pVBuffer;                // the pointer to the vertex buffer
-			std::shared_ptr<Mesh> m_mesh;
-		public:
-
-			Model() = default;
-
-			void init(const std::shared_ptr<Mesh>& mesh);
-			void initBuffers();
-			void cleanBuffers();
-			friend class Scene;
-		};
 
 		// --------------------- Object Decorators ---------------------
 
@@ -71,10 +57,24 @@ namespace engine
 
 		std::vector<Model> m_models;
 
+		Model model;
+		Skybox skybox;
+		ShaderProgram modelProgram;
+		ShaderProgram skyboxProgram;
+		std::shared_ptr<Mesh> cubeMesh;
+
 		Scene() = default;
+
+		void init();
+
+		void addModel(Model model);
+		void setSkybox(Skybox skybox);
+
 		bool findIntersection(const ray& r, IntersectionQuery& query);
 
-		void renderFrame(Window& window, Model& model);
+		void renderFrame(Window& window, Renderer& renderer, Camera& camera);
+
+		void clean();
 
 	protected:
 

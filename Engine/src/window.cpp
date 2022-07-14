@@ -24,16 +24,16 @@ namespace engine
 		RegisterClassEx(&wc);
 
 		RECT wr = { 0, 0, m_width, m_height };    // set the size, but not the position
-		AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
-
+		m_width = wr.right - wr.left;
+		m_height = wr.bottom - wr.top;
 		hWnd = CreateWindowEx(NULL,
 			L"WindowClass1",    // name of the window class
 			L"Engine",   // title of the window
 			WS_OVERLAPPEDWINDOW,    // window style
 			300,    // x-position of the window
 			300,    // y-position of the window
-			wr.right - wr.left,    // width of the window
-			wr.bottom - wr.top,    // height of the window
+			m_width,    // width of the window
+			m_height,    // height of the window
 			NULL,    // we have no parent window, NULL
 			NULL,    // we aren't using menus, NULL
 			hInstance,    // application handle
@@ -51,8 +51,6 @@ namespace engine
 		m_renderTargetView.release();
 		m_backbuffer.release();
 	}
-
-
 
 	void Window::onResize(uint16_t width, uint16_t height)
 	{

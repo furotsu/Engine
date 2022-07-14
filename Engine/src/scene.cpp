@@ -9,6 +9,44 @@
 
 namespace engine
 {
+	void Scene::init()
+	{
+		// shaders for main triangle pipeline
+		std::vector<ShaderInfo> shaders1 = {
+			{ShaderType::VERTEX, L"render/shaders/cube.hlsl", "VSMain"},
+			{ShaderType::PIXEL,  L"render/shaders/cube.hlsl",  "PSMain"} 
+		};
+
+		std::vector<ShaderInfo> shaders2 = {
+		{ShaderType::VERTEX, L"render/shaders/skybox.hlsl", "VSMain"},
+		{ShaderType::PIXEL,  L"render/shaders/skybox.hlsl",  "PSMain"}
+		};
+
+		// create the input layout object
+		std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		modelProgram.init(shaders1, ied);
+		skyboxProgram.init(shaders2);
+		
+
+		modelProgram.createUniform(sizeof(XMMATRIX));
+		skyboxProgram.createUniform(sizeof(XMVECTOR) * 4);
+	}
+
+	void Scene::addModel(Model model)
+	{
+		this->model = model;
+	}
+
+	void Scene::setSkybox(Skybox skybox)
+	{
+		this->skybox = skybox;
+	}
+
 	bool Scene::findIntersection(const ray& r, IntersectionQuery& query)
 	{
 		ObjRef ref = { nullptr, IntersectedType::NUM };
@@ -20,27 +58,16 @@ namespace engine
 		return ref.type != IntersectedType::NUM;
 	}
 
-	void Scene::renderFrame(Window& window, Model& model)
+	void Scene::renderFrame(Window& window, Renderer& renderer, Camera& camera)
 	{
-
 		ALWAYS_ASSERT(window.m_renderTargetView != NULL && "render target is NULL");
-		s_devcon->OMSetRenderTargets(1, window.m_renderTargetView.access(), NULL);
+		s_devcon->OMSetRenderTargets(1, window.m_renderTargetView.access(), NULL); 
 
-		// clear the back buffer to a deep blue
-		FLOAT backgroundColor[4] { 0.0f, 0.2f, 0.4f, 1.0f };
+		FLOAT backgroundColor[4]{ 0.0f, 0.2f, 0.4f, 1.0f };
 		s_devcon->ClearRenderTargetView(window.m_renderTargetView.ptr(), backgroundColor);
 
-		// select which vertex buffer to display
-		UINT stride = sizeof(Vertex);
-		UINT offset = 0;
-		s_devcon->IASetVertexBuffers(0, 1, model.m_pVBuffer.access(), &stride, &offset);
-
-		// select which primtive type we are using
-		s_devcon->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		// draw the vertex buffer to the back buffer
-		// switch the back buffer and the front buffer
-		s_devcon->Draw(3, 0);
+		renderer.render(skyboxProgram, window, camera, skybox);
+		renderer.render(modelProgram, window, camera, model);
 
 		DXGI_PRESENT_PARAMETERS pPresentParameters;
 		pPresentParameters.DirtyRectsCount = 0;
@@ -48,6 +75,15 @@ namespace engine
 		pPresentParameters.pScrollRect = NULL;
 		pPresentParameters.pScrollOffset = NULL;
 		window.m_swapchain->Present1(0, 0, &pPresentParameters);
+	}
+
+	void Scene::clean()
+	{
+		model.cleanBuffers();
+		skybox.clean();
+
+		modelProgram.clean();
+		skyboxProgram.clean();
 	}
 
 	void Scene::findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial)

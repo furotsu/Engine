@@ -3,9 +3,11 @@
 #include <string>
 #include <iostream>
 
-void LogCall(const char* tag, std::string log);
-void ErrorLog(std::string str, const char* file, int line);
-bool LogAssert(const char* funciton, const char* file, int line);
+namespace engine
+{
+	void LogCall(const char* tag, std::string log);
+	void ErrorLog(std::string str, const char* file, int line);
+	bool LogAssert(const char* funciton, const char* file, int line);
 
 #define ALWAYS_ASSERT(expr) \
 	do \
@@ -38,8 +40,8 @@ bool LogAssert(const char* funciton, const char* file, int line);
 	while (0) \
 
 #else  // NDEBUG is defined
-// These are the release mode definitions for the macros above.  They are all defined in such a way as to be 
-// ignored completely by the compiler.
+	// These are the release mode definitions for the macros above.  They are all defined in such a way as to be 
+	// ignored completely by the compiler.
 #define DEV_ASSERT(...)
 #define BREAK 
 #define ERROR(str) 
@@ -47,3 +49,4 @@ bool LogAssert(const char* funciton, const char* file, int line);
 #define ASSERT(expr) 
 #endif  // !defined NDEBUG
 
+}

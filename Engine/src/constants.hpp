@@ -9,6 +9,8 @@ using namespace DirectX;
 //Initial values for window size
 constexpr int SCREEN_WIDTH = 400;
 constexpr int SCREEN_HEIGHT = 200;
+constexpr float NEAR_PLANE = 1.0f;
+constexpr float FAR_PLANE = 1000.0f;
 
 //Controller
 constexpr float FRAME_DURATION = 1.0f / 60.0f;
@@ -35,7 +37,7 @@ constexpr float RAY_MAX = std::numeric_limits<float>::infinity();
 
 //utility
 constexpr float FLOAT_COMPARE_EPSILON = 0.00000001f;
-constexpr float GOLDEN_RATIO = 1.618033988749895; // = (1.0f + sqrtf(5.0f)) / 2.0f;
+constexpr float GOLDEN_RATIO = 1.618033988749895; // same as : (1.0f + sqrtf(5.0f)) / 2.0f;
 
 //small offset to avoid visual bugs
 constexpr float SMALL_OFFSET = 0.0001f;

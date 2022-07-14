@@ -1,3 +1,5 @@
+#pragma once
+
 #include "DxRes.hpp"
 
 namespace engine
@@ -19,9 +21,10 @@ namespace engine
 		Globals(Globals& other) = delete;
 		void operator=(const Globals&) = delete;
 
+		static void init();
 		static Globals* GetInstance();
 
 		void initD3D();
-		void clean();
+		static void clean();
 	};
 }

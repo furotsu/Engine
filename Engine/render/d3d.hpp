@@ -2,6 +2,7 @@
 
 #include "win.hpp"
 
+#include "DxRes.hpp"
 #include <d3d11_4.h>
 #include <d3dcompiler.h>
 

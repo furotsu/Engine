@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "triangle.h"
+#include "triangle.hpp"
 using namespace DirectX;
 
 bool math::Triangle::hit(const ray& r, Intersection& rec, float tMin, float tMax) const

@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "triangle.h"
+#include "triangle.hpp"
 
 struct Cube
 {

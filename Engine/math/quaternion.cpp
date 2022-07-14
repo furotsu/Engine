@@ -1,4 +1,4 @@
-#include "quaternion.h"
+#include "quaternion.hpp"
 
 math::Quaternion::Quaternion(float x, float y, float z, float w)
 	: m_quaternion(XMVectorSet(x, y, z, w))

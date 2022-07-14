@@ -78,9 +78,17 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>
+    </IncludePath>
+    <LibraryPath>$(WindowsSDK_LibraryPath_x64);$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>
+    </IncludePath>
+    <LibraryPath>$(WindowsSDK_LibraryPath_x64);$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,11 +124,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math;$(SolutionDir)Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\src\actor;$(SolutionDir)Engine;$(SolutionDir)Engine\math;$(SolutionDir)Engine\render;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;%(AdditionalIncludeDirectories);C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>DXGI.lib;d3dcompiler.lib;User32.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(WindowsSDK_LibraryPath_x64);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,7 +141,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\math;$(SolutionDir)Engine\src;$(SolutionDir)Engine\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\src\actor;$(SolutionDir)Engine;$(SolutionDir)Engine\math;$(SolutionDir)Engine\render;$(SolutionDir)Engine\include;$(SolutionDir)Engine\src;$(SolutionDir)Engine\;%(AdditionalIncludeDirectories);C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
@@ -139,51 +149,61 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>DXGI.lib;d3dcompiler.lib;User32.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(WindowsSDK_LibraryPath_x64);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lighting.cpp" />
-    <ClCompile Include="src\lightSource.cpp" />
     <ClCompile Include="math\matrixAlg.cpp" />
     <ClCompile Include="math\plane.cpp" />
     <ClCompile Include="math\quaternion.cpp" />
     <ClCompile Include="math\sphere.cpp" />
     <ClCompile Include="math\triangle.cpp" />
     <ClCompile Include="math\utility.cpp" />
-    <ClCompile Include="src\modelMover.cpp" />
-    <ClCompile Include="src\parallelExecutor.cpp" />
+    <ClCompile Include="render\d3d.cpp" />
+    <ClCompile Include="render\globals.cpp" />
+    <ClCompile Include="render\shader.cpp" />
+    <ClCompile Include="src\actor\mesh.cpp" />
+    <ClCompile Include="src\actor\model.cpp" />
     <ClCompile Include="src\application.cpp" />
-    <ClCompile Include="src\camera.cpp" />
-    <ClCompile Include="src\canvas.cpp" />
     <ClCompile Include="src\controller.cpp" />
+    <ClCompile Include="src\debug.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\mesh.cpp" />
-    <ClCompile Include="src\model.cpp" />
+    <ClCompile Include="src\parallelExecutor.cpp" />
     <ClCompile Include="src\scene.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\constants.h" />
-    <ClInclude Include="math\hitable.h" />
-    <ClInclude Include="math\matrixAlg.h" />
-    <ClInclude Include="math\plane.h" />
-    <ClInclude Include="math\quaternion.h" />
-    <ClInclude Include="math\ray.h" />
-    <ClInclude Include="math\sphere.h" />
-    <ClInclude Include="math\triangle.h" />
-    <ClInclude Include="math\utility.h" />
-    <ClInclude Include="src\cube.h" />
-    <ClInclude Include="src\parallelExecutor.h" />
-    <ClInclude Include="src\application.h" />
-    <ClInclude Include="src\camera.h" />
-    <ClInclude Include="src\canvas.h" />
-    <ClInclude Include="src\controller.h" />
-    <ClInclude Include="src\material.h" />
-    <ClInclude Include="src\mesh.h" />
-    <ClInclude Include="src\model.h" />
-    <ClInclude Include="src\scene.h" />
-    <ClInclude Include="src\timer.h" />
-    <ClInclude Include="src\window.h" />
+    <ClInclude Include="include\win.hpp" />
+    <ClInclude Include="math\hitable.hpp" />
+    <ClInclude Include="math\matrixAlg.hpp" />
+    <ClInclude Include="math\plane.hpp" />
+    <ClInclude Include="math\quaternion.hpp" />
+    <ClInclude Include="math\ray.hpp" />
+    <ClInclude Include="math\sphere.hpp" />
+    <ClInclude Include="math\triangle.hpp" />
+    <ClInclude Include="math\utility.hpp" />
+    <ClInclude Include="render\d3d.hpp" />
+    <ClInclude Include="render\DxRes.hpp" />
+    <ClInclude Include="render\globals.hpp" />
+    <ClInclude Include="render\shader.hpp" />
+    <ClInclude Include="src\actor\material.hpp" />
+    <ClInclude Include="src\actor\mesh.hpp" />
+    <ClInclude Include="src\actor\vertex.hpp" />
+    <ClInclude Include="src\application.hpp" />
+    <ClInclude Include="src\constants.hpp" />
+    <ClInclude Include="src\controller.hpp" />
+    <ClInclude Include="src\cube.hpp" />
+    <ClInclude Include="src\debug.hpp" />
+    <ClInclude Include="src\parallelExecutor.hpp" />
+    <ClInclude Include="src\scene.hpp" />
+    <ClInclude Include="src\timer.hpp" />
+    <ClInclude Include="src\window.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="render\shaders\pixel.shader" />
+    <None Include="render\shaders\vertex.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

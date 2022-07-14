@@ -3,8 +3,8 @@
 #include <DirectXMath.h>
 #include <iostream>
 
-#include "constants.h"
-#include "utility.h"
+#include "constants.hpp"
+#include "utility.hpp"
 using namespace DirectX;
 
 struct Material

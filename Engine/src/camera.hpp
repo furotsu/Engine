@@ -11,7 +11,6 @@ namespace engine
 {
 	class Camera
 	{
-	public:
 		XMMATRIX m_view = XMMatrixIdentity();
 		XMMATRIX m_proj = XMMatrixIdentity();
 		XMMATRIX m_viewProj = XMMatrixIdentity();
@@ -27,6 +26,7 @@ namespace engine
 		bool m_rollEnabled;
 		bool m_updatedBasis = false;
 		bool m_updatedMatrices = false;
+	public:
 
 
 		Camera() = default;
@@ -48,20 +48,18 @@ namespace engine
 		const XMVECTOR& position()const { return m_viewInv.r[3]; }
 
 		void setWorldOffset(const XMVECTOR& offset);
-
 		void addWorldOffset(const XMVECTOR& offset);
-
 		void addRelativeOffset(const XMVECTOR& offset);
-
 		void setWorldAngles(const Angles& angles);
-
 		void addWorldAngles(const Angles& angles);
-
 		void addRelativeAngles(const Angles& angles);
 
 		void updateBasis();
 
+		inline XMMATRIX getViewProj() { return m_viewProj; }
+		inline XMMATRIX getViewProjInv() { return m_viewProjInv; }
 		// This function must be called each frame to ensure the matrices are updated after camera movement
 		void updateMatrices();
+
 	};
 }

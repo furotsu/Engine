@@ -18,10 +18,14 @@ namespace engine
 		D3D11_VIEWPORT m_viewport;
 		D3D11_TEXTURE2D_DESC m_backbufferDesc;
 
+		DxResPtr<ID3D11Texture2D> m_pDepthStencil;
+		DxResPtr<ID3D11DepthStencilState> m_pDSState;
+
 	public:
 		DxResPtr<ID3D11RenderTargetView> m_renderTargetView;
 		DxResPtr<IDXGISwapChain1> m_swapchain;             // the pointer to the swap chain interface
 		DxResPtr<ID3D11Texture2D> m_backbuffer;    // the pointer to our back buffer
+		DxResPtr<ID3D11DepthStencilView> m_pDSV;
 
 		uint16_t m_width;
 		uint16_t m_height;
@@ -48,8 +52,14 @@ namespace engine
 		void initBackBuffer();
 		void initViewPort();
 
+		void bindDepthStencil();
+
+
 		friend LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		friend class Scene;
 		friend class Renderer;
+
+	private:
+		void createDepthStencilBuffer();
 	};
 }

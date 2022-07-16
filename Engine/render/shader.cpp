@@ -93,7 +93,7 @@ void engine::ShaderProgram::bindUniforms(const std::vector<const void*>& data, S
 	}
 }
 
-void engine::ShaderProgram::compileShader(const ShaderInfo& shader, ID3D10Blob*& blob)
+void engine::ShaderProgram::compileShader(const ShaderInfo& shader, ID3DBlob*& blob)
 {
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 #if defined( DEBUG ) || defined( _DEBUG )
@@ -101,7 +101,7 @@ void engine::ShaderProgram::compileShader(const ShaderInfo& shader, ID3D10Blob*&
 	flags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 	LPCSTR profile = (shader.type == ShaderType::PIXEL) ? "ps_5_0" : "vs_5_0";
-	ID3D10Blob* errorBlob = nullptr;
+	ID3DBlob* errorBlob = nullptr;
 	HRESULT result = D3DCompileFromFile(shader.filePath, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, shader.funcName, profile, flags, NULL, &blob, &errorBlob);
 
 	if (result)

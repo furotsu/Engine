@@ -29,7 +29,7 @@ namespace engine
 
 	std::shared_ptr<Texture> TextureManager::getTexture(const wchar_t* filepath, TextureType type)
 	{
-		std::map<const wchar_t*, std::shared_ptr<Texture>>::iterator it = GetInstance()->m_Textures.find(filepath);
+		auto it = GetInstance()->m_Textures.find(filepath);
 		
 		if (it != GetInstance()->m_Textures.end())
 		{

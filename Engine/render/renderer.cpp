@@ -16,7 +16,7 @@ void engine::Renderer::init()
 	cbbd.MiscFlags = 0;
 	
 	HRESULT hr = s_device->CreateBuffer(&cbbd, NULL, g_uniformGlobal.reset());
-	ASSERT(hr >= 0 && "cannot create global uniform buffer");
+	ASSERT(hr >= 0 && " cannot create global uniform buffer");
 }
 
 void engine::Renderer::clean()
@@ -50,7 +50,7 @@ void engine::Renderer::render(ShaderProgram& program, Window& window, Camera& ca
 	s_devcon->IASetIndexBuffer(model.m_pIBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	// select which primtive type we are using
-	s_devcon->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	s_devcon->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	s_devcon->DrawIndexed(model.m_mesh->m_indices.size(), 0, 0);
 }
@@ -65,17 +65,13 @@ void engine::Renderer::render(ShaderProgram& program, Window& window, Camera& ca
 	XMVECTOR BR = XMVectorSet(3.0f, -1.0f, 1.0f, 1.0f);
 	XMVECTOR BL = XMVectorSet(-1.0f, -1.0f, 1.0f, 1.0f);
 
-	TL = XMVector4Transform(TL, camera.m_projInv);
-	BR = XMVector4Transform(BR, camera.m_projInv);
-	BL = XMVector4Transform(BL, camera.m_projInv);
+	TL = XMVector4Transform(TL, camera.getViewProjInv());
+	BR = XMVector4Transform(BR, camera.getViewProjInv());
+	BL = XMVector4Transform(BL, camera.getViewProjInv());
 
 	TL /= XMVectorGetW(TL);
 	BR /= XMVectorGetW(BR);
 	BL /= XMVectorGetW(BL);
-
-	TL = XMVector4Transform(TL, camera.m_viewInv);
-	BR = XMVector4Transform(BR, camera.m_viewInv);
-	BL = XMVector4Transform(BL, camera.m_viewInv);
 
 	XMVECTOR res[4]{ TL, BR, BL, camera.position()};
 	std::vector<const void*> data;

@@ -80,16 +80,17 @@ namespace engine
 
 	void Controller::onResize(const Window& win)
 	{
-		m_camera.setPerspective(45.0f, win.m_width, win.m_height, NEAR_PLANE, FAR_PLANE); 
+		m_camera.setPerspective(45.0f, win.m_width, win.m_height, NEAR_PLANE, FAR_PLANE);
 	}
 
 	void Controller::processFrame(Window& window, Scene& scene)
 	{
 		PerFrameUniform uniform;
-		uniform.g_viewProj = m_camera.m_viewProj;
+		uniform.g_viewProj = m_camera.getViewProj();
 		uniform.g_screenWidht = window.m_width;
 		uniform.g_screenHeight = window.m_height;
 		renderer.setPerFrameUniforms(uniform); 
+		window.bindDepthStencil();
 
 		scene.renderFrame(window, renderer, m_camera);
 	}
@@ -103,27 +104,27 @@ namespace engine
 			{
 			case 'W':
 			{
-				moveCamera(XMVectorSet(0.0f, 0.0f, 0.1f, 0.0f)); 
+				moveCamera(m_camera.forward()); 
 			} break;
 			case 'A':
 			{
-				moveCamera(XMVectorSet(-0.1f, 0.0f, 0.0f, 0.0f));
+				moveCamera(-m_camera.right());
 			} break;
 			case 'S':
 			{
-				moveCamera(XMVectorSet(0.0f, 0.0f, -0.1f, 0.0f));
+				moveCamera(-m_camera.forward());
 			} break;
 			case 'D':
 			{
-				moveCamera(XMVectorSet(0.1f, 0.0f, 0.0f, 0.0f));
+				moveCamera(m_camera.right());
 			} break;
 			case 'Q':
 			{
-				moveCamera(XMVectorSet(0.0f, 0.1f, 0.0f, 0.0f));
+				moveCamera(XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f));
 			}break;
 			case 'E':
 			{
-				moveCamera(XMVectorSet(0.0f, -0.1f, 0.0f, 0.0f));
+				moveCamera(XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 			}break;
 			case VK_SHIFT:
 			{
@@ -150,7 +151,7 @@ namespace engine
 	{
 		XMVECTOR offset = direction * m_deltaTime * m_cameraSpeed * ((speedIncreased) ? 5.0f : 1.0f);
 		speedIncreased = false;
-		m_camera.addRelativeOffset(offset);
+		m_camera.addWorldOffset(offset);
 		m_camera.updateMatrices();
 	}
 

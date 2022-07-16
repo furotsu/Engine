@@ -6,7 +6,7 @@ namespace engine
 	void Camera::setPerspective(float fov, float width, float height, float nearP, float farP) // sets m_proj and m_projInv
 	{
 		float rad = XMConvertToRadians(fov);
-		float const h = XMScalarCos((float)0.5 * rad) / XMScalarSin((float)0.5 * rad);
+		float const h = XMScalarCos(0.5f * rad) / XMScalarSin(0.5f * rad);
 		float const w = h * width / height;
 
 		m_proj = XMMatrixPerspectiveFovLH(fov, width / height, nearP, farP);

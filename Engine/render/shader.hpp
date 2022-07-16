@@ -22,8 +22,8 @@ namespace engine
 	class ShaderProgram
 	{
 	private:
-		ID3D10Blob* VS = nullptr;
-		ID3D10Blob* PS = nullptr;
+		ID3DBlob* VS = nullptr;
+		ID3DBlob* PS = nullptr;
 		DxResPtr<ID3D11VertexShader> m_pVS;
 		DxResPtr<ID3D11PixelShader> m_pPS;
 		DxResPtr<ID3D11InputLayout> m_pLayout;   
@@ -43,7 +43,7 @@ namespace engine
 		void bindUniforms(const std::vector<const void*>& data, ShaderType = ShaderType::VERTEX);
 
 		void release();
-		void compileShader(const ShaderInfo& shader, ID3D10Blob*& blob);
+		void compileShader(const ShaderInfo& shader, ID3DBlob*& blob);
 
 		void bind();
 		void unbind();

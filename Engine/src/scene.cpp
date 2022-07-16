@@ -61,13 +61,14 @@ namespace engine
 	void Scene::renderFrame(Window& window, Renderer& renderer, Camera& camera)
 	{
 		ALWAYS_ASSERT(window.m_renderTargetView != NULL && "render target is NULL");
-		s_devcon->OMSetRenderTargets(1, window.m_renderTargetView.access(), NULL); 
+		s_devcon->OMSetRenderTargets(1, window.m_renderTargetView.access(), window.m_pDSV); 
 
 		FLOAT backgroundColor[4]{ 0.0f, 0.2f, 0.4f, 1.0f };
 		s_devcon->ClearRenderTargetView(window.m_renderTargetView.ptr(), backgroundColor);
+		s_devcon->ClearDepthStencilView(window.m_pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 
-		renderer.render(skyboxProgram, window, camera, skybox);
 		renderer.render(modelProgram, window, camera, model);
+		renderer.render(skyboxProgram, window, camera, skybox);
 
 		DXGI_PRESENT_PARAMETERS pPresentParameters;
 		pPresentParameters.DirtyRectsCount = 0;
@@ -93,5 +94,4 @@ namespace engine
 	void Scene::findIntersectionShadow(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial)
 	{
 	}
-
 }

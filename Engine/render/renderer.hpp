@@ -25,6 +25,7 @@ namespace engine
 		DxResPtr<ID3D11Buffer> g_uniformGlobal;
 
 	public:
+
 		Renderer() = default;
 		void init();
 		void clean();
@@ -33,6 +34,8 @@ namespace engine
 
 		void render(ShaderProgram& program, Window& window, Camera& camera, Model& model);
 		void render(ShaderProgram& program, Window& window, Camera& camera, Skybox& skybox);
+
+	private:
 
 	};
 }

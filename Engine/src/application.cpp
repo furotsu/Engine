@@ -6,15 +6,11 @@ namespace engine
 {
 	void Application::init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height)
 	{
-		this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
-
 		//init globals
 		Globals::init();
 		TextureManager::init();
 			
-		window.initSwapchain();
-		window.initBackBuffer();
-		window.initViewPort();
+		this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
 		controller.init(window, scene);
 	}

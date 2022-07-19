@@ -26,8 +26,6 @@ namespace engine
 
 		Camera m_camera;
 
-		Renderer renderer;
-
 		bool m_buttonsState[256];
 		std::vector<uint16_t> m_activeButtons;
 

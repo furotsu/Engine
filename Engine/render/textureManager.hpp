@@ -21,6 +21,7 @@ namespace engine
 		void operator=(const TextureManager&) = delete;
 
 		static void init();
+		static void deinit();
 		static TextureManager* GetInstance();
 
 		static std::shared_ptr<Texture> getTexture(const wchar_t* filepath, TextureType type = TextureType::TEXTURE_DEFAULT);

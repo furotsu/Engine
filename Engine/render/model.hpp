@@ -24,6 +24,7 @@ namespace engine
 		void initBuffers();
 		void cleanBuffers();
 		void bindTexture();
+
 		XMMATRIX getModelMat();
 		friend class Scene;
 		friend class Renderer;

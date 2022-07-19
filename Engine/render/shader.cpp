@@ -55,24 +55,29 @@ void engine::ShaderProgram::createUniform(UINT size)
 
 	D3D11_BUFFER_DESC cbbd;
 	ZeroMemory(&cbbd, sizeof(D3D11_BUFFER_DESC));
-	cbbd.Usage = D3D11_USAGE_DEFAULT;
+	cbbd.Usage = D3D11_USAGE_DYNAMIC;
 	cbbd.ByteWidth = size;
 	cbbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbbd.CPUAccessFlags = 0;
+	cbbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbbd.MiscFlags = 0;
 
 	s_device->CreateBuffer(&cbbd, NULL, pBuffer.reset());
 	uniformBuffers.push_back(pBuffer);
+	m_sizes.push_back(size);
 }
 
 void engine::ShaderProgram::bindUniforms(const std::vector<const void*>& data, ShaderType shaderType)
 {
 	if (shaderType == ShaderType::VERTEX)
 	{
-		for (std::size_t i = 0; i != data.size(); i++)
+		ASSERT(uniformBuffers.size() == data.size() && "Trying to bind wrong amount of uniforms to shader");
+		for (std::size_t i = 0; i != uniformBuffers.size(); i++)
 		{
-			s_devcon->UpdateSubresource(uniformBuffers[i], 0, NULL, data[i], 0, 0);
-
+			D3D11_MAPPED_SUBRESOURCE res;
+			
+			s_devcon->Map(uniformBuffers[i], NULL, D3D11_MAP_WRITE_DISCARD, NULL, &res);
+			memcpy(res.pData, data[i], m_sizes[i]);
+			s_devcon->Unmap(uniformBuffers[i], NULL);
 			// take account of global constant buffer at register(b0)
 			s_devcon->VSSetConstantBuffers(1 + i, 1, uniformBuffers[i].access());
 		}
@@ -81,7 +86,11 @@ void engine::ShaderProgram::bindUniforms(const std::vector<const void*>& data, S
 	{
 		for (std::size_t i = 0; i != data.size(); i++)
 		{
-			s_devcon->UpdateSubresource(uniformBuffers[i], 0, NULL, data[i], 0, 0);
+			D3D11_MAPPED_SUBRESOURCE res;
+			
+			s_devcon->Map(uniformBuffers[i], NULL, D3D11_MAP_WRITE_DISCARD, NULL, &res);
+			memcpy(res.pData, data[i], m_sizes[i]);
+			s_devcon->Unmap(uniformBuffers[i], NULL);
 
 			// take account of global constant buffer at register(b0)
 			s_devcon->PSSetConstantBuffers(1 + i, 1, uniformBuffers[i].access());

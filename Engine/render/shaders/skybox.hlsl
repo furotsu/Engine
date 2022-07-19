@@ -25,7 +25,6 @@ VSOut VSMain(uint vertexId : SV_VertexID)
 // Pixel shader
 
 TextureCube objTexture;
-SamplerState objSamplerState;
 
 float4 PSMain(float4 position : SV_POSITION, float3 dirWS : DIRECTIONWS) : SV_TARGET
 {

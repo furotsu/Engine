@@ -4,6 +4,7 @@
 #include <cmath>
 #include "textureLoader.hpp"
 #include "cube.hpp"
+#include "globals.hpp"
 
 namespace engine
 {
@@ -13,9 +14,26 @@ namespace engine
 		std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(cube.cubeVertices, cube.cubeIndices);
 		scene.init();
 
-		scene.addModel(Model(cubeMesh, L"container2.dds", 5.0f, XMVectorSet(10.0f, 0.0f, 30.0f, 0.0)));
-		scene.setSkybox(Skybox(L"cubemap.dds"));
-		renderer.init();
+		// shaders for main triangle pipeline
+		std::vector<ShaderInfo> shaders1 = {
+			{ShaderType::VERTEX, L"render/shaders/cube.hlsl", "VSMain"},
+			{ShaderType::PIXEL,  L"render/shaders/cube.hlsl",  "PSMain"}
+		};
+
+		std::vector<ShaderInfo> shaders2 = {
+		{ShaderType::VERTEX, L"render/shaders/skybox.hlsl", "VSMain"},
+		{ShaderType::PIXEL,  L"render/shaders/skybox.hlsl",  "PSMain"}
+		};
+
+		// create the input layout object for cube model
+		std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		scene.addModel(Model(cubeMesh, L"assets/container2.dds", 5.0f, XMVectorSet(10.0f, 0.0f, 30.0f, 0.0)), shaders1, ied);
+		scene.setSkybox(Sky(L"assets/cubemap.dds"), shaders2);
 
 		m_camera = Camera(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), { 0.0f, 0.0f, 0.0f });
 		m_camera.setPerspective(45.0f, win.m_width, win.m_height, 0.1f, 800.0f);
@@ -29,12 +47,11 @@ namespace engine
 		//Create the buffer to send to the cbuffer in effect file
 		D3D11_BUFFER_DESC cbbd;
 		ZeroMemory(&cbbd, sizeof(D3D11_BUFFER_DESC));
-
 	}
 
 	void Controller::clean()
 	{
-		renderer.clean();
+		
 	}
 
 	void Controller::update(float deltaTime, Scene& scene, Window& window)
@@ -87,12 +104,15 @@ namespace engine
 	{
 		PerFrameUniform uniform;
 		uniform.g_viewProj = m_camera.getViewProj();
-		uniform.g_screenWidht = window.m_width;
+		uniform.g_screenWidth = window.m_width;
 		uniform.g_screenHeight = window.m_height;
-		renderer.setPerFrameUniforms(uniform); 
+
+		Globals::GetInstance()->setPerFrameUniforms(uniform);
+		Globals::GetInstance()->bindSharedSampleState();
+
 		window.bindDepthStencil();
 
-		scene.renderFrame(window, renderer, m_camera);
+		scene.renderFrame(window, m_camera);
 	}
 
 	void Controller::processInput()

@@ -18,6 +18,20 @@ namespace engine
 		}
 	}
 
+	void TextureManager::deinit()
+	{
+		if (s_manager == nullptr)
+		{
+			ERROR("Trying to delete \" TextureManager \" singleton more than once ");
+		}
+		else
+		{
+			clean();
+			delete s_manager;
+			s_manager = nullptr;
+		}
+	}
+
 	TextureManager* TextureManager::GetInstance()
 	{
 		if (s_manager == nullptr)

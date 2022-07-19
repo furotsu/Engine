@@ -11,8 +11,10 @@
 #include "model.hpp"
 #include "utility.hpp"
 #include "parallelExecutor.hpp"
-#include "renderer.hpp"
 #include "camera.hpp"
+#include "sky.hpp"
+#include "shaderManager.hpp"
+
 
 using namespace math;
 
@@ -58,21 +60,21 @@ namespace engine
 		std::vector<Model> m_models;
 
 		Model model;
-		Skybox skybox;
-		ShaderProgram modelProgram;
-		ShaderProgram skyboxProgram;
+		Sky skybox;
+		std::shared_ptr<ShaderProgram> modelProgram;
 		std::shared_ptr<Mesh> cubeMesh;
 
 		Scene() = default;
 
 		void init();
 
-		void addModel(Model model);
-		void setSkybox(Skybox skybox);
+		void addModel(Model model, std::vector<ShaderInfo> shaders, std::vector<D3D11_INPUT_ELEMENT_DESC> ied);
+		void setSkybox(Sky skybox, std::vector<ShaderInfo> shaders);
 
 		bool findIntersection(const ray& r, IntersectionQuery& query);
 
-		void renderFrame(Window& window, Renderer& renderer, Camera& camera);
+		void renderFrame(Window& window, const Camera& camera);
+		void renderCube(Window& window, const Camera& camera);
 
 		void clean();
 

@@ -15,7 +15,6 @@ namespace engine
 	{
 	public:
 		DxResPtr<ID3D11ShaderResourceView> pRView;
-		DxResPtr<ID3D11SamplerState> pTSampleState;
 
 		Texture() = default;
 

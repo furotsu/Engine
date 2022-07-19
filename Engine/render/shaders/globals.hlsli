@@ -5,3 +5,5 @@ cbuffer PerFrame : register(b0)
 	float g_screenHeight;
 	float2 padding0;
 };
+
+SamplerState objSamplerState;

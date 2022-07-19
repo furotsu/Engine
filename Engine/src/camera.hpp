@@ -56,8 +56,8 @@ namespace engine
 
 		void updateBasis();
 
-		inline XMMATRIX getViewProj() { return m_viewProj; }
-		inline XMMATRIX getViewProjInv() { return m_viewProjInv; }
+		inline XMMATRIX getViewProj() const { return m_viewProj; }
+		inline XMMATRIX getViewProjInv() const { return m_viewProjInv; }
 		// This function must be called each frame to ensure the matrices are updated after camera movement
 		void updateMatrices();
 

@@ -24,7 +24,6 @@ VSOut VSMain(float4 position : POSITION, float2 texCoord : TEXCOORD)
 
 // Pixel shader
 Texture2D objTexture;
-SamplerState objSamplerState;
 
 float4 PSMain(float4 position : SV_POSITION, float2 texCoord : TEXCOORD) : SV_TARGET
 {

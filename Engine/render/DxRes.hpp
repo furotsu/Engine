@@ -18,8 +18,15 @@ namespace engine
 		DxResPtr(T* other) { T* m_ptr = other; }
 		DxResPtr& operator=(const DxResPtr& other)
 		{
-			m_ptr = other.m_ptr;
-			m_ptr->AddRef();
+			if (other)
+			{
+				m_ptr = other.m_ptr;
+				m_ptr->AddRef();
+			}
+			else
+			{
+				m_ptr = nullptr;
+			}
 			return *this;
 		}
 
@@ -31,8 +38,7 @@ namespace engine
 			other.m_ptr = nullptr;
 			return *this;
 		}
-
-
+			
 		T* ptr() const { return m_ptr; }
 		T* ptr() { return m_ptr; }
 

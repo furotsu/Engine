@@ -1,15 +1,14 @@
 #include "application.hpp"
 #include "globals.hpp"
 #include "textureManager.hpp"
+#include "shaderManager.hpp"
 
 namespace engine
 {
 	void Application::init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height)
 	{
-		//init globals
-		Globals::init();
-		TextureManager::init();
-			
+		initSingletons();
+
 		this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
 		controller.init(window, scene);
@@ -20,8 +19,8 @@ namespace engine
 		scene.clean();
 		controller.clean();
 		window.clean();
-		TextureManager::clean();
-		Globals::clean();
+
+		deinitSingletons();
 	}
 
 	void Application::initConsole()
@@ -31,6 +30,20 @@ namespace engine
 		}
 		FILE* dummy;
 		auto s = freopen_s(&dummy, "CONOUT$", "w", stdout);
+	}
+
+	void Application::initSingletons()
+	{
+		Globals::init();
+		TextureManager::init();
+		ShaderManager::init();
+	}
+
+	void Application::deinitSingletons()
+	{
+		ShaderManager::deinit();
+		TextureManager::deinit();
+		Globals::deinit();
 	}
 
 	LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Scene& scene, Window& w)
@@ -121,6 +134,5 @@ namespace engine
 		}
 
 		return msg;
-
 	}
 }

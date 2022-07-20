@@ -102,16 +102,8 @@ namespace engine
 
 	void Controller::processFrame(Window& window, Scene& scene)
 	{
-		PerFrameUniform uniform;
-		uniform.g_viewProj = m_camera.getViewProj();
-		uniform.g_screenWidth = window.m_width;
-		uniform.g_screenHeight = window.m_height;
-
-		Globals::GetInstance()->setPerFrameUniforms(uniform);
-		Globals::GetInstance()->bindSharedSampleState();
-
+		Globals::GetInstance()->bind(window, m_camera);
 		window.bindDepthStencil();
-
 		scene.renderFrame(window, m_camera);
 	}
 

@@ -145,6 +145,15 @@ namespace engine
 		s_globals->m_pSharedSampleState.release();
 	}
 
+	void Globals::bind(const Window& window, const Camera& camera)
+	{
+		uniform.g_viewProj = camera.getViewProj();
+		uniform.g_screenWidth = window.m_width;
+		uniform.g_screenHeight = window.m_height;
+		setPerFrameUniforms(uniform);
+		bindSharedSampleState();
+	}
+
 	void Globals::setPerFrameUniforms(PerFrameUniform& data)
 	{
 		D3D11_MAPPED_SUBRESOURCE res;
@@ -159,6 +168,7 @@ namespace engine
 
 	void Globals::bindSharedSampleState()
 	{
+
 		s_devcon->PSSetSamplers(0, 1, m_pSharedSampleState.access());
 	}
 }

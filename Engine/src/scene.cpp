@@ -54,12 +54,7 @@ namespace engine
 		renderCube(window, camera);
 		skybox.render(window, camera);
 
-		DXGI_PRESENT_PARAMETERS pPresentParameters;
-		pPresentParameters.DirtyRectsCount = 0;
-		pPresentParameters.pDirtyRects = NULL;
-		pPresentParameters.pScrollRect = NULL;
-		pPresentParameters.pScrollOffset = NULL;
-		window.m_swapchain->Present1(0, 0, &pPresentParameters);
+		window.m_swapchain->Present(0, 0);
 	}
 
 	void Scene::renderCube(Window& window, const Camera& camera)

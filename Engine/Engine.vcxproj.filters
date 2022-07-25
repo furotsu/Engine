@@ -34,6 +34,15 @@
     <Filter Include="render">
       <UniqueIdentifier>{5727df85-ff71-47b7-8c6a-7f343c35fd6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{311787d8-1f20-4ee1-85b4-717a15090adb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\shaders">
+      <UniqueIdentifier>{b0549427-d7e4-490b-83f8-4bb1fb313d87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\textures">
+      <UniqueIdentifier>{4b8c3c76-fa70-433a-95d1-9378665894dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -69,10 +78,7 @@
     <ClCompile Include="src\debug.cpp">
       <Filter>utility</Filter>
     </ClCompile>
-    <ClCompile Include="render\globals.cpp">
-      <Filter>render</Filter>
-    </ClCompile>
-    <ClCompile Include="lighting.cpp">
+    <ClCompile Include="src\lighting.cpp">
       <Filter>utility</Filter>
     </ClCompile>
     <ClCompile Include="src\actor\mesh.cpp">
@@ -90,8 +96,32 @@
     <ClCompile Include="src\actor\model.cpp">
       <Filter>Actor</Filter>
     </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="render\textureLoader.cpp">
+      <Filter>utility</Filter>
+    </ClCompile>
     <ClCompile Include="src\parallelExecutor.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>utility</Filter>
+    </ClCompile>
+    <ClCompile Include="render\texture.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="render\textureManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\transform.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="render\sky.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="render\globals.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="render\shaderManager.cpp">
+      <Filter>Application</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -155,24 +185,63 @@
     <ClInclude Include="include\win.hpp">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="render\globals.hpp">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="render\DxRes.hpp">
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="render\d3d.hpp">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="src\constants.hpp">
-      <Filter>utility</Filter>
+    <ClInclude Include="src\camera.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\transform.hpp">
+      <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="src\parallelExecutor.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="render\textureLoader.hpp">
+      <Filter>utility</Filter>
+    </ClInclude>
+    <ClInclude Include="render\texture.hpp">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="render\textureManager.hpp">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="render\model.hpp">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\constants.hpp">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="render\sky.hpp">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="render\globals.hpp">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="render\shaderManager.hpp">
+      <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="render\shaders\vertex.shader" />
-    <None Include="render\shaders\pixel.shader" />
+    <Image Include="assets\container2.dds">
+      <Filter>res\textures</Filter>
+    </Image>
+    <Image Include="assets\cubemap.dds">
+      <Filter>res\textures</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="render\shaders\cube.hlsl">
+      <Filter>res\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="render\shaders\skybox.hlsl">
+      <Filter>res\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="render\shaders\globals.hlsli">
+      <Filter>res\shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -4,10 +4,17 @@
 
 #include "application.hpp"
 #include "globals.hpp"
+#include "textureManager.hpp"
+#include "shaderManager.hpp"
 const uint32_t engine::ParallelExecutor::MAX_THREADS = max(1u, std::thread::hardware_concurrency());
 const uint32_t engine::ParallelExecutor::HALF_THREADS = max(1u, std::thread::hardware_concurrency() / 2);
 
-engine::Globals* engine::Globals::s_globals = nullptr;
+namespace engine
+{ 
+	Globals* Globals::s_globals = nullptr;
+	TextureManager* TextureManager::s_manager = nullptr;
+	ShaderManager* ShaderManager::s_manager = nullptr;
+}
 
 engine::Application app;
 engine::ParallelExecutor executor(max(1u, max(engine::ParallelExecutor::MAX_THREADS - 4u, engine::ParallelExecutor::HALF_THREADS)));

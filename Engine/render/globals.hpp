@@ -1,7 +1,21 @@
+#pragma once
+
+#include "DirectXMath.h"
 #include "DxRes.hpp"
+#include "d3d.h"
+#include "camera.hpp"
+#include "window.hpp"
 
 namespace engine
 {
+	struct PerFrameUniform
+	{
+		DirectX::XMMATRIX g_viewProj;
+		FLOAT g_screenWidth;
+		FLOAT g_screenHeight;
+		DirectX::XMFLOAT2 padding0;
+	};
+
 	class Globals // a singletone for accessing global rendering resources
 	{
 	protected:
@@ -14,6 +28,17 @@ namespace engine
 		DxResPtr<ID3D11DeviceContext>	 m_devcon;
 		DxResPtr<ID3D11DeviceContext4>   m_devcon4;
 		DxResPtr<ID3D11Debug>			 m_devdebug;
+
+		DxResPtr<ID3D11Buffer> m_uniformGlobal;
+		PerFrameUniform uniform;
+		DxResPtr<ID3D11SamplerState> m_pSharedSampleState;
+
+
+		void initD3D();
+		void initGlobalUniforms();
+		void initSharedSampleState();
+		void setPerFrameUniforms(PerFrameUniform& data);
+		void bindSharedSampleState();
 	public:
 		Globals();
 		Globals(Globals& other) = delete;
@@ -21,7 +46,10 @@ namespace engine
 
 		static Globals* GetInstance();
 
-		void initD3D();
-		void clean();
+		static void init();
+		static void deinit();
+		static void clean();
+
+		void bind(const Window& window, const Camera& camera);
 	};
 }

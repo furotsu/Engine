@@ -1,27 +1,26 @@
 #include "application.hpp"
 #include "globals.hpp"
+#include "textureManager.hpp"
+#include "shaderManager.hpp"
 
 namespace engine
 {
 	void Application::init(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow, int width, int height)
 	{
-		this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+		initSingletons();
 
-		//init globals
-		Globals::GetInstance();
-			
-		window.initSwapchain();
-		window.initBackBuffer();
-		window.initViewPort();
+		this->window = Window(width, height, hInstance, hPrevInstance, lpCmdLine, nCmdShow);
 
 		controller.init(window, scene);
 	}
 
 	void Application::clean()
 	{
+		scene.clean();
 		controller.clean();
 		window.clean();
-		Globals::GetInstance()->clean();
+
+		deinitSingletons();
 	}
 
 	void Application::initConsole()
@@ -31,6 +30,20 @@ namespace engine
 		}
 		FILE* dummy;
 		auto s = freopen_s(&dummy, "CONOUT$", "w", stdout);
+	}
+
+	void Application::initSingletons()
+	{
+		Globals::init();
+		TextureManager::init();
+		ShaderManager::init();
+	}
+
+	void Application::deinitSingletons()
+	{
+		ShaderManager::deinit();
+		TextureManager::deinit();
+		Globals::deinit();
 	}
 
 	LRESULT Application::processInput(HWND& hWnd, UINT& message, WPARAM& wParam, LPARAM& lParam, Scene& scene, Window& w)
@@ -46,14 +59,43 @@ namespace engine
 		} break;
 		case WM_SIZE:
 		{
-
 			RECT rect = { 0, 0, 0, 0 };
 			GetWindowRect(hWnd, &rect);
 
-			AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 			window.onResize(rect.right - rect.left, rect.bottom - rect.top);
+			controller.onResize(window);
 			controller.userInputReceived = true;
 		} break;
+		case WM_MOUSEMOVE:
+		{
+			controller.m_mouseMoved = true;
+		} break;
+		case WM_LBUTTONDOWN:
+		{
+			controller.m_lmbDown = true;
+			GetCursorPos(&controller.m_pressedPos);
+			//determine position relative to init window
+			ScreenToClient(FindWindowA(NULL, "Engine"), &controller.m_pressedPos);
+			controller.m_currentPos = controller.m_pressedPos;
+			controller.userInputReceived = true;
+		} break;
+		case WM_LBUTTONUP:
+		{
+			controller.m_lmbDown = false;
+		} break;
+		case WM_KEYDOWN:
+		{
+			controller.onKeyDown(wParam);
+			controller.userInputReceived = true;
+		} break;
+		case WM_KEYUP:
+		{
+			controller.onKeyUp(wParam);
+		}break;
+		case WM_MOUSEWHEEL:
+		{
+			controller.changeCameraSpeed(GET_WHEEL_DELTA_WPARAM(wParam));
+		}break;
 		default:
 		{
 		}
@@ -92,6 +134,5 @@ namespace engine
 		}
 
 		return msg;
-
 	}
 }

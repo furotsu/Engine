@@ -8,9 +8,13 @@
 #include "constants.hpp"
 #include "plane.hpp"
 #include "sphere.hpp"
-#include "mesh.hpp"
+#include "model.hpp"
 #include "utility.hpp"
 #include "parallelExecutor.hpp"
+#include "camera.hpp"
+#include "sky.hpp"
+#include "shaderManager.hpp"
+
 
 using namespace math;
 
@@ -30,22 +34,6 @@ namespace engine
 		};
 
 	public:
-
-		// --------------------- Scene Objects ---------------------
-
-		class Model
-		{
-			DxResPtr<ID3D11Buffer> m_pVBuffer;                // the pointer to the vertex buffer
-			std::shared_ptr<Mesh> m_mesh;
-		public:
-
-			Model() = default;
-
-			void init(const std::shared_ptr<Mesh>& mesh);
-			void initBuffers();
-			void cleanBuffers();
-			friend class Scene;
-		};
 
 		// --------------------- Object Decorators ---------------------
 
@@ -71,16 +59,29 @@ namespace engine
 
 		std::vector<Model> m_models;
 
+		Model model;
+		Sky skybox;
+		std::shared_ptr<ShaderProgram> modelProgram;
+		std::shared_ptr<Mesh> cubeMesh;
+
 		Scene() = default;
+
+		void init();
+
+		void addModel(Model model, std::vector<ShaderInfo> shaders, std::vector<D3D11_INPUT_ELEMENT_DESC> ied);
+		void setSkybox(Sky skybox, std::vector<ShaderInfo> shaders);
+
 		bool findIntersection(const ray& r, IntersectionQuery& query);
 
-		void renderFrame(Window& window, Model& model);
+		void renderFrame(Window& window, const Camera& camera);
+		void renderCube(Window& window, const Camera& camera);
+
+		void clean();
 
 	protected:
 
 		void findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial);
 		void findIntersectionShadow(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial);
-
 	};
 
 

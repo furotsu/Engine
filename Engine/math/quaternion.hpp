@@ -28,6 +28,7 @@ namespace math
 		inline Quaternion& operator*=(const Quaternion& q2) { m_quaternion = XMQuaternionMultiply(m_quaternion, q2.m_quaternion); return *this; }
 
 		friend void normalizeQuat(Quaternion& q);
+		inline XMVECTOR getQuat() const { return m_quaternion; }
 	};
 }
 

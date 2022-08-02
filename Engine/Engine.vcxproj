@@ -408,6 +408,7 @@
     <None Include="assets\models\Knight\Knight.fbx" />
     <None Include="assets\models\Samurai\Samurai.fbx" />
     <None Include="assets\models\SunCityWall\SunCityWall.fbx" />
+    <None Include="assimp-vc142-mt.dll" />
     <None Include="include\assimp\color4.inl" />
     <None Include="include\assimp\material.inl" />
     <None Include="include\assimp\matrix3x3.inl" />

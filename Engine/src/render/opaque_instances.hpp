@@ -7,13 +7,14 @@ namespace engine
 {
 	class OpaqueInstances
 	{
-	protected:
 		std::shared_ptr<ShaderProgram> shader;
 		uint32_t m_instanceCount;
+	public:
 
 		struct Instance
 		{
-			XMFLOAT3 pos;
+			XMMATRIX pos;
+			Instance(XMMATRIX mat) { pos = mat; }
 		};
 
 		struct PerMaterial
@@ -37,12 +38,11 @@ namespace engine
 
 		VertexBuffer<Instance> instanceBuffer;
 		std::vector<PerModel> perModel;
-	public:
 
 		OpaqueInstances() = default;
 		void init(std::shared_ptr<ShaderProgram> shader);
 
-		void addModel(std::string& filepath, std::string& filename, std::vector<XMFLOAT3>& positions, XMFLOAT3 size = {10.0f, 10.0f, 10.0f});
+		void addModel(std::shared_ptr<Model> model, std::vector<Instance>& positions, XMFLOAT3 size = { 10.0f, 10.0f, 10.0f });
 
 
 		void updateInstanceBuffers();
@@ -51,15 +51,7 @@ namespace engine
 		void clean();
 
 		friend void loadModel(std::string path, std::shared_ptr<engine::Model> model);
+
 	};
 
-	class MeshSystem
-	{
-		OpaqueInstances opaqueInstances;
-
-		void render()
-		{
-			opaqueInstances.render();
-		}
-	};
 }

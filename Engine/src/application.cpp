@@ -3,6 +3,7 @@
 #include "textureManager.hpp"
 #include "shaderManager.hpp"
 #include "modelManager.hpp"
+#include "meshSystem.hpp"
 
 namespace engine
 {
@@ -39,10 +40,12 @@ namespace engine
 		TextureManager::init();
 		ShaderManager::init();
 		ModelManager::init();
+		MeshSystem::init();
 	}
 
 	void Application::deinitSingletons()
 	{
+		MeshSystem::deinit();
 		ModelManager::deinit();
 		ShaderManager::deinit();
 		TextureManager::deinit();
@@ -67,6 +70,7 @@ namespace engine
 			GetWindowRect(hWnd, &rect);
 
 			window.onResize(rect.right - rect.left, rect.bottom - rect.top);
+			scene.onResize(window);
 			controller.onResize(window);
 			controller.userInputReceived = true;
 		} break;

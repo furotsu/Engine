@@ -2,7 +2,7 @@
 
 cbuffer cbPerObject : register(b1)
 {
-   row_major float4x4 modelMat;
+   row_major float4x4 g_modelMat;
 };
 
 // Vertex shader
@@ -16,7 +16,7 @@ VSOut VSMain(float4 position : POSITION, float2 texCoord : TEXCOORD)
 {
     VSOut output;
 
-    output.position = mul(mul(position, modelMat), g_viewProj);
+    output.position = mul(mul(position, g_modelMat), g_viewProj);
     output.texCoord = texCoord;
 
     return output;

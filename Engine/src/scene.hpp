@@ -14,7 +14,7 @@
 #include "camera.hpp"
 #include "sky.hpp"
 #include "shaderManager.hpp"
-#include "instance.hpp"
+#include "opaque_instances.hpp"
 
 
 using namespace math;
@@ -56,20 +56,26 @@ namespace engine
 			std::unique_ptr<Scene::IobjectMover> mover;
 		};
 
+		DxResPtr<ID3D11Texture2D> m_pDepthStencil;
+		DxResPtr<ID3D11DepthStencilState> m_pDSState;
 	public:
 
 		Sky skybox;
-		OpaqueInstances models;
+
+		DxResPtr<ID3D11DepthStencilView> m_pDSV;
 
 		Scene() = default;
 
-		void init(std::vector<ShaderInfo>& shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied);
-		void addModel(std::string filepath, std::string filename, std::vector<XMFLOAT3> position = { {0.0f, 0.0f, 0.0f} });
+		void init(const Window& window);
+		void addModel(std::shared_ptr<Model> model, std::vector<OpaqueInstances::Instance> position = {XMMATRIX()});
 		void setSkybox(Sky skybox, std::vector<ShaderInfo> shaders);
 
 		bool findIntersection(const ray& r, IntersectionQuery& query);
 
 		void renderFrame(Window& window, const Camera& camera);
+
+		void onResize(const Window& window);
+		void bindDepthStencil();
 
 		void clean();
 
@@ -77,6 +83,8 @@ namespace engine
 
 		void findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial);
 		void findIntersectionShadow(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial);
+
+		void createDepthStencilBuffer(uint32_t width, uint32_t height);
 	};
 
 

@@ -42,7 +42,7 @@ namespace engine
 		return s_manager;
 	}
 
-	std::shared_ptr<Model> ModelManager::getModel(std::string& filepath, std::string& filename)
+	std::shared_ptr<Model> ModelManager::getModel(std::string filepath, std::string filename)
 	{
 		auto it = GetInstance()->m_Models.find(filepath);
 

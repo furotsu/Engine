@@ -24,8 +24,7 @@ namespace engine
 		static void deinit();
 		static ModelManager* GetInstance();
 
-		static std::shared_ptr<Model> getModel(std::string& filepath, std::string& filename);
-
+		static std::shared_ptr<Model> getModel(std::string filepath, std::string filename);
 		static void clean();
 	};
 }

@@ -15,7 +15,6 @@ void loadModel(std::string path, std::string filename, std::shared_ptr<engine::M
 	uint32_t numMeshes = assimpScene->mNumMeshes;
 
 	// Load vertex data
-
 	model->name = filename;
 	model->meshes.resize(numMeshes);
 
@@ -28,6 +27,9 @@ void loadModel(std::string path, std::string filename, std::shared_ptr<engine::M
 	range.vertexNum = 0u;
 	range.indexNum = 0u;
 
+
+	std::vector<engine::Mesh::Vertex> vertices;
+	std::vector<engine::Mesh::Triangle> indices;
 
 	for (uint32_t i = 0; i < numMeshes; ++i)
 	{
@@ -53,6 +55,7 @@ void loadModel(std::string path, std::string filename, std::shared_ptr<engine::M
 		dstMesh.m_transform = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 		XMMATRIX x = reinterpret_cast<XMMATRIX&>(assimpScene->mRootNode->mChildren[0]->mTransformation);
 		dstMesh.m_transform = x;
+
 		if (assimpScene->HasMaterials())
 		{
 			aiMaterial* material = assimpScene->mMaterials[i];
@@ -76,6 +79,7 @@ void loadModel(std::string path, std::string filename, std::shared_ptr<engine::M
 			engine::Mesh::Vertex& vertex = dstMesh.vertices[v];
 			vertex.position = reinterpret_cast<XMFLOAT3&>(srcMesh->mVertices[v]);
 			vertex.texCoords = reinterpret_cast<XMFLOAT2&>(srcMesh->mTextureCoords[0][v]);
+			vertices.push_back(vertex);
 		}
 
 		for (uint32_t f = 0; f < srcMesh->mNumFaces; ++f)
@@ -83,9 +87,11 @@ void loadModel(std::string path, std::string filename, std::shared_ptr<engine::M
 			const auto& face = srcMesh->mFaces[f];
 			DEV_ASSERT(face.mNumIndices == 3);
 			dstMesh.triangles[f] = *reinterpret_cast<engine::Mesh::Triangle*>(face.mIndices);
+			indices.push_back(dstMesh.triangles[f]);
 		}
-
-
 	}
+
+	model->init(vertices, indices);
+
 }
 }

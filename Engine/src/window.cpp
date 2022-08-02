@@ -43,9 +43,6 @@ namespace engine
 		
 		hdc = GetDC(hWnd);
 
-		createDepthStencilBuffer();
-		bindDepthStencil();
-
 		initSwapchain();
 		initBackBuffer();
 		initViewPort();
@@ -55,13 +52,10 @@ namespace engine
 
 	void Window::clean()
 	{
-		m_pDepthStencil.release();
-		m_pDSState.release();
 		m_swapchain->SetFullscreenState(FALSE, NULL);    // switch to windowed mode
 		m_swapchain.release();
 		m_renderTargetView.release();
 		m_backbuffer.release();
-		m_pDSV.release();
 	}
 
 	void Window::onResize(uint16_t width, uint16_t height)
@@ -75,7 +69,6 @@ namespace engine
 			m_backbuffer.release();
 			m_swapchain->ResizeBuffers(NULL, m_width, m_height, DXGI_FORMAT_UNKNOWN, NULL);
 			
-			createDepthStencilBuffer();
 			initBackBuffer();
 			initViewPort();
 		}
@@ -145,69 +138,4 @@ namespace engine
 		s_devcon->RSSetViewports(1, &m_viewport);
 	}
 
-	void Window::createDepthStencilBuffer()
-	{
-		//Create depth-stencil buffer using texture resource
-
-		D3D11_TEXTURE2D_DESC descDepth;
-		descDepth.Width = m_width;
-		descDepth.Height = m_height;
-		descDepth.MipLevels = 1;
-		descDepth.ArraySize = 1;
-		descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		descDepth.SampleDesc.Count = 1;
-		descDepth.SampleDesc.Quality = 0;
-		descDepth.Usage = D3D11_USAGE_DEFAULT;
-		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		descDepth.CPUAccessFlags = NULL;
-		descDepth.MiscFlags = NULL;
-
-		HRESULT hr = s_device->CreateTexture2D(&descDepth, NULL, m_pDepthStencil.reset());
-		ASSERT(hr >= 0 && " cannot create depth-stencil uniform buffer");
-
-		//Create depth-stencil state
-		D3D11_DEPTH_STENCIL_DESC dsDesc;
-
-		// Depth test parameters
-		dsDesc.DepthEnable = true;
-		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		dsDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;
-
-		// Stencil test parameters
-		dsDesc.StencilEnable = true;
-		dsDesc.StencilReadMask = 0xFF;
-		dsDesc.StencilWriteMask = 0xFF;
-
-		// Stencil operations if pixel is front-facing
-		dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-		dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Stencil operations if pixel is back-facing
-		dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-		dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Create depth stencil state
-		ID3D11DepthStencilState* pDSState;
-		s_device->CreateDepthStencilState(&dsDesc, m_pDSState.reset());
-
-		// Create the depth stencil view
-		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-		descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		descDSV.Flags = NULL;
-		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		descDSV.Texture2D.MipSlice = 0;
-
-		hr = s_device->CreateDepthStencilView(m_pDepthStencil, &descDSV, m_pDSV.reset());
-		ASSERT(hr >= 0 && " cannot create depth-stencil view");
-
-	}
-
-	void Window::bindDepthStencil()
-	{
-		s_devcon->OMSetDepthStencilState(m_pDSState, 1);
-	}
 }

@@ -57,22 +57,22 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="math\plane.cpp">
+    <ClCompile Include="src\math\plane.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="math\quaternion.cpp">
+    <ClCompile Include="src\math\quaternion.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="math\sphere.cpp">
+    <ClCompile Include="src\math\sphere.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="math\triangle.cpp">
+    <ClCompile Include="src\math\triangle.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="math\matrixAlg.cpp">
+    <ClCompile Include="src\math\matrixAlg.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="math\utility.cpp">
+    <ClCompile Include="src\math\utility.cpp">
       <Filter>Math</Filter>
     </ClCompile>
     <ClCompile Include="src\application.cpp">
@@ -81,7 +81,7 @@
     <ClCompile Include="src\controller.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="render\d3d.cpp">
+    <ClCompile Include="src\render\d3d.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\debug.cpp">
@@ -96,7 +96,7 @@
     <ClCompile Include="src\scene.cpp">
       <Filter>World</Filter>
     </ClCompile>
-    <ClCompile Include="render\shader.cpp">
+    <ClCompile Include="src\render\shader.cpp">
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="src\window.cpp">
@@ -108,63 +108,66 @@
     <ClCompile Include="src\camera.cpp">
       <Filter>World</Filter>
     </ClCompile>
-    <ClCompile Include="render\textureLoader.cpp">
+    <ClCompile Include="src\render\textureLoader.cpp">
       <Filter>utility</Filter>
     </ClCompile>
     <ClCompile Include="src\parallelExecutor.cpp">
       <Filter>utility</Filter>
     </ClCompile>
-    <ClCompile Include="render\texture.cpp">
+    <ClCompile Include="src\render\texture.cpp">
       <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="src\transform.cpp">
       <Filter>Actor</Filter>
     </ClCompile>
-    <ClCompile Include="render\sky.cpp">
+    <ClCompile Include="src\render\sky.cpp">
       <Filter>World</Filter>
     </ClCompile>
-    <ClCompile Include="render\globals.cpp">
+    <ClCompile Include="src\render\globals.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="render\instance.cpp">
+    <ClCompile Include="src\render\opaque_instances.cpp">
       <Filter>Actor</Filter>
     </ClCompile>
     <ClCompile Include="src\actor\assimpLoader.cpp">
       <Filter>Actor</Filter>
     </ClCompile>
-    <ClCompile Include="render\textureManager.cpp">
+    <ClCompile Include="src\render\textureManager.cpp">
       <Filter>Application\Singletones</Filter>
     </ClCompile>
     <ClCompile Include="src\actor\modelManager.cpp">
       <Filter>Application\Singletones</Filter>
     </ClCompile>
-    <ClCompile Include="render\shaderManager.cpp">
+    <ClCompile Include="src\render\shaderManager.cpp">
+      <Filter>Application\Singletones</Filter>
+    </ClCompile>
+    <ClCompile Include="meshSystem.cpp">
       <Filter>Application\Singletones</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="math\matrixAlg.hpp">
+    <ClInclude Include="src\math\matrixAlg.hpp">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="math\plane.hpp">
+    <ClInclude Include="src\math\plane.hpp">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="math\quaternion.hpp">
+    <ClInclude Include="src\math\quaternion.hpp">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="math\sphere.hpp">
+    <ClInclude Include="src\math\sphere.hpp">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="math\triangle.hpp">
+    <ClInclude Include="src\math\triangle.hpp">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="math\hitable.hpp">
+    <ClInclude Include="src\math\hitable.hpp">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="math\ray.hpp">
+    <ClInclude Include="src\math\ray.hpp">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="math\utility.hpp">
+    <ClInclude Include="src\math\utility.hpp">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="src\scene.hpp">
@@ -185,19 +188,19 @@
     <ClInclude Include="src\window.hpp">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="render\shader.hpp">
+    <ClInclude Include="src\render\shader.hpp">
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="src\timer.hpp">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="include\win.hpp">
+    <ClInclude Include="src\include\win.hpp">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="render\DxRes.hpp">
+    <ClInclude Include="src\render\DxRes.hpp">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="render\d3d.hpp">
+    <ClInclude Include="src\render\d3d.hpp">
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="src\camera.hpp">
@@ -209,25 +212,25 @@
     <ClInclude Include="src\parallelExecutor.hpp">
       <Filter>utility</Filter>
     </ClInclude>
-    <ClInclude Include="render\textureLoader.hpp">
+    <ClInclude Include="src\render\textureLoader.hpp">
       <Filter>utility</Filter>
     </ClInclude>
-    <ClInclude Include="render\texture.hpp">
+    <ClInclude Include="src\render\texture.hpp">
       <Filter>Actor</Filter>
     </ClInclude>
-    <ClInclude Include="render\model.hpp">
+    <ClInclude Include="src\render\model.hpp">
       <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="src\constants.hpp">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="render\sky.hpp">
+    <ClInclude Include="src\render\sky.hpp">
       <Filter>World</Filter>
     </ClInclude>
-    <ClInclude Include="render\globals.hpp">
+    <ClInclude Include="src\render\globals.hpp">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="render\instance.hpp">
+    <ClInclude Include="src\render\opaque_instances.hpp">
       <Filter>Actor</Filter>
     </ClInclude>
     <ClInclude Include="src\actor\material.hpp">
@@ -236,253 +239,256 @@
     <ClInclude Include="src\actor\assimpLoader.hpp">
       <Filter>Actor</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\ZipArchiveIOSystem.h">
+    <ClInclude Include="src\include\assimp\ZipArchiveIOSystem.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\SmallVector.h">
+    <ClInclude Include="src\include\assimp\SmallVector.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\SmoothingGroups.h">
+    <ClInclude Include="src\include\assimp\SmoothingGroups.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\SpatialSort.h">
+    <ClInclude Include="src\include\assimp\SpatialSort.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\StandardShapes.h">
+    <ClInclude Include="src\include\assimp\StandardShapes.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\StreamReader.h">
+    <ClInclude Include="src\include\assimp\StreamReader.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\StreamWriter.h">
+    <ClInclude Include="src\include\assimp\StreamWriter.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\StringComparison.h">
+    <ClInclude Include="src\include\assimp\StringComparison.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\StringUtils.h">
+    <ClInclude Include="src\include\assimp\StringUtils.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Subdivision.h">
+    <ClInclude Include="src\include\assimp\Subdivision.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\texture.h">
+    <ClInclude Include="src\include\assimp\texture.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\TinyFormatter.h">
+    <ClInclude Include="src\include\assimp\TinyFormatter.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\types.h">
+    <ClInclude Include="src\include\assimp\types.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\vector2.h">
+    <ClInclude Include="src\include\assimp\vector2.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\vector3.h">
+    <ClInclude Include="src\include\assimp\vector3.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\version.h">
+    <ClInclude Include="src\include\assimp\version.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Vertex.h">
+    <ClInclude Include="src\include\assimp\Vertex.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\XmlParser.h">
+    <ClInclude Include="src\include\assimp\XmlParser.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\XMLTools.h">
+    <ClInclude Include="src\include\assimp\XMLTools.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\SkeletonMeshBuilder.h">
+    <ClInclude Include="src\include\assimp\SkeletonMeshBuilder.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\MathFunctions.h">
+    <ClInclude Include="src\include\assimp\MathFunctions.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\matrix3x3.h">
+    <ClInclude Include="src\include\assimp\matrix3x3.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\matrix4x4.h">
+    <ClInclude Include="src\include\assimp\matrix4x4.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\MemoryIOWrapper.h">
+    <ClInclude Include="src\include\assimp\MemoryIOWrapper.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\mesh.h">
+    <ClInclude Include="src\include\assimp\mesh.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\metadata.h">
+    <ClInclude Include="src\include\assimp\metadata.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\NullLogger.hpp">
+    <ClInclude Include="src\include\assimp\NullLogger.hpp">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\ParsingUtils.h">
+    <ClInclude Include="src\include\assimp\ParsingUtils.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\pbrmaterial.h">
+    <ClInclude Include="src\include\assimp\pbrmaterial.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Compiler\poppack1.h">
+    <ClInclude Include="src\include\assimp\Compiler\poppack1.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\postprocess.h">
+    <ClInclude Include="src\include\assimp\postprocess.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Profiler.h">
+    <ClInclude Include="src\include\assimp\Profiler.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\ProgressHandler.hpp">
+    <ClInclude Include="src\include\assimp\ProgressHandler.hpp">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Compiler\pstdint.h">
+    <ClInclude Include="src\include\assimp\Compiler\pstdint.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Compiler\pushpack1.h">
+    <ClInclude Include="src\include\assimp\Compiler\pushpack1.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\qnan.h">
+    <ClInclude Include="src\include\assimp\qnan.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\quaternion.h">
+    <ClInclude Include="src\include\assimp\quaternion.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\RemoveComments.h">
+    <ClInclude Include="src\include\assimp\RemoveComments.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\scene.h">
+    <ClInclude Include="src\include\assimp\scene.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\SceneCombiner.h">
+    <ClInclude Include="src\include\assimp\SceneCombiner.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\SGSpatialSort.h">
+    <ClInclude Include="src\include\assimp\SGSpatialSort.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\CreateAnimMesh.h">
+    <ClInclude Include="src\include\assimp\CreateAnimMesh.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\DefaultIOStream.h">
+    <ClInclude Include="src\include\assimp\DefaultIOStream.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\DefaultIOSystem.h">
+    <ClInclude Include="src\include\assimp\DefaultIOSystem.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\DefaultLogger.hpp">
+    <ClInclude Include="src\include\assimp\DefaultLogger.hpp">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Defines.h">
+    <ClInclude Include="src\include\assimp\Defines.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\defs.h">
+    <ClInclude Include="src\include\assimp\defs.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Exceptional.h">
+    <ClInclude Include="src\include\assimp\Exceptional.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Exporter.hpp">
+    <ClInclude Include="src\include\assimp\Exporter.hpp">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\fast_atof.h">
+    <ClInclude Include="src\include\assimp\fast_atof.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\GenericProperty.h">
+    <ClInclude Include="src\include\assimp\GenericProperty.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Hash.h">
+    <ClInclude Include="src\include\assimp\Hash.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Importer.hpp">
+    <ClInclude Include="src\include\assimp\Importer.hpp">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\importerdesc.h">
+    <ClInclude Include="src\include\assimp\importerdesc.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\IOStream.hpp">
+    <ClInclude Include="src\include\assimp\IOStream.hpp">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\IOStreamBuffer.h">
+    <ClInclude Include="src\include\assimp\IOStreamBuffer.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\IOSystem.hpp">
+    <ClInclude Include="src\include\assimp\IOSystem.hpp">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\light.h">
+    <ClInclude Include="src\include\assimp\light.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\LineSplitter.h">
+    <ClInclude Include="src\include\assimp\LineSplitter.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\LogAux.h">
+    <ClInclude Include="src\include\assimp\LogAux.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Logger.hpp">
+    <ClInclude Include="src\include\assimp\Logger.hpp">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\LogStream.hpp">
+    <ClInclude Include="src\include\assimp\LogStream.hpp">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\material.h">
+    <ClInclude Include="src\include\assimp\material.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\config.h">
+    <ClInclude Include="src\include\assimp\config.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\aabb.h">
+    <ClInclude Include="src\include\assimp\aabb.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\ai_assert.h">
+    <ClInclude Include="src\include\assimp\ai_assert.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\port\AndroidJNI\AndroidJNIIOSystem.h">
+    <ClInclude Include="src\include\assimp\port\AndroidJNI\AndroidJNIIOSystem.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\anim.h">
+    <ClInclude Include="src\include\assimp\anim.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\BaseImporter.h">
+    <ClInclude Include="src\include\assimp\BaseImporter.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\Bitmap.h">
+    <ClInclude Include="src\include\assimp\Bitmap.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\BlobIOSystem.h">
+    <ClInclude Include="src\include\assimp\BlobIOSystem.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\port\AndroidJNI\BundledAssetIOSystem.h">
+    <ClInclude Include="src\include\assimp\port\AndroidJNI\BundledAssetIOSystem.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\ByteSwapper.h">
+    <ClInclude Include="src\include\assimp\ByteSwapper.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\camera.h">
+    <ClInclude Include="src\include\assimp\camera.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\cexport.h">
+    <ClInclude Include="src\include\assimp\cexport.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\cfileio.h">
+    <ClInclude Include="src\include\assimp\cfileio.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\cimport.h">
+    <ClInclude Include="src\include\assimp\cimport.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\ColladaMetaData.h">
+    <ClInclude Include="src\include\assimp\ColladaMetaData.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\color4.h">
+    <ClInclude Include="src\include\assimp\color4.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="include\assimp\commonMetaData.h">
+    <ClInclude Include="src\include\assimp\commonMetaData.h">
       <Filter>res\assimp</Filter>
     </ClInclude>
-    <ClInclude Include="render\textureManager.hpp">
+    <ClInclude Include="src\render\textureManager.hpp">
       <Filter>Application\Singletones</Filter>
     </ClInclude>
     <ClInclude Include="src\actor\modelManager.hpp">
       <Filter>Application\Singletones</Filter>
     </ClInclude>
-    <ClInclude Include="render\shaderManager.hpp">
+    <ClInclude Include="src\render\shaderManager.hpp">
+      <Filter>Application\Singletones</Filter>
+    </ClInclude>
+    <ClInclude Include="meshSystem.hpp">
       <Filter>Application\Singletones</Filter>
     </ClInclude>
   </ItemGroup>
@@ -738,42 +744,42 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="render\shaders\cube.hlsl">
+    <FxCompile Include="shaders\cube.hlsl">
       <Filter>res\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="render\shaders\skybox.hlsl">
+    <FxCompile Include="shaders\skybox.hlsl">
       <Filter>res\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="render\shaders\globals.hlsli">
+    <FxCompile Include="shaders\globals.hlsli">
       <Filter>res\shaders</Filter>
     </FxCompile>
-    <FxCompile Include="render\shaders\modelInstanced.hlsl">
+    <FxCompile Include="shaders\modelInstanced.hlsl">
       <Filter>res\shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="include\assimp\SmoothingGroups.inl">
+    <None Include="src\include\assimp\SmoothingGroups.inl">
       <Filter>res\assimp</Filter>
     </None>
-    <None Include="include\assimp\vector2.inl">
+    <None Include="src\include\assimp\vector2.inl">
       <Filter>res\assimp</Filter>
     </None>
-    <None Include="include\assimp\vector3.inl">
+    <None Include="src\include\assimp\vector3.inl">
       <Filter>res\assimp</Filter>
     </None>
-    <None Include="include\assimp\matrix3x3.inl">
+    <None Include="src\include\assimp\matrix3x3.inl">
       <Filter>res\assimp</Filter>
     </None>
-    <None Include="include\assimp\matrix4x4.inl">
+    <None Include="src\include\assimp\matrix4x4.inl">
       <Filter>res\assimp</Filter>
     </None>
-    <None Include="include\assimp\quaternion.inl">
+    <None Include="src\include\assimp\quaternion.inl">
       <Filter>res\assimp</Filter>
     </None>
-    <None Include="include\assimp\material.inl">
+    <None Include="src\include\assimp\material.inl">
       <Filter>res\assimp</Filter>
     </None>
-    <None Include="include\assimp\color4.inl">
+    <None Include="src\include\assimp\color4.inl">
       <Filter>res\assimp</Filter>
     </None>
     <None Include="assets\models\KnightHorse\KnightHorse.fbx">

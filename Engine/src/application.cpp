@@ -2,6 +2,7 @@
 #include "globals.hpp"
 #include "textureManager.hpp"
 #include "shaderManager.hpp"
+#include "modelManager.hpp"
 
 namespace engine
 {
@@ -37,10 +38,12 @@ namespace engine
 		Globals::init();
 		TextureManager::init();
 		ShaderManager::init();
+		ModelManager::init();
 	}
 
 	void Application::deinitSingletons()
 	{
+		ModelManager::deinit();
 		ShaderManager::deinit();
 		TextureManager::deinit();
 		Globals::deinit();
@@ -52,6 +55,7 @@ namespace engine
 		{
 		case WM_DESTROY:
 		{
+
 			// close the application entirely
 			clean();
 			PostQuitMessage(0);

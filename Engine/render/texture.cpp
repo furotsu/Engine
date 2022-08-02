@@ -2,15 +2,18 @@
 #include "textureLoader.hpp"
 #include "debug.hpp"
 
-void engine::Texture::init(const wchar_t* filepath, TextureType type)
+void engine::Texture::init(std::string& filepath, TextureType type)
 {
 	ID3D11Resource* res;
-	HRESULT hr = DirectX::CreateDDSTextureFromFile(s_device, s_devcon, filepath, &res, pRView.reset());
-	res->Release();
-	res = nullptr;
 
+	std::wstring widestr = std::wstring(filepath.begin(), filepath.end());
+	const wchar_t* widecstr = widestr.c_str();
+
+	HRESULT hr = DirectX::CreateDDSTextureFromFile(s_device, s_devcon, widecstr, &res, pRView.reset());
 	ASSERT(hr >= 0 && L"unable to create texture from file");
 
+	res->Release();
+	res = nullptr;
 }
 
 void engine::Texture::clean()

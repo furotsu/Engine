@@ -1,7 +1,6 @@
 #include "window.hpp"
 #include "debug.hpp"
 #include "constants.hpp"
-#include "vertex.hpp"
 
 #include "d3d.hpp"
 

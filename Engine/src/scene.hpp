@@ -14,6 +14,7 @@
 #include "camera.hpp"
 #include "sky.hpp"
 #include "shaderManager.hpp"
+#include "instance.hpp"
 
 
 using namespace math;
@@ -57,24 +58,18 @@ namespace engine
 
 	public:
 
-		std::vector<Model> m_models;
-
-		Model model;
 		Sky skybox;
-		std::shared_ptr<ShaderProgram> modelProgram;
-		std::shared_ptr<Mesh> cubeMesh;
+		OpaqueInstances models;
 
 		Scene() = default;
 
-		void init();
-
-		void addModel(Model model, std::vector<ShaderInfo> shaders, std::vector<D3D11_INPUT_ELEMENT_DESC> ied);
+		void init(std::vector<ShaderInfo>& shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied);
+		void addModel(std::string filepath, std::string filename, std::vector<XMFLOAT3> position = { {0.0f, 0.0f, 0.0f} });
 		void setSkybox(Sky skybox, std::vector<ShaderInfo> shaders);
 
 		bool findIntersection(const ray& r, IntersectionQuery& query);
 
 		void renderFrame(Window& window, const Camera& camera);
-		void renderCube(Window& window, const Camera& camera);
 
 		void clean();
 

@@ -5,6 +5,7 @@ cbuffer cbPerObject : register(b1)
     float4 frustum_corners[3];
     float4 camera_position;
 };
+
 struct VSOut
 {
     float4 position : SV_POSITION;

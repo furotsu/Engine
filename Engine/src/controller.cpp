@@ -3,21 +3,18 @@
 #include <chrono>
 #include <cmath>
 #include "textureLoader.hpp"
-#include "cube.hpp"
 #include "globals.hpp"
+#include "instance.hpp"
 
 namespace engine
 {
 	void Controller::init(Window& win, Scene& scene)
 	{
-		Cube cube;
-		std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(cube.cubeVertices, cube.cubeIndices);
-		scene.init();
 
 		// shaders for main triangle pipeline
 		std::vector<ShaderInfo> shaders1 = {
-			{ShaderType::VERTEX, L"render/shaders/cube.hlsl", "VSMain"},
-			{ShaderType::PIXEL,  L"render/shaders/cube.hlsl",  "PSMain"}
+			{ShaderType::VERTEX, L"render/shaders/modelInstanced.hlsl", "VSMain"},
+			{ShaderType::PIXEL,  L"render/shaders/modelInstanced.hlsl",  "PSMain"}
 		};
 
 		std::vector<ShaderInfo> shaders2 = {
@@ -30,12 +27,31 @@ namespace engine
 		{
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{"INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1}
 		};
 
-		scene.addModel(Model(cubeMesh, L"assets/container2.dds", 5.0f, XMVectorSet(10.0f, 0.0f, 30.0f, 0.0)), shaders1, ied);
-		scene.setSkybox(Sky(L"assets/cubemap.dds"), shaders2);
+		scene.init(shaders1, ied);
+		scene.addModel("assets/models/Samurai/", "Samurai.fbx", { { 0.0f, 1.0f, 0.0f }, {0.0f, -1.0f, 0.0f} });
 
-		m_camera = Camera(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), { 0.0f, 0.0f, 0.0f });
+		std::vector<XMFLOAT3> wallPositions;
+		std::vector<XMFLOAT3> horsePositions;
+		std::vector<XMFLOAT3> knightPositions;
+
+		for (uint32_t i = 0; i != 20; ++i)
+		{
+			wallPositions.push_back({ -20.0f + 3.15f * i, 5.0f, 0.0f });
+			horsePositions.push_back({ -20.0f + 1.575f * i, 0.0f, 0.9f });
+			horsePositions.push_back({ -20.0f + 1.575f * i * 2.0f, 0.0f, 0.9f });
+			knightPositions.push_back({ -20.0f + 1.575f * i, 0.0f, 0.0f });
+			knightPositions.push_back({ -20.0f + 1.575f * i * 2.0f, 0.0f, 0.0f });
+		}
+
+		scene.addModel("assets/models/Knight/", "Knight.fbx", knightPositions);
+		scene.addModel("assets/models/KnightHorse/", "KnightHorse.fbx", horsePositions);
+		scene.addModel("assets/models/SunCityWall/", "SunCityWall.fbx", wallPositions);
+		scene.setSkybox(Sky("assets/cubemap.dds"), shaders2);
+
+		m_camera = Camera(XMVectorSet(0.0f, 10.0f, -130.0f, 1.0f), { 0.0f, 0.0f, 0.0f });
 		m_camera.setPerspective(45.0f, win.m_width, win.m_height, 0.1f, 800.0f);
 		m_cameraSpeed = CAMERA_SPEED;
 		m_mouseSensitivity = MOUSE_SENSITIVITY;

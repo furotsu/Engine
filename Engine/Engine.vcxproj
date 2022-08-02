@@ -130,8 +130,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DXGI.lib;d3dcompiler.lib;User32.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(WindowsSDK_LibraryPath_x64);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DXGI.lib;d3dcompiler.lib;User32.lib;d3d11.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Engine/res/lib;$(WindowsSDK_LibraryPath_x64);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <EntryPointName>main</EntryPointName>
@@ -156,8 +156,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DXGI.lib;d3dcompiler.lib;User32.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(WindowsSDK_LibraryPath_x64);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DXGI.lib;d3dcompiler.lib;User32.lib;d3d11.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Engine/res/lib;$(WindowsSDK_LibraryPath_x64);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <EntryPointName>main</EntryPointName>
@@ -166,8 +166,11 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\actor\modelManager.cpp" />
+    <ClCompile Include="render\instance.cpp" />
     <ClCompile Include="render\shaderManager.cpp" />
     <ClCompile Include="render\sky.cpp" />
+    <ClCompile Include="src\actor\assimpLoader.cpp" />
     <ClCompile Include="src\lighting.cpp" />
     <ClCompile Include="math\matrixAlg.cpp" />
     <ClCompile Include="math\plane.cpp" />
@@ -194,7 +197,88 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\assimp\aabb.h" />
+    <ClInclude Include="include\assimp\ai_assert.h" />
+    <ClInclude Include="include\assimp\anim.h" />
+    <ClInclude Include="include\assimp\BaseImporter.h" />
+    <ClInclude Include="include\assimp\Bitmap.h" />
+    <ClInclude Include="include\assimp\BlobIOSystem.h" />
+    <ClInclude Include="include\assimp\ByteSwapper.h" />
+    <ClInclude Include="include\assimp\camera.h" />
+    <ClInclude Include="include\assimp\cexport.h" />
+    <ClInclude Include="include\assimp\cfileio.h" />
+    <ClInclude Include="include\assimp\cimport.h" />
+    <ClInclude Include="include\assimp\ColladaMetaData.h" />
+    <ClInclude Include="include\assimp\color4.h" />
+    <ClInclude Include="include\assimp\commonMetaData.h" />
+    <ClInclude Include="include\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="include\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="include\assimp\Compiler\pushpack1.h" />
+    <ClInclude Include="include\assimp\config.h" />
+    <ClInclude Include="include\assimp\CreateAnimMesh.h" />
+    <ClInclude Include="include\assimp\DefaultIOStream.h" />
+    <ClInclude Include="include\assimp\DefaultIOSystem.h" />
+    <ClInclude Include="include\assimp\DefaultLogger.hpp" />
+    <ClInclude Include="include\assimp\Defines.h" />
+    <ClInclude Include="include\assimp\defs.h" />
+    <ClInclude Include="include\assimp\Exceptional.h" />
+    <ClInclude Include="include\assimp\Exporter.hpp" />
+    <ClInclude Include="include\assimp\fast_atof.h" />
+    <ClInclude Include="include\assimp\GenericProperty.h" />
+    <ClInclude Include="include\assimp\Hash.h" />
+    <ClInclude Include="include\assimp\Importer.hpp" />
+    <ClInclude Include="include\assimp\importerdesc.h" />
+    <ClInclude Include="include\assimp\IOStream.hpp" />
+    <ClInclude Include="include\assimp\IOStreamBuffer.h" />
+    <ClInclude Include="include\assimp\IOSystem.hpp" />
+    <ClInclude Include="include\assimp\light.h" />
+    <ClInclude Include="include\assimp\LineSplitter.h" />
+    <ClInclude Include="include\assimp\LogAux.h" />
+    <ClInclude Include="include\assimp\Logger.hpp" />
+    <ClInclude Include="include\assimp\LogStream.hpp" />
+    <ClInclude Include="include\assimp\material.h" />
+    <ClInclude Include="include\assimp\MathFunctions.h" />
+    <ClInclude Include="include\assimp\matrix3x3.h" />
+    <ClInclude Include="include\assimp\matrix4x4.h" />
+    <ClInclude Include="include\assimp\MemoryIOWrapper.h" />
+    <ClInclude Include="include\assimp\mesh.h" />
+    <ClInclude Include="include\assimp\metadata.h" />
+    <ClInclude Include="include\assimp\NullLogger.hpp" />
+    <ClInclude Include="include\assimp\ParsingUtils.h" />
+    <ClInclude Include="include\assimp\pbrmaterial.h" />
+    <ClInclude Include="include\assimp\port\AndroidJNI\AndroidJNIIOSystem.h" />
+    <ClInclude Include="include\assimp\port\AndroidJNI\BundledAssetIOSystem.h" />
+    <ClInclude Include="include\assimp\postprocess.h" />
+    <ClInclude Include="include\assimp\Profiler.h" />
+    <ClInclude Include="include\assimp\ProgressHandler.hpp" />
+    <ClInclude Include="include\assimp\qnan.h" />
+    <ClInclude Include="include\assimp\quaternion.h" />
+    <ClInclude Include="include\assimp\RemoveComments.h" />
+    <ClInclude Include="include\assimp\scene.h" />
+    <ClInclude Include="include\assimp\SceneCombiner.h" />
+    <ClInclude Include="include\assimp\SGSpatialSort.h" />
+    <ClInclude Include="include\assimp\SkeletonMeshBuilder.h" />
+    <ClInclude Include="include\assimp\SmallVector.h" />
+    <ClInclude Include="include\assimp\SmoothingGroups.h" />
+    <ClInclude Include="include\assimp\SpatialSort.h" />
+    <ClInclude Include="include\assimp\StandardShapes.h" />
+    <ClInclude Include="include\assimp\StreamReader.h" />
+    <ClInclude Include="include\assimp\StreamWriter.h" />
+    <ClInclude Include="include\assimp\StringComparison.h" />
+    <ClInclude Include="include\assimp\StringUtils.h" />
+    <ClInclude Include="include\assimp\Subdivision.h" />
+    <ClInclude Include="include\assimp\texture.h" />
+    <ClInclude Include="include\assimp\TinyFormatter.h" />
+    <ClInclude Include="include\assimp\types.h" />
+    <ClInclude Include="include\assimp\vector2.h" />
+    <ClInclude Include="include\assimp\vector3.h" />
+    <ClInclude Include="include\assimp\version.h" />
+    <ClInclude Include="include\assimp\Vertex.h" />
+    <ClInclude Include="include\assimp\XmlParser.h" />
+    <ClInclude Include="include\assimp\XMLTools.h" />
+    <ClInclude Include="include\assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="include\win.hpp" />
+    <ClInclude Include="src\actor\material.hpp" />
     <ClInclude Include="math\hitable.hpp" />
     <ClInclude Include="math\matrixAlg.hpp" />
     <ClInclude Include="math\plane.hpp" />
@@ -203,9 +287,11 @@
     <ClInclude Include="math\sphere.hpp" />
     <ClInclude Include="math\triangle.hpp" />
     <ClInclude Include="math\utility.hpp" />
+    <ClInclude Include="src\actor\modelManager.hpp" />
     <ClInclude Include="render\d3d.hpp" />
     <ClInclude Include="render\DxRes.hpp" />
     <ClInclude Include="render\globals.hpp" />
+    <ClInclude Include="render\instance.hpp" />
     <ClInclude Include="render\model.hpp" />
     <ClInclude Include="render\shader.hpp" />
     <ClInclude Include="render\shaderManager.hpp" />
@@ -213,15 +299,13 @@
     <ClInclude Include="render\texture.hpp" />
     <ClInclude Include="render\textureLoader.hpp" />
     <ClInclude Include="render\textureManager.hpp" />
+    <ClInclude Include="src\actor\assimpLoader.hpp" />
     <ClInclude Include="src\camera.hpp" />
     <ClInclude Include="src\transform.hpp" />
-    <ClInclude Include="src\actor\material.hpp" />
     <ClInclude Include="src\actor\mesh.hpp" />
-    <ClInclude Include="src\actor\vertex.hpp" />
     <ClInclude Include="src\application.hpp" />
     <ClInclude Include="src\constants.hpp" />
     <ClInclude Include="src\controller.hpp" />
-    <ClInclude Include="src\cube.hpp" />
     <ClInclude Include="src\debug.hpp" />
     <ClInclude Include="src\parallelExecutor.hpp" />
     <ClInclude Include="src\scene.hpp" />
@@ -231,11 +315,107 @@
   <ItemGroup>
     <Image Include="assets\container2.dds" />
     <Image Include="assets\cubemap.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Armor_BaseColor.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Armor_Metallic.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Armor_Normal.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Armor_OpacityMask.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Armor_Roughness.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Horse_BaseColor.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Horse_Normal.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Horse_Roughness.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Tail_BaseColor.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Tail_Normal.dds" />
+    <Image Include="assets\models\KnightHorse\dds\Tail_OpacityMask.dds" />
+    <Image Include="assets\models\Knight\dds\Cape_BaseColor.dds" />
+    <Image Include="assets\models\Knight\dds\Cape_Normal.dds" />
+    <Image Include="assets\models\Knight\dds\Cape_OpacityMask.dds" />
+    <Image Include="assets\models\Knight\dds\Cape_Roughness.dds" />
+    <Image Include="assets\models\Knight\dds\Eye_BaseColor.dds" />
+    <Image Include="assets\models\Knight\dds\Fur_BaseColor.dds" />
+    <Image Include="assets\models\Knight\dds\Fur_Normal.dds" />
+    <Image Include="assets\models\Knight\dds\Fur_OpacityMask.dds" />
+    <Image Include="assets\models\Knight\dds\Fur_Roughness.dds" />
+    <Image Include="assets\models\Knight\dds\Glove_BaseColor.dds" />
+    <Image Include="assets\models\Knight\dds\Glove_Metallic.dds" />
+    <Image Include="assets\models\Knight\dds\Glove_Normal.dds" />
+    <Image Include="assets\models\Knight\dds\Glove_Roughness.dds" />
+    <Image Include="assets\models\Knight\dds\Head_BaseColor.dds" />
+    <Image Include="assets\models\Knight\dds\Head_Normal.dds" />
+    <Image Include="assets\models\Knight\dds\Head_Roughness.dds" />
+    <Image Include="assets\models\Knight\dds\Helmet_BaseColor.dds" />
+    <Image Include="assets\models\Knight\dds\Helmet_Metallic.dds" />
+    <Image Include="assets\models\Knight\dds\Helmet_Normal.dds" />
+    <Image Include="assets\models\Knight\dds\Helmet_Roughness.dds" />
+    <Image Include="assets\models\Knight\dds\Legs_BaseColor.dds" />
+    <Image Include="assets\models\Knight\dds\Legs_Metallic.dds" />
+    <Image Include="assets\models\Knight\dds\Legs_Normal.dds" />
+    <Image Include="assets\models\Knight\dds\Legs_Roughness.dds" />
+    <Image Include="assets\models\Knight\dds\Skirt_BaseColor.dds" />
+    <Image Include="assets\models\Knight\dds\Skirt_Normal.dds" />
+    <Image Include="assets\models\Knight\dds\Skirt_OpacityMask.dds" />
+    <Image Include="assets\models\Knight\dds\Skirt_Roughness.dds" />
+    <Image Include="assets\models\Knight\dds\Torso_BaseColor.dds" />
+    <Image Include="assets\models\Knight\dds\Torso_Metallic.dds" />
+    <Image Include="assets\models\Knight\dds\Torso_Normal.dds" />
+    <Image Include="assets\models\Knight\dds\Torso_Roughness.dds" />
+    <Image Include="assets\models\Samurai\dds\Eye_BaseColor.dds" />
+    <Image Include="assets\models\Samurai\dds\Hand_BaseColor.dds" />
+    <Image Include="assets\models\Samurai\dds\Hand_Normal.dds" />
+    <Image Include="assets\models\Samurai\dds\Hand_Roughness.dds" />
+    <Image Include="assets\models\Samurai\dds\Head_BaseColor.dds" />
+    <Image Include="assets\models\Samurai\dds\Head_Normal.dds" />
+    <Image Include="assets\models\Samurai\dds\Head_Roughness.dds" />
+    <Image Include="assets\models\Samurai\dds\Helmet_BaseColor.dds" />
+    <Image Include="assets\models\Samurai\dds\Helmet_Metallic.dds" />
+    <Image Include="assets\models\Samurai\dds\Helmet_Normal.dds" />
+    <Image Include="assets\models\Samurai\dds\Helmet_Roughness.dds" />
+    <Image Include="assets\models\Samurai\dds\Legs_BaseColor.dds" />
+    <Image Include="assets\models\Samurai\dds\Legs_Metallic.dds" />
+    <Image Include="assets\models\Samurai\dds\Legs_Normal.dds" />
+    <Image Include="assets\models\Samurai\dds\Legs_Roughness.dds" />
+    <Image Include="assets\models\Samurai\dds\Sword_BaseColor.dds" />
+    <Image Include="assets\models\Samurai\dds\Sword_Metallic.dds" />
+    <Image Include="assets\models\Samurai\dds\Sword_Normal.dds" />
+    <Image Include="assets\models\Samurai\dds\Sword_Roughness.dds" />
+    <Image Include="assets\models\Samurai\dds\Torso_BaseColor.dds" />
+    <Image Include="assets\models\Samurai\dds\Torso_Metallic.dds" />
+    <Image Include="assets\models\Samurai\dds\Torso_Normal.dds" />
+    <Image Include="assets\models\Samurai\dds\Torso_Roughness.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Marble_BaseColor.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Star_BaseColor.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Star_Metallic.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Star_Normal.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Star_Roughness.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Statue_BaseColor.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Statue_Normal.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Statue_Roughness.dds" />
+    <Image Include="assets\models\SunCityWall\dds\StoneWork_BaseColor.dds" />
+    <Image Include="assets\models\SunCityWall\dds\StoneWork_Normal.dds" />
+    <Image Include="assets\models\SunCityWall\dds\StoneWork_Roughness.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Trims_BaseColor.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Trims_Metallic.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Trims_Normal.dds" />
+    <Image Include="assets\models\SunCityWall\dds\Trims_Roughness.dds" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="render\shaders\modelInstanced.hlsl" />
     <FxCompile Include="render\shaders\globals.hlsli" />
     <FxCompile Include="render\shaders\cube.hlsl" />
     <FxCompile Include="render\shaders\skybox.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\models\KnightHorse\KnightHorse.fbx" />
+    <None Include="assets\models\Knight\Knight.fbx" />
+    <None Include="assets\models\Samurai\Samurai.fbx" />
+    <None Include="assets\models\SunCityWall\SunCityWall.fbx" />
+    <None Include="include\assimp\color4.inl" />
+    <None Include="include\assimp\material.inl" />
+    <None Include="include\assimp\matrix3x3.inl" />
+    <None Include="include\assimp\matrix4x4.inl" />
+    <None Include="include\assimp\quaternion.inl" />
+    <None Include="include\assimp\SmoothingGroups.inl" />
+    <None Include="include\assimp\vector2.inl" />
+    <None Include="include\assimp\vector3.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

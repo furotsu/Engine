@@ -6,6 +6,7 @@
 #include "globals.hpp"
 #include "textureManager.hpp"
 #include "shaderManager.hpp"
+#include "modelManager.hpp"
 const uint32_t engine::ParallelExecutor::MAX_THREADS = max(1u, std::thread::hardware_concurrency());
 const uint32_t engine::ParallelExecutor::HALF_THREADS = max(1u, std::thread::hardware_concurrency() / 2);
 
@@ -14,6 +15,7 @@ namespace engine
 	Globals* Globals::s_globals = nullptr;
 	TextureManager* TextureManager::s_manager = nullptr;
 	ShaderManager* ShaderManager::s_manager = nullptr;
+	ModelManager* ModelManager::s_manager = nullptr;
 }
 
 engine::Application app;

@@ -1,6 +1,6 @@
 #include "sky.hpp"
 
-engine::Sky::Sky(const wchar_t* filepath)
+engine::Sky::Sky(std::string filepath)
 {
 	m_texture = TextureManager::getTexture(filepath, TextureType::TEXTURE_CUBEMAP);
 }

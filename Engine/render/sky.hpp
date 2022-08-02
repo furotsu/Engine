@@ -25,7 +25,7 @@ namespace engine
 			return *this;
 		}
 
-		Sky(const wchar_t* filepath);
+		Sky(std::string filepath);
 
 		void init(std::vector<ShaderInfo>& shaders);
 		void clean();

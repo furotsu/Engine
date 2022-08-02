@@ -5,24 +5,17 @@
 #include "d3d.hpp"
 #include "scene.hpp"
 #include "debug.hpp"
-#include "vertex.hpp"
 
 namespace engine
 {
-	void Scene::init()
+	void Scene::init(std::vector<ShaderInfo>& shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied)
 	{
+		models.init(ShaderManager::GetInstance()->getShader(shaders, ied));
 	}
 
-	void Scene::addModel(Model model, std::vector<ShaderInfo> shaders, std::vector<D3D11_INPUT_ELEMENT_DESC> ied)
+	void Scene::addModel(std::string filepath, std::string filename, std::vector<XMFLOAT3> positions)
 	{
-		this->model = model;
-		this->modelProgram = ShaderManager::GetInstance()->getShader(shaders, ied);
-
-		if (modelProgram->isUniformsEmpty())
-		{
-			modelProgram->createUniform(sizeof(XMMATRIX));
-		}
-
+		models.addModel(filepath, filename, positions);
 	}
 
 	void Scene::setSkybox(Sky skybox, std::vector<ShaderInfo> shaders)
@@ -51,42 +44,16 @@ namespace engine
 		s_devcon->ClearRenderTargetView(window.m_renderTargetView.ptr(), backgroundColor);
 		s_devcon->ClearDepthStencilView(window.m_pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 
-		renderCube(window, camera);
+		models.render();
 		skybox.render(window, camera);
 
 		window.m_swapchain->Present(0, 0);
 	}
 
-	void Scene::renderCube(Window& window, const Camera& camera)
-	{
-		modelProgram->bind();
-		model.bindTexture();
-
-		std::vector<const void*> data;
-		XMMATRIX modelMat = model.getModelMat();
-
-		data.push_back(&modelMat);
-		modelProgram->bindUniforms(data);
-
-		// select which vertex buffer to display
-		UINT stride = sizeof(Vertex);
-		UINT offset = 0;
-		s_devcon->IASetVertexBuffers(0, 1, model.m_pVBuffer.access(), &stride, &offset);
-
-		s_devcon->IASetIndexBuffer(model.m_pIBuffer, DXGI_FORMAT_R32_UINT, 0);
-
-		// select which primtive type we are using
-		s_devcon->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		s_devcon->DrawIndexed(model.m_mesh->m_indices.size(), 0, 0);
-	}
-
 	void Scene::clean()
 	{
-		model.cleanBuffers();
+		models.clean();
 		skybox.clean();
-
-		modelProgram = nullptr;
 	}
 
 	void Scene::findIntersectionInternal(const ray& r, ObjRef& outRef, Intersection& outNearest, Material*& outMaterial)

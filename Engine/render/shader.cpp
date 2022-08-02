@@ -23,10 +23,6 @@ void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders)
 		{}
 		}
 	}
-
-	// set the shader objects
-	s_devcon->VSSetShader(m_pVS, NULL, NULL);
-	s_devcon->PSSetShader(m_pPS, NULL, NULL);
 }
 
 void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied)
@@ -34,7 +30,7 @@ void engine::ShaderProgram::init(std::vector<ShaderInfo>& shaders, std::vector<D
 	m_ied = ied;
 	init(shaders);
 	
-	auto res = s_device->CreateInputLayout(m_ied.data(), 2, VS->GetBufferPointer(), VS->GetBufferSize(), m_pLayout.access());
+	auto res = s_device->CreateInputLayout(m_ied.data(), ied.size(), VS->GetBufferPointer(), VS->GetBufferSize(), m_pLayout.access());
 	ALWAYS_ASSERT(res == S_OK && "failed to create input layout for vertex shader" );
 
 	s_devcon->IASetInputLayout(m_pLayout);

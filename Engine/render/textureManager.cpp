@@ -41,13 +41,14 @@ namespace engine
 		return s_manager;
 	}
 
-	std::shared_ptr<Texture> TextureManager::getTexture(const wchar_t* filepath, TextureType type)
+	std::shared_ptr<Texture> TextureManager::getTexture(std::string filepath, TextureType type)
 	{
 		auto it = GetInstance()->m_Textures.find(filepath);
 		
 		if (it != GetInstance()->m_Textures.end())
 		{
 			return it->second;
+
 		}
 		else
 		{

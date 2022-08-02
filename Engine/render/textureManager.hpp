@@ -13,7 +13,7 @@ namespace engine
 	protected:
 		static TextureManager* s_manager;
 		
-		std::map<const wchar_t*, std::shared_ptr<Texture>> m_Textures;
+		std::map<std::string, std::shared_ptr<Texture>> m_Textures;
 
 	public:
 		TextureManager();
@@ -24,8 +24,7 @@ namespace engine
 		static void deinit();
 		static TextureManager* GetInstance();
 
-		static std::shared_ptr<Texture> getTexture(const wchar_t* filepath, TextureType type = TextureType::TEXTURE_DEFAULT);
-
+		static std::shared_ptr<Texture> getTexture(std::string filepath, TextureType type = TextureType::TEXTURE_DEFAULT);
 
 		static void clean();
 	};

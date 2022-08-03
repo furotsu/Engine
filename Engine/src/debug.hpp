@@ -3,12 +3,9 @@
 #include <string>
 #include <iostream>
 
-namespace engine
-{
-	void LogCall(const char* tag, std::string log);
-	void ErrorLog(std::string str, const char* file, int line);
-	bool LogAssert(const char* funciton, const char* file, int line);
-
+void LogCall(const char* tag, std::string log);
+void ErrorLog(std::string str, const char* file, int line);
+bool LogAssert(const char* funciton, const char* file, int line);
 #define ALWAYS_ASSERT(expr) \
 	do \
 	{ \
@@ -49,4 +46,3 @@ namespace engine
 #define ASSERT(expr) 
 #endif  // !defined NDEBUG
 
-}

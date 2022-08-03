@@ -2,6 +2,8 @@
 #include "globals.hpp"
 #include "textureManager.hpp"
 #include "shaderManager.hpp"
+#include "modelManager.hpp"
+#include "meshSystem.hpp"
 
 namespace engine
 {
@@ -37,10 +39,14 @@ namespace engine
 		Globals::init();
 		TextureManager::init();
 		ShaderManager::init();
+		ModelManager::init();
+		MeshSystem::init();
 	}
 
 	void Application::deinitSingletons()
 	{
+		MeshSystem::deinit();
+		ModelManager::deinit();
 		ShaderManager::deinit();
 		TextureManager::deinit();
 		Globals::deinit();
@@ -52,6 +58,7 @@ namespace engine
 		{
 		case WM_DESTROY:
 		{
+
 			// close the application entirely
 			clean();
 			PostQuitMessage(0);
@@ -63,6 +70,7 @@ namespace engine
 			GetWindowRect(hWnd, &rect);
 
 			window.onResize(rect.right - rect.left, rect.bottom - rect.top);
+			scene.onResize(window);
 			controller.onResize(window);
 			controller.userInputReceived = true;
 		} break;

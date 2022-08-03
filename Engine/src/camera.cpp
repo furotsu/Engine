@@ -9,7 +9,7 @@ namespace engine
 		float const h = XMScalarCos(0.5f * rad) / XMScalarSin(0.5f * rad);
 		float const w = h * width / height;
 
-		m_proj = XMMatrixPerspectiveFovLH(fov, width / height, nearP, farP);
+		m_proj = XMMatrixPerspectiveFovLH(fov, width / height, farP, nearP);
 
 		m_projInv = XMMatrixInverse(nullptr, m_proj);
 

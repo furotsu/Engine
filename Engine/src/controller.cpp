@@ -3,26 +3,24 @@
 #include <chrono>
 #include <cmath>
 #include "textureLoader.hpp"
-#include "cube.hpp"
 #include "globals.hpp"
+#include "opaque_instances.hpp"
+#include "meshSystem.hpp"
 
 namespace engine
 {
 	void Controller::init(Window& win, Scene& scene)
 	{
-		Cube cube;
-		std::shared_ptr<Mesh> cubeMesh = std::make_shared<Mesh>(cube.cubeVertices, cube.cubeIndices);
-		scene.init();
 
 		// shaders for main triangle pipeline
 		std::vector<ShaderInfo> shaders1 = {
-			{ShaderType::VERTEX, L"render/shaders/cube.hlsl", "VSMain"},
-			{ShaderType::PIXEL,  L"render/shaders/cube.hlsl",  "PSMain"}
+			{ShaderType::VERTEX, L"shaders/modelInstanced.hlsl", "VSMain"},
+			{ShaderType::PIXEL,  L"shaders/modelInstanced.hlsl",  "PSMain"}
 		};
 
 		std::vector<ShaderInfo> shaders2 = {
-		{ShaderType::VERTEX, L"render/shaders/skybox.hlsl", "VSMain"},
-		{ShaderType::PIXEL,  L"render/shaders/skybox.hlsl",  "PSMain"}
+		{ShaderType::VERTEX, L"shaders/skybox.hlsl", "VSMain"},
+		{ShaderType::PIXEL,  L"shaders/skybox.hlsl",  "PSMain"}
 		};
 
 		// create the input layout object for cube model
@@ -30,12 +28,57 @@ namespace engine
 		{
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{"ROWX", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"ROWY", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"ROWZ", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"ROWW", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1}
 		};
 
-		scene.addModel(Model(cubeMesh, L"assets/container2.dds", 5.0f, XMVectorSet(10.0f, 0.0f, 30.0f, 0.0)), shaders1, ied);
-		scene.setSkybox(Sky(L"assets/cubemap.dds"), shaders2);
+		scene.init(win);
+		MeshSystem::GetInstance()->initOpaqueInstances(shaders1, ied);
 
-		m_camera = Camera(XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f), { 0.0f, 0.0f, 0.0f });
+
+		std::vector<std::vector<OpaqueInstances::Instance>> wallPositions(1);
+		std::vector<std::vector<OpaqueInstances::Instance>> horsePositions(1);
+		std::vector<std::vector<OpaqueInstances::Instance>> knightPositions(1);
+		std::vector<std::vector<OpaqueInstances::Instance>> samuraiPositions(1);
+
+		for (uint32_t i = 0; i != 20; ++i)
+		{
+			wallPositions[0].push_back(XMMatrixTranslation(-20.0f + 3.15f * i, 5.0f, 0.0f));
+			horsePositions[0].push_back(XMMatrixTranslation(-20.0f + 1.575f * i, 0.0f, 0.9f));
+			horsePositions[0].push_back(XMMatrixTranslation(-20.0f + 1.575f * i * 2.0f, 0.0f, 0.9f));
+			knightPositions[0].push_back(XMMatrixTranslation(-20.0f + 1.575f * i, 0.0f, 0.0f));
+			knightPositions[0].push_back(XMMatrixTranslation(-20.0f + 1.575f * i * 2.0f, 0.0f, 0.0f));
+			samuraiPositions[0].push_back(XMMatrixTranslation(-20.0f + 3.15f * i, 4.8f, -5.2f));
+		}
+
+		MeshSystem::GetInstance()->addOpaqueInstances(ModelManager::GetInstance()->getModel("assets/models/Knight/", "Knight.fbx"), knightPositions);
+		MeshSystem::GetInstance()->addOpaqueInstances(ModelManager::GetInstance()->getModel("assets/models/KnightHorse/", "KnightHorse.fbx"), horsePositions);
+		MeshSystem::GetInstance()->addOpaqueInstances(ModelManager::GetInstance()->getModel("assets/models/SunCityWall/", "SunCityWall.fbx"), wallPositions);
+		MeshSystem::GetInstance()->addOpaqueInstances(ModelManager::GetInstance()->getModel("assets/models/Samurai/", "Samurai.fbx"), samuraiPositions);
+		scene.setSkybox(Sky("assets/cubemap.dds"), shaders2);
+
+
+		std::vector<Material> materials;
+		materials.push_back({});
+		materials.push_back({ TextureManager::GetInstance()->getTexture("assets/models/Cube/cube2.fbm/container1.dds") });
+		materials.push_back({ TextureManager::GetInstance()->getTexture("assets/models/Cube/cube2.fbm/container3.dds") });
+		std::vector<std::vector<OpaqueInstances::Instance>> cubePositions(3);
+		cubePositions[0].push_back(XMMatrixTranslation(-4.0f, -5.0f,  3.0f));
+		cubePositions[0].push_back(XMMatrixTranslation(-4.0f, -9.0f,  3.0f));
+		cubePositions[0].push_back(XMMatrixTranslation(-4.0f, -13.0f, 3.0f));
+		cubePositions[1].push_back(XMMatrixTranslation(0.0f, -5.0f,   3.0f));
+		cubePositions[1].push_back(XMMatrixTranslation(0.0f, -9.0f,   3.0f));
+		cubePositions[1].push_back(XMMatrixTranslation(0.0f, -13.0f,  3.0f));
+		cubePositions[2].push_back(XMMatrixTranslation(4.0f, -5.0f,   3.0f));
+		cubePositions[2].push_back(XMMatrixTranslation(4.0f, -9.0f,   3.0f));
+		cubePositions[2].push_back(XMMatrixTranslation(4.0f, -13.0f,  3.0f));
+
+		MeshSystem::GetInstance()->addOpaqueInstances(ModelManager::GetInstance()->getModel("assets/models/Cube/", "cube2.fbx"), cubePositions, materials);
+
+
+		m_camera = Camera(XMVectorSet(0.0f, 5.0f, -110.0f, 1.0f), { 0.0f, 0.0f, 0.0f });
 		m_camera.setPerspective(45.0f, win.m_width, win.m_height, 0.1f, 800.0f);
 		m_cameraSpeed = CAMERA_SPEED;
 		m_mouseSensitivity = MOUSE_SENSITIVITY;
@@ -103,8 +146,9 @@ namespace engine
 	void Controller::processFrame(Window& window, Scene& scene)
 	{
 		Globals::GetInstance()->bind(window, m_camera);
-		window.bindDepthStencil();
+		scene.bindDepthStencil();
 		scene.renderFrame(window, m_camera);
+		window.m_swapchain->Present(0, 0);
 	}
 
 	void Controller::processInput()

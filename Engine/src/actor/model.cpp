@@ -20,7 +20,29 @@ namespace engine
 		indexData.pSysMem = &indices[0];
 
 		s_device->CreateBuffer(&indexBufferDesc, &indexData, m_pIBuffer.reset());
-	};
+	}
+	void IndexBuffer::bind()
+	{
+		s_devcon->IASetIndexBuffer(m_pIBuffer, DXGI_FORMAT_R32_UINT, 0);
+	}
+
+	D3D11_MAPPED_SUBRESOURCE& IndexBuffer::map()
+	{
+		D3D11_MAPPED_SUBRESOURCE ms;
+		ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));
+		s_devcon->Map(m_pIBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+		return ms;
+	}
+
+	void IndexBuffer::unmap()
+	{
+		s_devcon->Unmap(m_pIBuffer, NULL);
+	}
+
+	void IndexBuffer::clean()
+	{
+		m_pIBuffer.release();
+	}
 
 	void Model::init(std::vector<Mesh::Vertex>& vertices, std::vector<Mesh::Triangle> indices)
 	{

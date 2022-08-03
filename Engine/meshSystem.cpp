@@ -51,9 +51,14 @@ namespace engine
 		m_opaqueInstances.push_back(i);
 	}
 
-	void MeshSystem::addOpaqueInstances(std::shared_ptr<Model> model, std::vector<OpaqueInstances::Instance> instances)
+	void MeshSystem::addOpaqueInstances(std::shared_ptr<Model> model, std::vector<std::vector<OpaqueInstances::Instance>> instances, std::vector<Material> materials)
 	{
-		m_opaqueInstances[0].addModel(model, instances);
+		uint32_t modelPos = m_opaqueInstances[0].addModel(model);
+
+		for (uint32_t i = 0; i != materials.size(); ++i)
+		{
+			m_opaqueInstances[0].addMaterial(materials[i], instances[i], modelPos);
+		}
 	}
 		
 	void MeshSystem::render()

@@ -14,6 +14,8 @@ namespace engine
 		struct Instance
 		{
 			XMMATRIX pos;
+
+			Instance() = delete;
 			Instance(XMMATRIX mat) { pos = mat; }
 		};
 
@@ -42,8 +44,8 @@ namespace engine
 		OpaqueInstances() = default;
 		void init(std::shared_ptr<ShaderProgram> shader);
 
-		void addModel(std::shared_ptr<Model> model, std::vector<Instance>& positions, XMFLOAT3 size = { 10.0f, 10.0f, 10.0f });
-
+		uint32_t addModel(std::shared_ptr<Model> model, XMFLOAT3 size = { 10.0f, 10.0f, 10.0f });
+		void addMaterial(Material& material, std::vector<Instance>& instances, uint32_t modelPos = 0u);
 
 		void updateInstanceBuffers();
 		void render();

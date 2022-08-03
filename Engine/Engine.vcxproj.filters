@@ -742,6 +742,13 @@
     <Image Include="assets\models\SunCityWall\dds\Trims_Roughness.dds">
       <Filter>res\textures</Filter>
     </Image>
+    <Image Include="assets\models\Cube\container2.dds" />
+    <Image Include="assets\models\Cube\cube2.fbm\container1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\models\Cube\cube2.fbm\container2.dds" />
+    <Image Include="assets\models\Cube\cube2.fbm\container3.dds" />
+    <Image Include="assets\models\Cube\cube2.fbm\container1.dds" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\cube.hlsl">
@@ -795,5 +802,6 @@
       <Filter>res\models</Filter>
     </None>
     <None Include="assimp-vc142-mt.dll" />
+    <None Include="assets\models\Cube\cube2.fbx" />
   </ItemGroup>
 </Project>

@@ -17,9 +17,9 @@ namespace engine
 	public:
 		VertexBuffer() = default;
 
-		void init(std::vector<Mesh::Vertex>& vertices, D3D11_USAGE usage)
+		void init(std::vector<T>& vertices, D3D11_USAGE usage)
 		{
-			m_size = sizeof(Mesh::Vertex) * vertices.size();
+			m_size = sizeof(T) * vertices.size();
 			// create the vertex buffer
 			D3D11_BUFFER_DESC bd;
 			ZeroMemory(&bd, sizeof(bd));
@@ -79,19 +79,13 @@ namespace engine
 		IndexBuffer() = default;
 
 		void init(std::vector<Mesh::Triangle>& indices, D3D11_USAGE usage);
-		void bind() { s_devcon->IASetIndexBuffer(m_pIBuffer, DXGI_FORMAT_R32_UINT, 0); }
+		void bind(); 
 
-		D3D11_MAPPED_SUBRESOURCE& map()
-		{
-			D3D11_MAPPED_SUBRESOURCE ms;
-			ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));
-			s_devcon->Map(m_pIBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
-			return ms;
-		}
+		D3D11_MAPPED_SUBRESOURCE& map();
 
-		void unmap() { s_devcon->Unmap(m_pIBuffer, NULL); }
+		void unmap();
 
-		void clean() { m_pIBuffer.release(); }
+		void clean();
 	};
 
 	class Model

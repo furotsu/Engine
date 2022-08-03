@@ -9,7 +9,7 @@ namespace engine
 		shader->createUniform(sizeof(XMMATRIX));
 	}
 
-	void OpaqueInstances::addModel(std::shared_ptr<Model> model, std::vector<Instance>& instances, XMFLOAT3 size)
+	uint32_t OpaqueInstances::addModel(std::shared_ptr<Model> model, XMFLOAT3 size)
 	{
 		perModel.push_back({ model });
 
@@ -22,18 +22,33 @@ namespace engine
 			XMMATRIX& transformDst = perModel[perModelPos].model->meshes[i].m_transform;
 			transformDst = XMMatrixMultiply(transformDst, XMMatrixScaling(size.x, size.y, size.z));
 
-			perModel[perModelPos].perMesh[i].perMaterial.push_back({ {} });
 		}
 
-		for (auto& perMesh : perModel[perModelPos].perMesh)
-			for (auto& material : perMesh.perMaterial)
-				for (auto& pos : instances)
-					material.instances.push_back({ pos });
+		return perModelPos;
+	}
+
+	void OpaqueInstances::addMaterial(Material& material, std::vector<Instance>& instances, uint32_t modelPos)
+	{
+		for (auto& mesh : perModel[modelPos].perMesh)
+		{
+			mesh.perMaterial.push_back(PerMaterial());
+		}
+
+		for (auto& mesh : perModel[modelPos].perMesh)
+		{
+			for (uint32_t i = 0; i != instances.size(); ++i)
+				mesh.perMaterial[mesh.perMaterial.size() - 1].instances.push_back(instances[i]);
+		}
+
+		for (auto& mesh : perModel[modelPos].model->meshes)
+		{
+			if(material.texture)
+				mesh.materials.push_back(material);
+		}
 
 		updateInstanceBuffers();
-
 	}
-	
+
 	void OpaqueInstances::updateInstanceBuffers()
 	{
 		uint32_t totalInstances = 0;
@@ -83,7 +98,7 @@ namespace engine
 		instanceBuffer.bind(1, sizeof(Instance));
 
 		uint32_t renderedInstances = 0;
-		s_devcon->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		for (const auto& model : perModel)
 		{
 			if (model.empty()) continue;

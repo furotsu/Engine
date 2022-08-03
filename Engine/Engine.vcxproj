@@ -317,6 +317,11 @@
   <ItemGroup>
     <Image Include="assets\container2.dds" />
     <Image Include="assets\cubemap.dds" />
+    <Image Include="assets\models\Cube\container2.dds" />
+    <Image Include="assets\models\Cube\cube2.fbm\container1.dds" />
+    <Image Include="assets\models\Cube\cube2.fbm\container1.jpg" />
+    <Image Include="assets\models\Cube\cube2.fbm\container2.dds" />
+    <Image Include="assets\models\Cube\cube2.fbm\container3.dds" />
     <Image Include="assets\models\KnightHorse\dds\Armor_BaseColor.dds" />
     <Image Include="assets\models\KnightHorse\dds\Armor_Metallic.dds" />
     <Image Include="assets\models\KnightHorse\dds\Armor_Normal.dds" />
@@ -406,6 +411,7 @@
     <FxCompile Include="shaders\skybox.hlsl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\models\Cube\cube2.fbx" />
     <None Include="assets\models\KnightHorse\KnightHorse.fbx" />
     <None Include="assets\models\Knight\Knight.fbx" />
     <None Include="assets\models\Samurai\Samurai.fbx" />

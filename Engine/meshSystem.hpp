@@ -25,7 +25,7 @@ namespace engine
 		static MeshSystem* GetInstance();
 
 		void initOpaqueInstances(std::vector<ShaderInfo>& shaders, std::vector<D3D11_INPUT_ELEMENT_DESC>& ied);
-		void addOpaqueInstances(std::shared_ptr<Model> model, std::vector<OpaqueInstances::Instance> instances);
+		void addOpaqueInstances(std::shared_ptr<Model> model, std::vector<std::vector<OpaqueInstances::Instance>> instances, std::vector<Material> materials = { {} });
 		void render();
 
 		static void clean();

@@ -66,10 +66,12 @@ void loadModel(std::string path, std::string filename, std::shared_ptr<engine::M
 				srcMaterial->GetTexture(aiTextureType_DIFFUSE, k, &name);
 
 				std::string str = path + name.C_Str();
+
 				while(str.find("tga") != std::string::npos)
 					str.replace(str.find("tga"), 3, "dds");
 				while (str.find("TGA") != std::string::npos)
 					str.replace(str.find("TGA"), 3, "dds");
+
 				dstMesh.materials[k].texture = engine::TextureManager::GetInstance()->getTexture(str);
 			}
 		}
